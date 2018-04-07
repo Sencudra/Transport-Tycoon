@@ -13,10 +13,267 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Файлы ресурсов\media">
+      <UniqueIdentifier>{e4179bac-619e-43a6-a4c0-b173c13ebc1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\media\images">
+      <UniqueIdentifier>{f4bf75aa-694e-4e98-a7bb-e71309a09459}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\media\textures">
+      <UniqueIdentifier>{087381ee-d6a7-4227-bbf6-df8e4ec09b5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\media\sound">
+      <UniqueIdentifier>{7345afbe-7945-427f-ac7e-31b114334528}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\media\fonts">
+      <UniqueIdentifier>{4fa7d49b-6684-4ef9-aa70-a466d9cbec9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\media\sound\music">
+      <UniqueIdentifier>{f211e938-2fc4-4277-a920-f270d4c3d4fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\media\textures\Industry">
+      <UniqueIdentifier>{e43e3291-1be2-4f85-ae0f-16cf9e3dfe59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\media\textures\Land">
+      <UniqueIdentifier>{7f1ef4a1-8217-42cf-84c2-8a1c71c3a960}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\media\textures\Roads">
+      <UniqueIdentifier>{ac61d782-9a92-4249-8af1-1c78f086247e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="world.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="view.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="vehicle.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="tile.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="texturemanager.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="programstatestart.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="programstatemain.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="programengine.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="object.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="map.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="gui.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="cell.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="programstate.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="cell.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="gui.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="programengine.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="programstatemain.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="programstatestart.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="resources.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="texturemanager.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="tile.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="vehicle.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="view.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="world.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tycoon.ini">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="media\sound\music\play1.ogg">
+      <Filter>Файлы ресурсов\media\sound\music</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="media\object.png">
+      <Filter>Файлы ресурсов\media</Filter>
+    </Image>
+    <Image Include="media\images\flat1.jpg">
+      <Filter>Файлы ресурсов\media\images</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Bank.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Coalmine.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Factory.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Farm.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Forest(industry).png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Ironoremine.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Oilrefinery.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Oilrig.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Oilwells.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\powerstation.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Sawmill.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Industry\Steelmill.png">
+      <Filter>Файлы ресурсов\media\textures\Industry</Filter>
+    </Image>
+    <Image Include="media\textures\Land\deepwater.png">
+      <Filter>Файлы ресурсов\media\textures\Land</Filter>
+    </Image>
+    <Image Include="media\textures\Land\factory.png">
+      <Filter>Файлы ресурсов\media\textures\Land</Filter>
+    </Image>
+    <Image Include="media\textures\Land\forest.png">
+      <Filter>Файлы ресурсов\media\textures\Land</Filter>
+    </Image>
+    <Image Include="media\textures\Land\plain.png">
+      <Filter>Файлы ресурсов\media\textures\Land</Filter>
+    </Image>
+    <Image Include="media\textures\Land\red.png">
+      <Filter>Файлы ресурсов\media\textures\Land</Filter>
+    </Image>
+    <Image Include="media\textures\Land\sand.png">
+      <Filter>Файлы ресурсов\media\textures\Land</Filter>
+    </Image>
+    <Image Include="media\textures\Land\snow.png">
+      <Filter>Файлы ресурсов\media\textures\Land</Filter>
+    </Image>
+    <Image Include="media\textures\Land\stone1.png">
+      <Filter>Файлы ресурсов\media\textures\Land</Filter>
+    </Image>
+    <Image Include="media\textures\Land\stone2.png">
+      <Filter>Файлы ресурсов\media\textures\Land</Filter>
+    </Image>
+    <Image Include="media\textures\Land\water.png">
+      <Filter>Файлы ресурсов\media\textures\Land</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road0path1.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road1path1.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road1path2.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road1path3.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road1path4.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road2path1.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road2path2.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road2path3.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road2path4.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road2path5.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road2path6.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road3path1.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road3path2.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road3path3.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road3path4.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+    <Image Include="media\textures\Roads\road4path1.png">
+      <Filter>Файлы ресурсов\media\textures\Roads</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="media\fonts\RobotoSlab-Bold.ttf">
+      <Filter>Файлы ресурсов\media\fonts</Filter>
+    </Font>
+    <Font Include="media\fonts\RobotoSlab-Light.ttf">
+      <Filter>Файлы ресурсов\media\fonts</Filter>
+    </Font>
+    <Font Include="media\fonts\RobotoSlab-Regular.ttf">
+      <Filter>Файлы ресурсов\media\fonts</Filter>
+    </Font>
+    <Font Include="media\fonts\RobotoSlab-Thin.ttf">
+      <Filter>Файлы ресурсов\media\fonts</Filter>
+    </Font>
   </ItemGroup>
 </Project>
