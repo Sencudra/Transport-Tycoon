@@ -6,6 +6,14 @@
 
 ProgramStateStart::ProgramStateStart(ng::ProgramEngine* game)
 {
+
+	if (!music.openFromFile("media/sound/music/play1.ogg"))
+		std::cout << "ERROR while opening music file" << std::endl;
+	
+	//music.setVolume(10);
+	//music.play();
+
+
     this->m_game = game;
     sf::Vector2f pos = sf::Vector2f(this->m_game->m_window->getSize());
     this->view.setSize(pos);
@@ -25,11 +33,7 @@ ProgramStateStart::ProgramStateStart(ng::ProgramEngine* game)
     this->guiSystem.at("menu").show();
 
 
-	sf::Music music;
-	if (!music.openFromFile("media/sound/music/play1.ogg"))
-		std::cout << "ERROR" << std::endl;
-	music.play();
-	while (music.getStatus() == sf::SoundStream::Status::Playing);
+
 
 }
 
@@ -46,17 +50,15 @@ void ProgramStateStart::draw(const float dt)
     return;
 }
 
-
 void ProgramStateStart::update(const float dt)
 {
+	//std::cout << "check" << std::endl;
 
-
-    this->guiSystem.at("menu").setEntryText(0, L" Новая игра");
-    this->guiSystem.at("menu").setEntryText(1, L" Загрузить Игру");
-    this->guiSystem.at("menu").setEntryText(2, L" Выйти");
+    this->guiSystem.at("menu").setEntryText(0, "New Game");
+    this->guiSystem.at("menu").setEntryText(1, "Load Game");
+    this->guiSystem.at("menu").setEntryText(2, "Quit");
 
 }
-
 
 void ProgramStateStart::newGame()
 {

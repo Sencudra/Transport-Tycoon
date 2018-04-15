@@ -11,7 +11,7 @@
 #include <boost/property_tree/ini_parser.hpp>
 
 #include "texturemanager.h"
-#include "gui.h"
+#include "gui/gui.h"
 
 
 class ProgramState;

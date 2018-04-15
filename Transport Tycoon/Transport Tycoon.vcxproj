@@ -83,7 +83,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../External libraries/SFML/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vladt\source\repos\External libraries\SFML\include;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Player;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Objects;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Map;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Gui;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\States;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Resources;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Mechanics;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Graphics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)/../External libraries/SFML/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -96,6 +96,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Player;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Objects;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Map;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Gui;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\States;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Resources;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Mechanics;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Graphics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -106,7 +107,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../External libraries/SFML/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vladt\source\repos\External libraries\SFML\include;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Player;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Objects;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Map;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Gui;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\States;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Resources;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Mechanics;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Graphics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -123,6 +124,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Player;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Objects;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Map;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Gui;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\States;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Resources;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Mechanics;C:\Users\vladt\source\repos\Transport Tycoon\Transport Tycoon\Engine\Graphics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -130,37 +132,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cell.cpp" />
-    <ClCompile Include="gui.cpp" />
+    <ClCompile Include="Engine\Graphics\view.cpp" />
+    <ClCompile Include="Engine\Mechanics\world.cpp" />
+    <ClCompile Include="Engine\programengine.cpp" />
+    <ClCompile Include="Engine\Resources\texturemanager.cpp" />
+    <ClCompile Include="Engine\States\programstatemain.cpp" />
+    <ClCompile Include="Engine\States\programstatestart.cpp" />
+    <ClCompile Include="Gui\gui.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="map.cpp" />
-    <ClCompile Include="object.cpp" />
-    <ClCompile Include="player.cpp" />
-    <ClCompile Include="programengine.cpp" />
-    <ClCompile Include="programstatemain.cpp" />
-    <ClCompile Include="programstatestart.cpp" />
-    <ClCompile Include="texturemanager.cpp" />
-    <ClCompile Include="tile.cpp" />
-    <ClCompile Include="vehicle.cpp" />
-    <ClCompile Include="view.cpp" />
-    <ClCompile Include="world.cpp" />
+    <ClCompile Include="Map\cell.cpp" />
+    <ClCompile Include="Map\map.cpp" />
+    <ClCompile Include="Map\tile.cpp" />
+    <ClCompile Include="Objects\object.cpp" />
+    <ClCompile Include="Objects\vehicle.cpp" />
+    <ClCompile Include="Player\player.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cell.h" />
-    <ClInclude Include="gui.h" />
-    <ClInclude Include="map.h" />
-    <ClInclude Include="object.h" />
-    <ClInclude Include="player.h" />
-    <ClInclude Include="programengine.h" />
-    <ClInclude Include="programstate.h" />
-    <ClInclude Include="programstatemain.h" />
-    <ClInclude Include="programstatestart.h" />
+    <ClInclude Include="Engine\Graphics\view.h" />
+    <ClInclude Include="Engine\Mechanics\world.h" />
+    <ClInclude Include="Engine\programengine.h" />
+    <ClInclude Include="Engine\Resources\texturemanager.h" />
+    <ClInclude Include="Engine\States\programstate.h" />
+    <ClInclude Include="Engine\States\programstatemain.h" />
+    <ClInclude Include="Engine\States\programstatestart.h" />
+    <ClInclude Include="Gui\gui.h" />
+    <ClInclude Include="Map\cell.h" />
+    <ClInclude Include="Map\map.h" />
+    <ClInclude Include="Map\tile.h" />
+    <ClInclude Include="Objects\object.h" />
+    <ClInclude Include="Objects\vehicle.h" />
+    <ClInclude Include="Player\player.h" />
     <ClInclude Include="resources.h" />
-    <ClInclude Include="texturemanager.h" />
-    <ClInclude Include="tile.h" />
-    <ClInclude Include="vehicle.h" />
-    <ClInclude Include="view.h" />
-    <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="media\sound\music\play1.ogg" />

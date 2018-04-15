@@ -4,8 +4,7 @@
 #include <iostream>
 
 #include "programengine.h"
-#include "gui.h"
-
+#include "gui\gui.h"
 
 class ProgramState
 {

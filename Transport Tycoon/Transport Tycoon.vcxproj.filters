@@ -5,10 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Файлы заголовков">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Файлы ресурсов">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -40,96 +36,123 @@
     <Filter Include="Файлы ресурсов\media\textures\Roads">
       <UniqueIdentifier>{ac61d782-9a92-4249-8af1-1c78f086247e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\Engine">
+      <UniqueIdentifier>{1280c49c-142f-42c2-9de3-ef1efe72ee11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Gui">
+      <UniqueIdentifier>{1d518ef0-7951-4428-b8d5-77ec35d0feae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Engine\Graphics">
+      <UniqueIdentifier>{7f5b20ad-b9ba-4a37-a25b-0fe74ed9c895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Engine\Resources">
+      <UniqueIdentifier>{ee5498c5-431a-4dc5-8841-b659293489ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Engine\States">
+      <UniqueIdentifier>{42a812e3-881b-4d00-acda-33a6d3a69443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Engine\Mechanics">
+      <UniqueIdentifier>{14aaec8f-8343-4948-aa05-fcad34f44ef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Player">
+      <UniqueIdentifier>{2594a1a2-7474-4b1d-a53c-9522148394b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Map">
+      <UniqueIdentifier>{48220074-2c72-4d83-b2de-9c9f2a0a0da3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Objects">
+      <UniqueIdentifier>{f8eb36a2-576f-4919-aecd-8c15d85ebeaf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="world.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Map\map.cpp">
+      <Filter>Исходные файлы\Map</Filter>
     </ClCompile>
-    <ClCompile Include="view.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Gui\gui.cpp">
+      <Filter>Исходные файлы\Gui</Filter>
     </ClCompile>
-    <ClCompile Include="vehicle.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Engine\Mechanics\world.cpp">
+      <Filter>Исходные файлы\Engine\Mechanics</Filter>
     </ClCompile>
-    <ClCompile Include="tile.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Objects\object.cpp">
+      <Filter>Исходные файлы\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="texturemanager.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Map\cell.cpp">
+      <Filter>Исходные файлы\Map</Filter>
     </ClCompile>
-    <ClCompile Include="programstatestart.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Objects\vehicle.cpp">
+      <Filter>Исходные файлы\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="programstatemain.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Map\tile.cpp">
+      <Filter>Исходные файлы\Map</Filter>
     </ClCompile>
-    <ClCompile Include="programengine.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Engine\States\programstatestart.cpp">
+      <Filter>Исходные файлы\Engine\States</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Engine\States\programstatemain.cpp">
+      <Filter>Исходные файлы\Engine\States</Filter>
     </ClCompile>
-    <ClCompile Include="object.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Engine\Resources\texturemanager.cpp">
+      <Filter>Исходные файлы\Engine\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="map.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Player\player.cpp">
+      <Filter>Исходные файлы\Player</Filter>
     </ClCompile>
-    <ClCompile Include="gui.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Engine\programengine.cpp">
+      <Filter>Исходные файлы\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="cell.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Engine\Graphics\view.cpp">
+      <Filter>Исходные файлы\Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="programstate.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="cell.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="gui.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="map.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="object.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="programengine.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="programstatemain.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="programstatestart.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="resources.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Исходные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="texturemanager.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="Map\map.h">
+      <Filter>Исходные файлы\Map</Filter>
     </ClInclude>
-    <ClInclude Include="tile.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="Gui\gui.h">
+      <Filter>Исходные файлы\Gui</Filter>
     </ClInclude>
-    <ClInclude Include="vehicle.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="Engine\Mechanics\world.h">
+      <Filter>Исходные файлы\Engine\Mechanics</Filter>
     </ClInclude>
-    <ClInclude Include="view.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="Map\cell.h">
+      <Filter>Исходные файлы\Map</Filter>
     </ClInclude>
-    <ClInclude Include="world.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="Objects\object.h">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\player.h">
+      <Filter>Исходные файлы\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\programengine.h">
+      <Filter>Исходные файлы\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\States\programstate.h">
+      <Filter>Исходные файлы\Engine\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\States\programstatemain.h">
+      <Filter>Исходные файлы\Engine\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\States\programstatestart.h">
+      <Filter>Исходные файлы\Engine\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Resources\texturemanager.h">
+      <Filter>Исходные файлы\Engine\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\vehicle.h">
+      <Filter>Исходные файлы\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\tile.h">
+      <Filter>Исходные файлы\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\view.h">
+      <Filter>Исходные файлы\Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

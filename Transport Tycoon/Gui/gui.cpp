@@ -1,7 +1,5 @@
 #include "gui.h"
 
-
-
 using namespace gui;
 
 sf::Vector2f Gui::getSize()
@@ -31,7 +29,7 @@ int Gui::getEntry(const sf::Vector2f mousePos)
 }
 
 
-void Gui::setEntryText(int entry, std::wstring text)
+void Gui::setEntryText(int entry, std::string text)
 {
     if(entry >= entries.size() || entry < 0) return;
 

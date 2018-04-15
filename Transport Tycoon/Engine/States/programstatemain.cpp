@@ -103,18 +103,18 @@ void ProgramStateMain::update(const float dt)
 
     m_world->update(dt);
 
-    this->guiSystem.at("infoBar").setEntryText(0, L" День: " + std::to_wstring(int(this->m_world->m_day)));
-    this->guiSystem.at("infoBar").setEntryText(1, L" $: " + std::to_wstring(m_world->m_player.getBalance()));
-    this->guiSystem.at("infoBar").setEntryText(2, L" " + m_world->m_player.getCompanyName());
-    this->guiSystem.at("infoBar").setEntryText(3, L" Игрок: " + m_world->m_player.getPlayerName());
-    this->guiSystem.at("infoBar").setEntryText(4, L"");
+    this->guiSystem.at("infoBar").setEntryText(0, " Days: " + std::to_string(int(this->m_world->m_day)));
+    this->guiSystem.at("infoBar").setEntryText(1, " $: " + std::to_string(m_world->m_player.getBalance()));
+    this->guiSystem.at("infoBar").setEntryText(2, " " + m_world->m_player.getCompanyName());
+    this->guiSystem.at("infoBar").setEntryText(3, " Player: " + m_world->m_player.getPlayerName());
+    this->guiSystem.at("infoBar").setEntryText(4, "");
 
-    this->guiSystem.at("toolBar").setEntryText(0, L" Пауза");
-    this->guiSystem.at("toolBar").setEntryText(1, L" Ускорить");
-    this->guiSystem.at("toolBar").setEntryText(2, L" Сохранить");
-    this->guiSystem.at("toolBar").setEntryText(3, L" Дорога");
-    this->guiSystem.at("toolBar").setEntryText(4, L" Машина");
-    this->guiSystem.at("toolBar").setEntryText(5, L" Выход");
+    this->guiSystem.at("toolBar").setEntryText(0, " Pause");
+    this->guiSystem.at("toolBar").setEntryText(1, " Speed Up");
+    this->guiSystem.at("toolBar").setEntryText(2, " Save");
+    this->guiSystem.at("toolBar").setEntryText(3, " Road");
+    this->guiSystem.at("toolBar").setEntryText(4, " Vehicle");
+    this->guiSystem.at("toolBar").setEntryText(5, " Exit");
 
     return;
 }

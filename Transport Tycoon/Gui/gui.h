@@ -127,7 +127,7 @@ class Gui : public sf::Transformable, public sf::Drawable
     int getEntry(const sf::Vector2f mousePos);
 
     /* Change the text of an entry. */
-    void setEntryText(int entry, std::wstring text);
+    void setEntryText(int entry, std::string text);
 
     /* Change the entry dimensions. */
     void setDimensions(sf::Vector2f dimensions);
