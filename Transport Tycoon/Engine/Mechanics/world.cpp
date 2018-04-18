@@ -602,10 +602,10 @@ void World::drawMap(ScreenView& gameView)
     isoToTwoD(idxRec.bottomLeft.x, idxRec.bottomLeft.y, 64, 32);
     isoToTwoD(idxRec.bottomRight.x,idxRec.bottomRight.y, 64, 32);
 
-    idxRec.topLeft.x -= 3;
-    idxRec.topRight.x -= 3;
-    idxRec.bottomLeft.y += 3;
-    idxRec.bottomRight.y += 3;
+    //idxRec.topLeft.x += 3;
+    //idxRec.topRight.x += 3;
+    //idxRec.bottomLeft.y -= 3;
+    //idxRec.bottomRight.y -= 3;
 
     if(idxRec.topLeft.x > mapSize)			idxRec.topLeft.x = mapSize;
     if(idxRec.topLeft.x < 0)                idxRec.topLeft.x = 0;
@@ -619,55 +619,77 @@ void World::drawMap(ScreenView& gameView)
     if(idxRec.bottomRight.x > mapSize)		idxRec.bottomRight.x = mapSize;
     if(idxRec.bottomRight.x < 0)            idxRec.bottomRight.x = 0;
 
-	int dRows = idxRec.topRight.y - idxRec.bottomLeft.y;
-	int dColumns = idxRec.topLeft.x - idxRec.bottomRight.x;
+	int dRows = std::abs(idxRec.topRight.y - idxRec.bottomLeft.y);
+	int dColumns = std::abs(idxRec.topLeft.x - idxRec.bottomRight.x);
 
-	for (int line = 1; line <= 2*dRows-1; line++)
-	//for (int line = idxRec.topLeft.y; line <= idxRec.topLeft.y + (2*dRows  - 1); line++)
+	int lineBegin
+	int lin
+
+	// OLD Version
+	//for (int y = idxRec.topRight.y; y < idxRec.bottomLeft.y; ++y)
+	//{
+	//	for (int x = idxRec.topLeft.x; x < idxRec.bottomRight.x; ++x)
+	//	{
+	//		float n_x = x;
+	//		float n_y = y;
+
+	//		twoDToIso(n_x, n_y, 64, 32);
+
+	//		std::cout << "X: " << x << " : " << n_x << " Y: " << y << " : " << n_y << std::endl;
+	//		if ((n_x >= gameView.getViewRect().topLeft.x - 64 &&
+	//			n_x <= gameView.getViewRect().bottomRight.x + 64) &&
+	//			(n_y >= gameView.getViewRect().topLeft.y - 64 &&
+	//				n_y <= gameView.getViewRect().bottomRight.y + 64))
+	//		{
+	//			m_tileMap->m_map[x][y]->draw(n_x, n_y, *(m_engine->m_window));
+	//		}
+
+	//	}
+	//}
+
+
+	for (int line = 1; line <= (dRows + dColumns)-1; line++)
 	{
-		/* Get column index of the first element in this line of output.
-		The index is 0 for first "row" lines and "line - row" for remaining
+		/* get column index of the first element in this line of output.
+		the index is 0 for first "row" lines and "line - row" for remaining
 		lines  */
 		int start_col = std::max(0, line - dRows);
 
-		/* Get count of elements in this line. The count of elements is
+		/* get count of elements in this line. the count of elements is
 		equal to minimum of line number, "col-start_col" and "row" */
 		int count = min(line, (dRows - start_col), dRows);
 
-		/* Print elements of this line */
+		/* print elements of this line */
 		for (int j = 0; j < count; j++)
 		{
 
-			float n_x = j + idxRec.topLeft.x;
-			float n_y = line + idxRec.topRight.y;
+			int x, y;
+			x = idxRec.topLeft.x + start_col + j;
+			y = idxRec.topRight.y + std::min(dRows, line) - 1 - j;
 
-			twoDToIso(n_x, n_y, 64, 32);
+			if (x >= mapSize || y >= mapSize)
+				continue;
 
-			m_tileMap->m_map[std::min(dRows, line) - j - 1][start_col + j]->draw(n_x, n_y, *(m_engine->m_window));
-		
-		}
-	}
-
-
-	/*for (int y = idxRec.topRight.y; y < idxRec.bottomLeft.y; ++y)
-	{
-		for (int x = idxRec.topLeft.x; x < idxRec.bottomRight.x; ++x)
-		{
 			float n_x = x;
 			float n_y = y;
 
 			twoDToIso(n_x, n_y, 64, 32);
 
-			if ((n_x >= gameView.getViewRect().topLeft.x - 64 &&
-				n_x <= gameView.getViewRect().bottomRight.x + 64) &&
-				(n_y >= gameView.getViewRect().topLeft.y - 64 &&
-					n_y <= gameView.getViewRect().bottomRight.y + 64))
+			//if ((n_x >= gameView.getViewRect().topLeft.x &&
+			//	n_x <= gameView.getViewRect().bottomRight.x) &&
+			//	(n_y >= gameView.getViewRect().topLeft.y &&
+			//		n_y <= gameView.getViewRect().bottomRight.y))
 			{
 				m_tileMap->m_map[x][y]->draw(n_x, n_y, *(m_engine->m_window));
+				//std::cout << "X: " << x << "Y: " << y << std::endl;
 			}
+		
 		}
-	}*/
+	}
 
+
+
+	
 	return;
 }
 
