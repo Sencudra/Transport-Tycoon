@@ -10,7 +10,8 @@ Tile::Tile()
 Tile::Tile(const unsigned int height, sf::Texture& texture,
     const rs::TileType tileType)
 {
-    this->m_tileStatObj = NULL;
+    this->m_tileStatObj = nullptr;
+	this->isMainStatic = false;
 
     this->m_tileType = tileType;
     //this->regions[0] = 0;
@@ -23,10 +24,19 @@ Tile::Tile(const unsigned int height, sf::Texture& texture,
 
 void Tile::draw(int x, int y, sf::RenderWindow& window)
 {
+	// Draw tiles with/without static/dynamic objects.
+
     m_sprite.setPosition(x,y);
     window.draw(m_sprite);
-    if(m_tileStatObj != NULL)
-        m_tileStatObj->draw(&window);
+
+	if (this->isMainStatic == true && m_tileStatObj != NULL)
+		m_tileStatObj->draw(&window);
+
+	if (m_tileDynObj.size() != 0)
+		for (auto i : m_tileDynObj)
+		{
+			i->draw(&window);
+		}
 }
 
 void Tile::update()
@@ -47,4 +57,16 @@ bool Tile::setObject(Object* obj)
     {
         return false;
     }
+}
+
+void Tile::deleteObject()
+{
+	if (this->m_tileStatObj == NULL) return;
+
+	if (this->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
+	{
+		delete m_tileStatObj;
+		m_tileStatObj = NULL;
+		bool isMainStatic = false;
+	}
 }

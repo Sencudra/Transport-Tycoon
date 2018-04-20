@@ -25,7 +25,6 @@ public:
     void saveToFile();
     void loadFromFile();
 
-
     Object* selectObject(sf::Vector2f pos);
     void deleteObject(sf::Vector2f pos);
 

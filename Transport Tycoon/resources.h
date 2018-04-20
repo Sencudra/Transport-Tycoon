@@ -75,15 +75,6 @@ struct Cargo
 
 };
 
-struct PPoint   // Point struct for path finding algorithm
-{
-    int x,y;    //  Position
-    float g;    //  Cost of the path from the start point
-    float h;    //  Heuristic cost estimate
-    float f;    //  Sum of H and F
-
-    PPoint* cameFrom;
-};
 
 
 struct Point

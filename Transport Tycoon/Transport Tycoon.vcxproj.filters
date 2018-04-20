@@ -107,6 +107,9 @@
     <ClCompile Include="Engine\Graphics\view.cpp">
       <Filter>Исходные файлы\Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Pathfinder.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resources.h">
@@ -154,6 +157,7 @@
     <ClInclude Include="Engine\Graphics\view.h">
       <Filter>Исходные файлы\Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Pathfinder.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tycoon.ini">

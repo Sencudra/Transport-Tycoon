@@ -19,17 +19,26 @@ public:
         const rs::TileType tileType);
     ~Tile(){delete m_tileStatObj;}
 
+	void deleteObject();
+
     void draw(int x, int y, sf::RenderWindow& window);
     void update();
 
     bool setObject(Object *obj);
+
+	bool isEmptyStatic() { return m_tileStatObj == nullptr ? true : false; }
+	
 
 
 public:
     //AnimationHandler animHandler;
     sf::Sprite m_sprite; // make a massive for layering ATTENTION ATTENTION
     rs::TileType m_tileType;
+
     Object* m_tileStatObj;
+	bool isMainStatic;
+
+	std::vector<Object*> m_tileDynObj;
 
     int m_tileHeight;
 

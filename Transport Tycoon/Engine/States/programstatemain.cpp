@@ -143,12 +143,11 @@ void ProgramStateMain::handleInput()
 
     while(this->m_game->m_window->pollEvent(event))      
     {
-
         switch(event.type)
         {
-
         case sf::Event::MouseMoved:
         {
+
             /* Pan the camera */
             if(this->m_actionState == ActionState::PANNING)
             {
@@ -195,33 +194,43 @@ void ProgramStateMain::handleInput()
                 }
             }
 
+			/* Right click: */
             if(event.mouseButton.button == sf::Mouse::Right)
             {
-                 sf::Vector2f mousePosWorld = this->m_game->m_window->mapPixelToCoords(sf::Mouse::getPosition(*this->m_game->m_window),this->m_gameView);
-                if(m_focusObject != nullptr && m_editState == EditState::ROUTING)
-                {
-                    std::cout << "Adding task" << std::endl;
-                    rs::Point task;
-                    task.setValues(mousePosWorld.x, mousePosWorld.y);
-                    rs::isoToTwoD(task.x, task.y, 64, 32);
-                    dynamic_cast<DynamicObject*> (m_focusObject)->addTask(task);
-                }
+                sf::Vector2f mousePosWorld = this->m_game->m_window->mapPixelToCoords(sf::Mouse::getPosition(*this->m_game->m_window),this->m_gameView);
+
             }
 
-
+			/* Left mouse click */
             if(event.mouseButton.button == sf::Mouse::Left)
             {
                 sf::Vector2f mousePos = this->m_game->m_window->mapPixelToCoords(sf::Mouse::getPosition(*this->m_game->m_window),this->m_guiView);
                 sf::Vector2f mousePosWorld = this->m_game->m_window->mapPixelToCoords(sf::Mouse::getPosition(*this->m_game->m_window),this->m_gameView);
 
                 if(m_focusObject != nullptr && m_editState == EditState::NONE)
-                {
+                {					
                     m_focusObject->m_isSelected = false;
                     m_focusObject->m_sprite.setColor(Color::White);
+					std::cout << "ProgramStateMain::handleInput: Object unselected" << std::endl;
                 }
-                if(m_editState == EditState::NONE)
-                    m_focusObject = m_world->selectObject(mousePosWorld); // HERE
 
+				// Selecting object
+				if (m_focusObject != nullptr && m_editState == EditState::NONE)
+				{
+					m_focusObject = m_world->selectObject(mousePosWorld);
+					std::cout << "ProgramStateMain::handleInput: Object selected" << std::endl;
+				}
+
+				// Adding task for vechicle
+				if (m_focusObject != nullptr && m_editState == EditState::ROUTING)
+				{	
+					rs::Point task;
+					task.setValues(mousePosWorld.x, mousePosWorld.y);
+					rs::isoToTwoD(task.x, task.y, 64, 32);
+					dynamic_cast<DynamicObject*> (m_focusObject)->addTask(task);
+					std::cout << "ProgramStateMain::handleInput: Task added for vechicle" << std::endl;
+
+				}
 
                 /* Tool Box panel handling */
                 std::string msg = this->guiSystem.at("toolBar").activate(mousePos);
@@ -367,11 +376,11 @@ void ProgramStateMain::handleInput()
                     m_focusObject->m_sprite.setColor(Color::White);
                 }
             }
-            if(event.key.code == sf::Keyboard::Space)
-            {
-                if(m_focusObject != nullptr && m_focusObject->m_objectType == rs::ObjectType::VECHICALE)
-                    m_editState = EditState::ROUTING;
-            }
+			if (event.key.code == sf::Keyboard::T)
+			{
+				if (m_focusObject != nullptr && m_focusObject->m_objectType == rs::ObjectType::VECHICALE)
+					m_editState = EditState::ROUTING;
+			}
             if(event.key.code == sf::Keyboard::C)
             {
 

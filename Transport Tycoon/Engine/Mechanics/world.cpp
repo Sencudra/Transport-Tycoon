@@ -73,19 +73,13 @@ void World::update(float dt)
 
 void World::draw(ScreenView& gameView)
 {
-    drawMap(gameView);
+    
+	drawMap(gameView);
 
-    for(auto i : m_objStaticContainer)
-        i->draw(m_engine->m_window);
-
-
-    for(auto i : m_objDynamContainer)
-        i->draw(m_engine->m_window);
 }
 
 void World::addRoad(float x, float y)
 {
-
 
     float a,b;
     a = x;
@@ -116,7 +110,12 @@ void World::addRoad(float x, float y)
         std::cout << "Add road" << std::endl;
         Road* road = new Road(rs::ObjectType::ROAD, m_engine->m_texmng->getTextureRef(rs::RoadType::ROAD_0_PATH1), rs::RoadType::ROAD_0_PATH1);
         m_tileMap->m_map[x1][y1]->setObject(road);
+		m_tileMap->m_map[x1][y1]->isMainStatic = true;
 
+		this->m_objStaticContainer.push_back(road);
+
+
+		// Update road image
         updateRoadDirection(x1,y1);
 
         int mapSize = m_tileMap->getMapSize();
@@ -256,7 +255,6 @@ void World::updateRoadDirection(int a, int b)
 Object* World::addVehicle(float x, float y)
 {
 
-
     float a,b;
     a = x;
     b = y;
@@ -286,6 +284,8 @@ Object* World::addVehicle(float x, float y)
 
         DynamicObject* car = new DynamicObject(&m_player, m_tileMap, m_engine->m_texmng->getTextureRef("auto"), x1, y1);
         m_objDynamContainer.push_back(car);
+		m_tileMap->m_map[x1][y1]->m_tileDynObj.push_back(car);
+
         return car;
     }
     else
@@ -498,10 +498,27 @@ void World::deleteVec(Object* obj)
         if(i == obj)
         {
             m_objDynamContainer.erase(m_objDynamContainer.begin()+position);
-            delete i;
+			return;
         }
         position++;
     }
+
+	int x1, y1;
+
+	x1 = obj->m_x;
+	y1 = obj->m_y;
+	m_tileMap->m_map[x1][y1]->deleteObject();
+
+	for (auto i : m_tileMap->m_map[x1][y1]->m_tileDynObj)
+	{
+		if (i == obj)
+		{
+			m_tileMap->m_map[x1][y1]->m_tileDynObj.erase(m_tileMap->m_map[x1][y1]->m_tileDynObj.begin() + position);
+			delete i;
+			return;
+		}
+		position++;
+	}
 }
 
 
@@ -516,35 +533,25 @@ void World::deleteObject(sf::Vector2f pos)
     x1 = x;
     y1 = y;
 
-    if(m_tileMap->m_map[x1][y1]->m_tileStatObj == NULL) return;
+	m_tileMap->m_map[x1][y1]->deleteObject();
 
-    if(m_tileMap->m_map[x1][y1]->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
-    {
-        delete m_tileMap->m_map[x1][y1]->m_tileStatObj;
-        m_tileMap->m_map[x1][y1]->m_tileStatObj = NULL;
 
-        for(int x = x1 - 1; x < x1 + 1; ++x )
-            for(int y = y1 - 1; y < y1 + 1; ++y)
+    for(int x = x1 - 1; x < x1 + 1; ++x )
+        for(int y = y1 - 1; y < y1 + 1; ++y)
+        {
+            if(x != x1 && y != y1)
             {
-                if(x != x1 && y != y1)
-                {
-                    if(m_tileMap->m_map[x][y]->m_tileStatObj!=NULL && m_tileMap->m_map[x][y]->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
-                        this->updateRoadDirection(x,y);
-                }
+                if(m_tileMap->m_map[x][y]->m_tileStatObj!=NULL && m_tileMap->m_map[x][y]->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
+                    this->updateRoadDirection(x,y);
             }
+        }
 
-    }
-
-    else if(m_tileMap->m_map[x1][y1]->m_tileStatObj->m_objectType == rs::ObjectType::VECHICALE)
-    {
-        delete m_tileMap->m_map[x1][y1]->m_tileStatObj;
-        m_tileMap->m_map[x1][y1]->m_tileStatObj = NULL;
-    }
 }
 
 
 Object* World::selectObject(sf::Vector2f pos)
 {
+	// Object Highlight, Color Green
     for(auto i : m_objDynamContainer)
     {
         if(i->m_sprite.getGlobalBounds().contains(pos.x, pos.y))
@@ -602,10 +609,14 @@ void World::drawMap(ScreenView& gameView)
     isoToTwoD(idxRec.bottomLeft.x, idxRec.bottomLeft.y, 64, 32);
     isoToTwoD(idxRec.bottomRight.x,idxRec.bottomRight.y, 64, 32);
 
-    //idxRec.topLeft.x += 3;
-    //idxRec.topRight.x += 3;
-    //idxRec.bottomLeft.y -= 3;
-    //idxRec.bottomRight.y -= 3;
+
+	//Buffer 
+
+    idxRec.bottomLeft.y += 2;
+
+
+	int dRows = std::abs(idxRec.topRight.y - idxRec.bottomLeft.y);
+	int dColumns = std::abs(idxRec.topLeft.x - idxRec.bottomRight.x);
 
     if(idxRec.topLeft.x > mapSize)			idxRec.topLeft.x = mapSize;
     if(idxRec.topLeft.x < 0)                idxRec.topLeft.x = 0;
@@ -618,35 +629,6 @@ void World::drawMap(ScreenView& gameView)
 
     if(idxRec.bottomRight.x > mapSize)		idxRec.bottomRight.x = mapSize;
     if(idxRec.bottomRight.x < 0)            idxRec.bottomRight.x = 0;
-
-	int dRows = std::abs(idxRec.topRight.y - idxRec.bottomLeft.y);
-	int dColumns = std::abs(idxRec.topLeft.x - idxRec.bottomRight.x);
-
-	int lineBegin
-	int lin
-
-	// OLD Version
-	//for (int y = idxRec.topRight.y; y < idxRec.bottomLeft.y; ++y)
-	//{
-	//	for (int x = idxRec.topLeft.x; x < idxRec.bottomRight.x; ++x)
-	//	{
-	//		float n_x = x;
-	//		float n_y = y;
-
-	//		twoDToIso(n_x, n_y, 64, 32);
-
-	//		std::cout << "X: " << x << " : " << n_x << " Y: " << y << " : " << n_y << std::endl;
-	//		if ((n_x >= gameView.getViewRect().topLeft.x - 64 &&
-	//			n_x <= gameView.getViewRect().bottomRight.x + 64) &&
-	//			(n_y >= gameView.getViewRect().topLeft.y - 64 &&
-	//				n_y <= gameView.getViewRect().bottomRight.y + 64))
-	//		{
-	//			m_tileMap->m_map[x][y]->draw(n_x, n_y, *(m_engine->m_window));
-	//		}
-
-	//	}
-	//}
-
 
 	for (int line = 1; line <= (dRows + dColumns)-1; line++)
 	{
@@ -675,48 +657,20 @@ void World::drawMap(ScreenView& gameView)
 
 			twoDToIso(n_x, n_y, 64, 32);
 
-			//if ((n_x >= gameView.getViewRect().topLeft.x &&
-			//	n_x <= gameView.getViewRect().bottomRight.x) &&
-			//	(n_y >= gameView.getViewRect().topLeft.y &&
-			//		n_y <= gameView.getViewRect().bottomRight.y))
+			if ((n_x >= gameView.getViewRect().topLeft.x - 64 &&
+				n_x <= gameView.getViewRect().bottomRight.x + 64) &&
+				(n_y >= gameView.getViewRect().topLeft.y - 64 &&
+					n_y <= gameView.getViewRect().bottomRight.y + 64))
 			{
 				m_tileMap->m_map[x][y]->draw(n_x, n_y, *(m_engine->m_window));
 				//std::cout << "X: " << x << "Y: " << y << std::endl;
 			}
 		
 		}
-	}
-
-
-
-	
+	}	
 	return;
 }
 
-//void diagonalOrder(int(&matrix)[30][30], int size)
-//{
-//	// The function prints matrix in diagonal order
-//	int num = 0;
-//	// There will be "row+columns-1" lines in the output
-//	for (int line = 1; line <= (2 * size - 1); line++)
-//	{
-//		/* Get column index of the first element in this line of output.
-//		The index is 0 for first "row" lines and "line - row" for remaining
-//		lines  */
-//		int start_col = std::max(0, line - size);
-//
-//		/* Get count of elements in this line. The count of elements is
-//		equal to minimum of line number, "col-start_col" and "row" */
-//		int count = min(line, (size - start_col), size);
-//
-//		/* Print elements of this line */
-//		for (int j = 0; j < count; j++)
-//		{
-//			matrix[std::min(size, line) - j - 1][start_col + j] = num;
-//			num++;
-//		}
-//	}
-//}
 
 
 
