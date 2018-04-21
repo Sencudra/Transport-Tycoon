@@ -30,6 +30,7 @@ World::World(int mode, ng::ProgramEngine* engine, ProgramStateMain *state):
 
     m_oneDayTimer = 0;
     m_isPause = false;
+	m_drawFlag = false;
     m_timePerDay = 1.5;
 }
 
@@ -48,7 +49,8 @@ void World::update(float dt)
         float time_dt = dt*2;
         if (m_timePerDay == 0.75)
             time_dt = dt*4;
-        for(auto i : m_objStaticContainer)
+        
+		for(auto i : m_objStaticContainer)
             i->update(time_dt);
 
         for(auto i : m_objDynamContainer)
@@ -348,7 +350,7 @@ void World::loadFromFile()
 
             //rs::TileType tileType = getTileType(height);
             //std::cout<< "DATA" << x1 << " " << y1 << std::endl;
-            m_tileMap->m_map[x1][y1] = new Tile(height, m_tileMap->getTileTexture(height), tileType);
+            m_tileMap->m_map[x1][y1] = new Tile(height, m_tileMap->getTileTexture(height), tileType, &m_drawFlag);
 
 
             if(roadType != -1)
@@ -629,6 +631,10 @@ void World::drawMap(ScreenView& gameView)
 
     if(idxRec.bottomRight.x > mapSize)		idxRec.bottomRight.x = mapSize;
     if(idxRec.bottomRight.x < 0)            idxRec.bottomRight.x = 0;
+
+
+	// Tiles draw for one time helper
+	m_drawFlag = !m_drawFlag;
 
 	for (int line = 1; line <= (dRows + dColumns)-1; line++)
 	{

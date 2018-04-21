@@ -45,6 +45,8 @@ public:
     void switchPause(){m_isPause == true ? m_isPause = false : m_isPause = true;}
     void x2Speed(){m_timePerDay == 1.5 ? m_timePerDay = 0.75 : m_timePerDay = 1.5;}
 
+	bool* getDrawnFlag() { return &m_drawFlag; }
+
 private:
     void drawMap(ScreenView& gameView);
 
@@ -54,6 +56,7 @@ private:
 private:
 
     bool m_isPause;
+	bool m_drawFlag;
 
     ng::ProgramEngine* m_engine;
     ProgramStateMain* m_state;

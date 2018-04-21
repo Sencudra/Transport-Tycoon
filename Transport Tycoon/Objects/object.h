@@ -45,6 +45,9 @@ public:
         m_x = x;
         m_y = y;
 
+		this->x = x;
+		this->y = y;
+
         m_isSelected = false;
 
         m_objectType = type;
@@ -53,11 +56,13 @@ public:
     }
 
     virtual void update(const float dt) = 0;
-    virtual void draw(sf::RenderWindow *view) = 0;
+    virtual void draw(sf::RenderWindow& view) = 0;
 
 
 public:
     bool m_isSelected;
+
+	int x, y; 
 
     float m_x;
     float m_y;
@@ -74,7 +79,7 @@ public:
     ~DynamicObject();
 
     virtual void update(const float dt);
-    virtual void draw(sf::RenderWindow *view);
+    virtual void draw(sf::RenderWindow& view);
 
     void moveTaskSetup(rs::Point start, rs::Point end);
     void addTask(rs::Point task);
@@ -82,6 +87,7 @@ public:
     std::vector<rs::Point> m_moveTask;
     int m_cargoLoaded;
     int m_capacity;
+
 
 private:
     void cargoExchange();
@@ -111,7 +117,7 @@ public:
     ~Industries(){}
 
     virtual void update(const float dt);
-    virtual void draw(sf::RenderWindow *view); //Возможно прорисовывает несколько раз. Проверить
+    virtual void draw(sf::RenderWindow& view); //Возможно прорисовывает несколько раз. Проверить
 
     void setProp(const rs::IndustryType type);
     void setIsActive();
@@ -142,7 +148,7 @@ public:
     ~Road(){}
 
     virtual void update(const float dt);
-    virtual void draw(sf::RenderWindow *view);
+    virtual void draw(sf::RenderWindow& view);
 
     void setNewType(sf::Texture* texture, rs::RoadType type)
         {m_type = type; updateSprite(texture);}

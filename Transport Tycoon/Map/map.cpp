@@ -102,7 +102,7 @@ int Map::initialiseMap()
 
             rs::TileType tileType = getTileType(height);
 
-            m_map[i][j] = new Tile(height, getTileTexture(height),tileType);
+            m_map[i][j] = new Tile(height, getTileTexture(height),tileType, m_world->getDrawnFlag());
         }
     }
     return 0;

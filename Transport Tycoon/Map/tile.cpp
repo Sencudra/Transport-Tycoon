@@ -8,7 +8,7 @@ Tile::Tile()
 }
 
 Tile::Tile(const unsigned int height, sf::Texture& texture,
-    const rs::TileType tileType)
+    const rs::TileType tileType, bool* drawFlag)
 {
     this->m_tileStatObj = nullptr;
 	this->isMainStatic = false;
@@ -19,6 +19,9 @@ Tile::Tile(const unsigned int height, sf::Texture& texture,
 
     this->m_sprite.setOrigin(sf::Vector2f(0.0f, 0.0f)); //tileSize*(height-1)));
     this->m_sprite.setTexture(texture);
+	
+	this->drawFlag = drawFlag;
+	this->isSpriteDrawn = *drawFlag;
 
 }
 
@@ -26,18 +29,42 @@ void Tile::draw(int x, int y, sf::RenderWindow& window)
 {
 	// Draw tiles with/without static/dynamic objects.
 
-    m_sprite.setPosition(x,y);
-    window.draw(m_sprite);
+	if (*drawFlag != isSpriteDrawn)
+	{
+		m_sprite.setPosition(x, y);
+		window.draw(m_sprite);
+		isSpriteDrawn = *drawFlag;
 
-	if (this->isMainStatic == true && m_tileStatObj != NULL)
-		m_tileStatObj->draw(&window);
+
+		if (this->isMainStatic == true && m_tileStatObj != NULL)
+			m_tileStatObj->draw(window);
+	}
 
 	if (m_tileDynObj.size() != 0)
 		for (auto i : m_tileDynObj)
 		{
-			i->draw(&window);
+			i->draw(window);
 		}
+
 }
+
+void Tile::partDraw(int x, int y, sf::RenderWindow& window)
+{
+
+	if (*drawFlag != isSpriteDrawn)
+	{
+		m_sprite.setPosition(x, y);
+		window.draw(m_sprite);
+		isSpriteDrawn = *drawFlag;
+
+		if (this->isMainStatic == true && m_tileStatObj != NULL)
+		{
+			m_tileStatObj->draw(window);
+		}
+			
+	}
+}
+
 
 void Tile::update()
 {

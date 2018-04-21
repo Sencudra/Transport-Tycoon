@@ -113,10 +113,9 @@ void PathFinder::checkNeighbTiles(PPoint* vertex)
 			{
 				float tentative_g_score = vertex->g + 1; // distance between x and y (neighbours)
 				
-				PPoint* newVertex;
-				bool isInOpenSet = vertInSet(m_openSet, x, y);
+				PPoint* newVertex = vertInSet(m_openSet, x, y);
 
-				if (!isInOpenSet)
+				if (newVertex == nullptr)
 				{
 					newVertex = new PPoint();
 					newVertex->x = x;
