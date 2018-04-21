@@ -145,6 +145,7 @@
     <ClCompile Include="Map\tile.cpp" />
     <ClCompile Include="Objects\object.cpp" />
     <ClCompile Include="Objects\vehicle.cpp" />
+    <ClCompile Include="Pathfinder.cpp" />
     <ClCompile Include="Player\player.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +162,7 @@
     <ClInclude Include="Map\tile.h" />
     <ClInclude Include="Objects\object.h" />
     <ClInclude Include="Objects\vehicle.h" />
+    <ClInclude Include="Pathfinder.h" />
     <ClInclude Include="Player\player.h" />
     <ClInclude Include="resources.h" />
   </ItemGroup>

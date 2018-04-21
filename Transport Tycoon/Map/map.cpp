@@ -102,7 +102,7 @@ int Map::initialiseMap()
 
             rs::TileType tileType = getTileType(height);
 
-            m_map[i][j] = new Tile(height, getTileTexture(height),tileType);
+            m_map[i][j] = new Tile(height, getTileTexture(height),tileType, m_world->getDrawnFlag());
         }
     }
     return 0;
@@ -177,7 +177,9 @@ int Map::generateObjects()
 
                     if(isCreated)
                     {
-                        float a, b; a = x;  b = y;
+                        float a, b; 
+						a = x;  
+						b = y;
 
                         rs::twoDToIso(a,b,64,32);
 
@@ -185,7 +187,7 @@ int Map::generateObjects()
 
                         Object* newObject = new Industries(rs::ObjectType::INDUSTRY , newTexture, type, a, b);
 
-                        m_world->addObject(newObject);
+                        //m_world->addObject(newObject);
 
 
 
@@ -196,11 +198,18 @@ int Map::generateObjects()
                         {
                             for(int j = x, j2 = 0; j <= x + columns, j2 < columns; ++j,++j2)
                             {
+
+								// Look in Map::loadIndustryMaps() for more info
                                 if(m_industryMaps[type].m_map[i2][j2] == 'x')
-                                {
-                                    m_map[j][i]->m_sprite.setTexture(*m_engine->m_texmng->getTextureRef("bg_factory"));
+                                {        
                                     m_map[j][i]->m_tileStatObj = newObject;
                                 }
+								if (m_industryMaps[type].m_map[i2][j2] == '1')
+								{
+									m_map[j][i]->m_sprite.setTexture(*m_engine->m_texmng->getTextureRef("bg_factory"));
+									m_map[j][i]->m_tileStatObj = newObject;
+									m_map[j][i]->isMainStatic = true;
+								}
 
                             }
                         }
@@ -233,7 +242,7 @@ void Map::loadIndustryMaps()
 
     const char temp_matrix1[4][4] = {{'0','0','0','0'},
                                     {'0','x','x','x'},
-                                    {'x','x','x','x'},
+                                    {'x','x','x','1'},
                                     {'x','x','x','0'}};
 
 
@@ -242,7 +251,7 @@ void Map::loadIndustryMaps()
     const char temp_matrix2[4][4] = {{'x','x','0','0'},
                                     {'x','x','0','0'},
                                     {'x','x','0','0'},
-                                    {'x','x','0','0'}};
+                                    {'x','1','0','0'}};
 
     this->m_industryMaps[rs::IndustryType::POWERSTATION].CreateIndustryMap(4,2,temp_matrix2);
 

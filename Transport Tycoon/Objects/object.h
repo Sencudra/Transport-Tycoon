@@ -7,7 +7,8 @@
 #include "tile.h"
 
 
-class pathFinderA;
+class PathFinder;
+class PPoint;
 class Player;
 
 template <class T>
@@ -33,7 +34,6 @@ private:
 };
 
 
-
 class Object
 {
 public:
@@ -45,6 +45,9 @@ public:
         m_x = x;
         m_y = y;
 
+		this->x = x;
+		this->y = y;
+
         m_isSelected = false;
 
         m_objectType = type;
@@ -53,11 +56,13 @@ public:
     }
 
     virtual void update(const float dt) = 0;
-    virtual void draw(sf::RenderWindow *view) = 0;
+    virtual void draw(sf::RenderWindow& view) = 0;
 
 
 public:
     bool m_isSelected;
+
+	int x, y; 
 
     float m_x;
     float m_y;
@@ -74,7 +79,7 @@ public:
     ~DynamicObject();
 
     virtual void update(const float dt);
-    virtual void draw(sf::RenderWindow *view);
+    virtual void draw(sf::RenderWindow& view);
 
     void moveTaskSetup(rs::Point start, rs::Point end);
     void addTask(rs::Point task);
@@ -83,15 +88,13 @@ public:
     int m_cargoLoaded;
     int m_capacity;
 
+
 private:
-    void findPath(rs::Point start, rs::Point end);
     void cargoExchange();
 
 private:
 
-
     rs::Resources m_cargoType;
-
     bool m_isActive;
 
     Map* m_map;
@@ -101,9 +104,9 @@ private:
     float m_speedY;
     float m_acceleration;
 
-    pathFinderA* m_finder;
+    PathFinder* m_finder;
 
-    std::vector<rs::PPoint*>*  m_path;
+    std::vector<PPoint*>*  m_path;
 
 };
 
@@ -114,7 +117,7 @@ public:
     ~Industries(){}
 
     virtual void update(const float dt);
-    virtual void draw(sf::RenderWindow *view); //Возможно прорисовывает несколько раз. Проверить
+    virtual void draw(sf::RenderWindow& view); //Возможно прорисовывает несколько раз. Проверить
 
     void setProp(const rs::IndustryType type);
     void setIsActive();
@@ -145,7 +148,7 @@ public:
     ~Road(){}
 
     virtual void update(const float dt);
-    virtual void draw(sf::RenderWindow *view);
+    virtual void draw(sf::RenderWindow& view);
 
     void setNewType(sf::Texture* texture, rs::RoadType type)
         {m_type = type; updateSprite(texture);}
@@ -160,39 +163,7 @@ private:
 };
 
 
-class pathFinderA
-{
-public:
-    pathFinderA(Map *map, rs::Point start, rs::Point goal);
-    ~pathFinderA()
-    {
-        for(auto i : m_closedSet)
-            delete i;
-    }
 
-    std::vector<rs::PPoint*>* getPath(){return &m_pathMap;}
-
-private:
-    float heuristic_cost(rs::PPoint* start, rs::Point goal);
-    bool findPath();
-    void reconstructPath(rs::PPoint *goal);
-    void checkNeighbTiles(rs::PPoint* vertex);
-
-
-    bool vertInSet(const std::deque<rs::PPoint*> set, int x, int y);
-
-private:
-    Map* m_tileMap;
-    rs::PPoint* m_start;
-    rs::Point m_goal;
-
-    std::deque<rs::PPoint*>  m_closedSet;   // Visited points
-    std::deque<rs::PPoint*>   m_openSet;     // Available points to check in the future
-
-public:
-    std::vector<rs::PPoint*>  m_pathMap;     // Path from start to goal
-
-};
 
 
 

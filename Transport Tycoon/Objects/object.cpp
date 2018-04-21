@@ -3,20 +3,22 @@
 #include <algorithm>
 #include "object.h"
 #include "player.h"
+#include "Pathfinder.h"
+#include "resources.h"
 
 
 DynamicObject::DynamicObject(Player *player, Map* map, sf::Texture* texture, float x, float y)
 {
+
+	m_map = map;
     createObject(rs::ObjectType::VECHICALE, texture, x, y);
-    m_map = map;
     m_player = player;
 
     m_cargoType = rs::Resources::COAL;
     m_capacity = 20;
     m_cargoLoaded = 0;
 
-    m_finder = nullptr;
-    m_path = nullptr;
+    m_finder = new PathFinder(map);
 
     m_x = x;
     m_y = y;
@@ -29,8 +31,21 @@ DynamicObject::DynamicObject(Player *player, Map* map, sf::Texture* texture, flo
 
 void DynamicObject::moveTaskSetup(rs::Point start, rs::Point end)
 {
-    findPath(start, end);
-
+	if (m_finder)
+	{
+		if (m_finder->setupPath(start, end))
+		{
+			std::cout << "ERROR DynamicObject::moveTaskSetup: setupPath()" << std::endl;
+			
+		}
+		else
+		{
+			if (m_finder->findPath())
+			{
+				m_path = m_finder->getPath();
+			}
+		}
+	}
 }
 
 void DynamicObject::cargoExchange()
@@ -82,12 +97,12 @@ void DynamicObject::update(const float dt)
 
     if(m_path != nullptr && m_path->empty())
     {
-        if(m_moveTask.front().x == m_x && m_moveTask.front().y == m_y)
+        if(m_moveTask.front().x == this->x && m_moveTask.front().y == this->y)
         {
-            delete m_finder;
+			//std::cout << "Task DONE" << std::endl;
             m_moveTask.push_back(*m_moveTask.begin());
             m_moveTask.erase(m_moveTask.begin());
-            findPath(m_moveTask.back(), m_moveTask.front());
+            moveTaskSetup(m_moveTask.back(), m_moveTask.front());
             cargoExchange();
         }
         m_speedX = 0;
@@ -101,10 +116,9 @@ void DynamicObject::update(const float dt)
             m_x = m_path->front()->x;
             m_y = m_path->front()->y;
 
-            //std::cout << m_x << " " << m_y << std::endl;
 
             m_path->erase(m_path->begin());
-            if(m_path != nullptr)
+            if(m_path->size() != 0 && m_path != nullptr)
             {
                 float x,y;
                 x = m_path->front()->x;
@@ -116,18 +130,36 @@ void DynamicObject::update(const float dt)
         }
     }
 
-    float x,y;
+	m_x += (m_speedX*dt);
+	m_y += (m_speedY*dt);
+	
+	// Changing object's tile
+	if (round(m_x) != this->x ||
+		round(m_y) != this->y)
+	{
+		int counter = 0;
+		bool isFound = false;
+		for (Object* i : this->m_map->m_map[x][y]->m_tileDynObj)
+		{
+			if (i == this)
+			{
+				this->m_map->m_map[x][y]->m_tileDynObj.erase(this->m_map->m_map[x][y]->m_tileDynObj.begin() + counter);
+				isFound = true;
+			}
+			counter++;
+		}
+		if (!isFound)
+		{
+			std::cout << "ERROR DynamicObject::update: Object not found on tile" << std::endl;
+		}
+		else
+		{
+			this->x = round(m_x);
+			this->y = round(m_y);
+			this->m_map->m_map[x][y]->m_tileDynObj.push_back(this);
+		}
 
-    m_x += (m_speedX*dt);
-    m_y += (m_speedY*dt);
-
-    x = m_x;
-    y = m_y;
-
-    rs::twoDToIso(x,y,64,32);
-    m_sprite.setPosition(x, y);
-
-
+	}
 }
 
 DynamicObject::~DynamicObject()
@@ -135,20 +167,37 @@ DynamicObject::~DynamicObject()
     delete m_finder;
 }
 
-void DynamicObject::draw(sf::RenderWindow *view)
+void DynamicObject::draw(sf::RenderWindow& view)
 {
+	if (m_path != nullptr && !m_path->empty())
+	{	// Draw next tile and previous tile
+
+		float nextTileX = m_path->front()->x;
+		float nextTileY = m_path->front()->y;
+
+		rs::twoDToIso(nextTileX, nextTileY, 64, 32);
+
+		m_map->m_map[m_path->front()->x][m_path->front()->y]->partDraw(nextTileX, nextTileY, view);
+
+		if (m_path->front()->cameFrom != nullptr)
+		{
+			int x1, y1;
+			x1 = m_path->front()->cameFrom->x;
+			y1 = m_path->front()->cameFrom->y;
+			float prevTileX = m_path->front()->cameFrom->x;
+			float prevTileY = m_path->front()->cameFrom->y;
+			rs::twoDToIso(prevTileX, prevTileY, 64, 32);
+
+			m_map->m_map[x1][y1]->partDraw(prevTileX, prevTileY, view);
+		}
+	}
+
     float x,y;
     x = m_x;
     y = m_y;
     rs::twoDToIso(x,y, 64, 32);
     m_sprite.setPosition(x+27,y+11); // TO GET TO THE CENTER
-    view->draw(m_sprite);
-}
-
-void DynamicObject::findPath(rs::Point start, rs::Point end)
-{
-    m_finder = new pathFinderA(m_map, start, end);
-    m_path = m_finder->getPath();
+    view.draw(m_sprite);
 }
 
 void DynamicObject::addTask(rs::Point task)
@@ -166,7 +215,6 @@ void DynamicObject::addTask(rs::Point task)
         }
 }
 
-
 Road::Road(rs::ObjectType objType, sf::Texture* texture, rs::RoadType type)
 {
     createObject(objType, texture,0,0);
@@ -181,16 +229,15 @@ void Road::update(const float dt)
 
 }
 
-void Road::draw(sf::RenderWindow *view)
+void Road::draw(sf::RenderWindow& view)
 {
-    view->draw(this->m_sprite);
+    view.draw(this->m_sprite);
 }
 
 void Road::updateSprite(sf::Texture *texture)
 {
     m_sprite.setTexture(*texture);
 }
-
 
 Industries::Industries(rs::ObjectType objType, sf::Texture* texture, rs::IndustryType type, float x, float y)
 {
@@ -228,10 +275,10 @@ void Industries::update(const float dt)
     }
 }
 
-void Industries::draw(sf::RenderWindow* view)
+void Industries::draw(sf::RenderWindow& view)
 {
 
-    view->draw(this->m_sprite);
+    view.draw(this->m_sprite);
 }
 
 void Industries::setProp(const rs::IndustryType type)
@@ -284,142 +331,3 @@ void Industries::setIsActive()
 }
 
 
-pathFinderA::pathFinderA(Map* map, rs::Point start, rs::Point goal)
-{
-    m_tileMap = map;
-
-    rs::PPoint* first = new rs::PPoint();
-    first->x = start.x;
-    first->y = start.y;
-
-    first->g = 0;
-    first->h = heuristic_cost(first, goal);
-    first->f = first->g + first->h;
-
-    first->cameFrom = nullptr;
-
-    m_start = first;
-    m_openSet.push_back(first);
-
-    m_goal.setValues(goal.x, goal.y);
-
-    findPath();
-}
-
-bool pathFinderA::findPath(){
-
-    while(!m_openSet.empty())
-    {
-        float min = m_openSet.front()->f;
-        rs::PPoint* vertex = m_openSet.front();
-        int num = 0;
-        int counter = 0;
-
-        for(rs::PPoint* i : m_openSet)
-        {
-            if(i->f < min){
-                min = i->f;
-                vertex = i;
-                num = counter;
-            }
-            counter++;
-        }
-
-        if(vertex->x == m_goal.x && vertex->y == m_goal.y)
-        {
-            reconstructPath(vertex);
-            return true;
-        }
-
-
-        m_openSet.erase(m_openSet.begin()+num);
-        m_closedSet.push_back(vertex);
-
-        checkNeighbTiles(vertex);
-
-    }
-    return false;
-}
-
-void pathFinderA::checkNeighbTiles(rs::PPoint* vertex)
-{
-    int mapSize = m_tileMap->getMapSize();
-
-    int mask[4][2] = {{-1,0},{0, -1},{1, 0},{0, 1}};
-
-    for(int i = 0; i < 4; ++i)
-    {
-        int x = vertex->x + mask[i][0];
-        int y = vertex->y + mask[i][1];
-
-        if(x < mapSize && x > 0 && y < mapSize && y > 0 &&
-                m_tileMap->m_map[x][y]->m_tileStatObj != NULL &&
-                m_tileMap->m_map[x][y]->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
-        {
-
-            bool isInClosedSet = vertInSet(m_closedSet, x, y);
-            bool tentativeIsBetter = false;
-
-            if(!isInClosedSet)
-            {
-                float tentative_g_score = vertex->g + 1; // distance between x and y (neighbours)
-                rs::PPoint* newVertex;
-
-                bool isInOpenSet = vertInSet(m_openSet, x, y);
-
-                if(!isInOpenSet)
-                {
-                    newVertex = new rs::PPoint();
-                    newVertex->x = x;
-                    newVertex->y = y;
-                    m_openSet.push_back(newVertex);
-                    tentativeIsBetter = true;
-                }
-                else
-                {
-                    if(tentative_g_score < newVertex->g)
-                    {
-                        tentativeIsBetter = true;
-                    }
-                    else
-                    {
-                        tentativeIsBetter = false;
-                    }
-                }
-                if(tentativeIsBetter == true)
-                {
-                    newVertex->cameFrom = vertex;
-                    newVertex->g = tentative_g_score;
-                    newVertex->h = heuristic_cost(newVertex, m_goal);
-                    newVertex->f = newVertex->g + newVertex->h;
-                }
-            }
-        }
-    }
-}
-
-
-bool pathFinderA::vertInSet(const std::deque<rs::PPoint*> set, int x, int y)
-{
-    for (auto iterator = set.begin(); iterator != set.end(); ++iterator)
-    {
-        if ((*iterator)->x == x && (*iterator)->y == y)
-            return true;
-    }
-    return false;
-}
-
-void pathFinderA::reconstructPath(rs::PPoint* goal)
-{
-    rs::PPoint* currentNode = goal;
-    while (currentNode != nullptr)
-    {
-        m_pathMap.insert(m_pathMap.begin(),currentNode);
-        currentNode = currentNode->cameFrom;
-    }
-}
-
-float pathFinderA::heuristic_cost(rs::PPoint *start, rs::Point goal)
-{
-    return sqrt(pow(abs(start->x - goal.x),2)+pow(abs(start->y - goal.y),2));
-}
