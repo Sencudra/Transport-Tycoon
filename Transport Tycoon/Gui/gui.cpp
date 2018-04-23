@@ -13,7 +13,7 @@ int Gui::getEntry(const sf::Vector2f mousePos)
     if(entries.size() == 0) return -1;
     if(!this->visible) return -1;
 
-    for(int i = 0; i < this->entries.size(); ++i)
+    for(size_t i = 0; i < this->entries.size(); ++i)
     {
         /* Translate point to use the entry's local coordinates. */
         sf::Vector2f point = mousePos;
