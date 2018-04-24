@@ -4,8 +4,10 @@
 #include "programstate.h"
 #include "programengine.h"
 #include "resources.h"
+#include "IOutput.h"
 
 using namespace ng;
+
 
 ProgramEngine::ProgramEngine()
 {
@@ -14,9 +16,7 @@ ProgramEngine::ProgramEngine()
     //  boostIni() must be first
     //  reading config data from ini file
     m_iniFile = this->boostIni();
-
     this->renderIni();
-
 
 
     m_texmng = new TextureManager();
@@ -25,6 +25,7 @@ ProgramEngine::ProgramEngine()
     this->loadStylesheets();
     this->m_background.setTexture(*this->m_texmng->getTextureRef("flat1"));
 
+	m_ioutput = new IOutput();
 
     m_clock = new sf::Clock();
 
