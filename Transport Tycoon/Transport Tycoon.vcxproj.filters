@@ -195,6 +195,9 @@
     <None Include="media\sound\music\play1.ogg">
       <Filter>Файлы ресурсов\media\sound\music</Filter>
     </None>
+    <None Include="..\.gitignore">
+      <Filter>Исходные файлы</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="media\object.png">

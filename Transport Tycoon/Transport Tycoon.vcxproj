@@ -173,6 +173,7 @@
     <ClInclude Include="resources.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\.gitignore" />
     <None Include="media\sound\music\play1.ogg" />
     <None Include="tycoon.ini" />
   </ItemGroup>
