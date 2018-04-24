@@ -63,6 +63,15 @@
     <Filter Include="Исходные файлы\Objects">
       <UniqueIdentifier>{f8eb36a2-576f-4919-aecd-8c15d85ebeaf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\Engine\Mechanics\Pathfinder">
+      <UniqueIdentifier>{cc74e158-e88c-4eed-88ab-f535312a1d2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Engine\IOutput">
+      <UniqueIdentifier>{1fcef1b3-e095-46c4-bb54-80a7129051bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\ImGui">
+      <UniqueIdentifier>{c6c38dc5-2b81-4658-af6a-a06fb6d0bdca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -107,8 +116,23 @@
     <ClCompile Include="Engine\Graphics\view.cpp">
       <Filter>Исходные файлы\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Pathfinder.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="Engine\IOutput\IOutput.cpp">
+      <Filter>Исходные файлы\Engine\IOutput</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Mechanics\Pathfinder\Pathfinder.cpp">
+      <Filter>Исходные файлы\Engine\Mechanics\Pathfinder</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_demo.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_draw.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui-SFML.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,7 +181,12 @@
     <ClInclude Include="Engine\Graphics\view.h">
       <Filter>Исходные файлы\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Pathfinder.h" />
+    <ClInclude Include="Engine\IOutput\IOutput.h">
+      <Filter>Исходные файлы\Engine\IOutput</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Mechanics\Pathfinder\Pathfinder.h">
+      <Filter>Исходные файлы\Engine\Mechanics\Pathfinder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="tycoon.ini">
@@ -302,5 +331,10 @@
     <Font Include="media\fonts\RobotoSlab-Thin.ttf">
       <Filter>Файлы ресурсов\media\fonts</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="README.md">
+      <Filter>Исходные файлы</Filter>
+    </Text>
   </ItemGroup>
 </Project>
