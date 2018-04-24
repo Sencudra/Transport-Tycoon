@@ -15,6 +15,7 @@
 
 
 class ProgramState;
+class IOutput;
 
 namespace ng {
     class ProgramEngine
@@ -51,6 +52,8 @@ namespace ng {
 
     private:
         sf::Clock* m_clock;
+		IOutput* m_ioutput;
     };
 }
+
 #endif // PROGRAMENGINE_H
