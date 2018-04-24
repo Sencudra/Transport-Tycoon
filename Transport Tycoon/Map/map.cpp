@@ -373,8 +373,8 @@ void Map::diamondStep(int sideLength, int halfSide)
             avg /= 4.0;
             m_heightMap[x][y] = avg + dRand(m_range);
 
-            if(x == 0) m_heightMap[m_heightMapSize-1][y] = (float)avg;
-            if(y == 0) m_heightMap[x][m_heightMapSize-1] = (float)avg;
+            if(x == 0) m_heightMap[m_heightMapSize-1][y] = avg;
+            if(y == 0) m_heightMap[x][m_heightMapSize-1] = avg;
         }
     }
 }

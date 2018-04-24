@@ -271,7 +271,7 @@ void Industries::update(const float dt)
 {
     if(m_isActive)
     {
-        m_storage+= int(dt/5*m_workSpeed);
+        m_storage+= dt/5*m_workSpeed;
     }
 }
 
