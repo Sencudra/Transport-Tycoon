@@ -17,7 +17,7 @@ public:
     Tile();
     Tile(const unsigned int height, sf::Texture& texture,
         const rs::TileType tileType, bool* drawFlag);
-	~Tile();
+    ~Tile(){delete m_tileStatObj;}
 
 	void deleteObject();
 
