@@ -260,3 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 /Transport Tycoon/includes/imgui-master
+/Transport Tycoon/ImGui
+/Transport Tycoon/imconfig.h
+/Transport Tycoon/imgui.ini
