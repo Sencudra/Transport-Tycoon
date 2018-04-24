@@ -69,6 +69,9 @@
     <Filter Include="Исходные файлы\Engine\IOutput">
       <UniqueIdentifier>{1fcef1b3-e095-46c4-bb54-80a7129051bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\ImGui">
+      <UniqueIdentifier>{c6c38dc5-2b81-4658-af6a-a06fb6d0bdca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -118,6 +121,18 @@
     </ClCompile>
     <ClCompile Include="Engine\Mechanics\Pathfinder\Pathfinder.cpp">
       <Filter>Исходные файлы\Engine\Mechanics\Pathfinder</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_demo.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_draw.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui-SFML.cpp">
+      <Filter>Исходные файлы\ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -316,5 +331,10 @@
     <Font Include="media\fonts\RobotoSlab-Thin.ttf">
       <Filter>Файлы ресурсов\media\fonts</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="README.md">
+      <Filter>Исходные файлы</Filter>
+    </Text>
   </ItemGroup>
 </Project>
