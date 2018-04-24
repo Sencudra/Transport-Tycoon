@@ -38,7 +38,7 @@ ProgramEngine::~ProgramEngine()
     while(!this->states.empty()) popState();
 
     delete m_texmng;
-    delete m_window;
+    //delete m_window;
     delete m_clock;
 }
 
@@ -90,11 +90,15 @@ int ProgramEngine::renderIni()
     int screenWidth = std::stoi(m_iniFile.get<std::string>("video.screen_width"));
     int screenHeight = std::stoi(m_iniFile.get<std::string>("video.screen_height"));
 
-    m_window = new sf::RenderWindow(sf::VideoMode(screenWidth, screenHeight,8), windowName);
+    //m_window = new sf::RenderWindow(sf::VideoMode(screenWidth, screenHeight,8), windowName);
+	
+	m_window.create(sf::VideoMode(screenWidth, screenHeight, 8), windowName);
 
 
+	m_window.setVerticalSyncEnabled(true);
+    m_window.setFramerateLimit(60);
 
-    m_window->setFramerateLimit(60);
+	
 
     // console output
     std::cout << "CONFIG::Width: "  << screenWidth << std::endl;
@@ -105,26 +109,24 @@ int ProgramEngine::renderIni()
 
 void ProgramEngine::loop()
 {
-    std::cout << "ENGINE::loop..." << std::endl;
-    sf::RenderWindow* m_renderWindow = m_window;
-
-
+	std::cout << "ProgramEngine::loop" << std::endl;
+    //sf::RenderWindow* m_renderWindow = m_window;
 
     // Time variables
     sf::Clock clock;
     sf::Clock fps_clock;
     sf::Time fps_time;
 
+	ImGui::SFML::Init(m_window);
 
-
-    while( m_renderWindow->isOpen())
+    while( m_window.isOpen())
     {
         float time = m_clock->getElapsedTime().asMicroseconds();
         m_clock->restart();
         time = time/800;
 
         fps_time = fps_clock.getElapsedTime();
-        //std::cout << 1.0f/fps_time.asSeconds() << std::endl;
+        std::cout << 1.0f/fps_time.asSeconds() << std::endl;
         fps_clock.restart().asSeconds();
 
         sf::Time elapsed = clock.restart();
@@ -132,18 +134,25 @@ void ProgramEngine::loop()
 
         if(peekState() == nullptr) continue;
         ProgramState* state = peekState();
+
+		
         state->handleInput();
+		ImGui::SFML::Update(m_window, elapsed);
+		
+		ImGui::ShowDemoWindow();
         state->update(dt);
+		
 
-
-
-        m_renderWindow->clear(sf::Color::Black);
+        m_window.clear(sf::Color::Black);
 
         state->draw(dt);
 
+		ImGui::SFML::Render(m_window);
 
-        m_renderWindow->display();
+		m_window.display();
+		
     }
+	ImGui::SFML::Shutdown();
 }
 
 void ProgramEngine::loadTextures()

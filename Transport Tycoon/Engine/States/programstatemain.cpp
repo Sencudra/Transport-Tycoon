@@ -26,7 +26,7 @@ ProgramStateMain::ProgramStateMain(int mode, ng::ProgramEngine* game)
     }
 
     /* View setup */
-    sf::Vector2f pos = sf::Vector2f(this->m_game->m_window->getSize());
+    sf::Vector2f pos = sf::Vector2f(this->m_game->m_window.getSize());
 
     sf::Vector2f centre(0, this->m_world->getTileMapSize()*0.5*32);
     this->m_gameView = ScreenView(pos);
@@ -42,7 +42,7 @@ ProgramStateMain::ProgramStateMain(int mode, ng::ProgramEngine* game)
     m_focusObject = nullptr;
 
 
-    this->guiSystem.emplace("infoBar", gui::Gui(sf::Vector2f(this->m_game->m_window->getSize().x / 5 , 24), 2, true, this->m_game->stylesheets.at("button"),
+    this->guiSystem.emplace("infoBar", gui::Gui(sf::Vector2f(this->m_game->m_window.getSize().x / 5 , 24), 2, true, this->m_game->stylesheets.at("button"),
         {
             std::make_pair("time",          "time"),
             std::make_pair("funds",         "funds"),
@@ -51,10 +51,10 @@ ProgramStateMain::ProgramStateMain(int mode, ng::ProgramEngine* game)
             std::make_pair("current tile",  "tile")
         }));
 
-    this->guiSystem.at("infoBar").setPosition(sf::Vector2f(0,this->m_game->m_window->getSize().y-24));
+    this->guiSystem.at("infoBar").setPosition(sf::Vector2f(0,this->m_game->m_window.getSize().y-24));
     this->guiSystem.at("infoBar").show();
 
-    this->guiSystem.emplace("toolBar", gui::Gui(sf::Vector2f(this->m_game->m_window->getSize().x / 6 , 24), 10, true, this->m_game->stylesheets.at("button"),
+    this->guiSystem.emplace("toolBar", gui::Gui(sf::Vector2f(this->m_game->m_window.getSize().x / 6 , 24), 10, true, this->m_game->stylesheets.at("button"),
         {
             std::make_pair("time",          "time"),
             std::make_pair("speed",         "speed"),
@@ -80,16 +80,16 @@ ProgramStateMain::~ProgramStateMain()
 void ProgramStateMain::draw(const float dt)
 {
 
-    this->m_game->m_window->clear(sf::Color::Black);
+    this->m_game->m_window.clear(sf::Color::Black);
 
-    this->m_game->m_window->setView(this->m_guiView);
-    this->m_game->m_window->draw(this->m_game->m_background);
+    this->m_game->m_window.setView(this->m_guiView);
+    this->m_game->m_window.draw(this->m_game->m_background);
 
-    this->m_game->m_window->setView(this->m_gameView);
+    this->m_game->m_window.setView(this->m_gameView);
     this->m_world->draw(this->m_gameView);
 
-    this->m_game->m_window->setView(this->m_guiView);
-    for(auto gui : this->guiSystem) this->m_game->m_window->draw(gui.second);
+    this->m_game->m_window.setView(this->m_guiView);
+    for(auto gui : this->guiSystem) this->m_game->m_window.draw(gui.second);
 
 
     return;
@@ -141,7 +141,7 @@ void ProgramStateMain::handleInput()
 {
     sf::Event event;
 
-    while(this->m_game->m_window->pollEvent(event))      
+    while(this->m_game->m_window.pollEvent(event))      
     {
         switch(event.type)
         {
@@ -153,7 +153,7 @@ void ProgramStateMain::handleInput()
             {
                 rs::Rectangle mapEdges = m_world->getTileMapEdges();
 
-                sf::Vector2f pos = sf::Vector2f(sf::Mouse::getPosition(*this->m_game->m_window) - this->m_panningAnchor);
+                sf::Vector2f pos = sf::Vector2f(sf::Mouse::getPosition(this->m_game->m_window) - this->m_panningAnchor);
 
                 sf::Vector2f newPos = m_gameView.getCenter() + (-1.0f * pos * this->m_zoomLevel);
 
@@ -173,7 +173,7 @@ void ProgramStateMain::handleInput()
                     m_gameView.move(-1.0f * pos * this->m_zoomLevel);
 
                 }
-                m_panningAnchor = sf::Mouse::getPosition(*this->m_game->m_window);
+                m_panningAnchor = sf::Mouse::getPosition(this->m_game->m_window);
 
             }
             break;
@@ -190,22 +190,22 @@ void ProgramStateMain::handleInput()
                 if(this->m_actionState != ActionState::PANNING)
                 {
                     this->m_actionState = ActionState::PANNING;
-                    this->m_panningAnchor = sf::Mouse::getPosition(*this->m_game->m_window);
+                    this->m_panningAnchor = sf::Mouse::getPosition(this->m_game->m_window);
                 }
             }
 
 			/* Right click: */
             if(event.mouseButton.button == sf::Mouse::Right)
             {
-                sf::Vector2f mousePosWorld = this->m_game->m_window->mapPixelToCoords(sf::Mouse::getPosition(*this->m_game->m_window),this->m_gameView);
+                sf::Vector2f mousePosWorld = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_gameView);
 
             }
 
 			/* Left mouse click */
             if(event.mouseButton.button == sf::Mouse::Left)
             {
-                sf::Vector2f mousePos = this->m_game->m_window->mapPixelToCoords(sf::Mouse::getPosition(*this->m_game->m_window),this->m_guiView);
-                sf::Vector2f mousePosWorld = this->m_game->m_window->mapPixelToCoords(sf::Mouse::getPosition(*this->m_game->m_window),this->m_gameView);
+                sf::Vector2f mousePos = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_guiView);
+                sf::Vector2f mousePosWorld = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_gameView);
 
                 if(m_focusObject != nullptr && m_editState == EditState::NONE)
                 {					
@@ -247,7 +247,7 @@ void ProgramStateMain::handleInput()
                 }
                 else if (msg == "exit_game")
                 {
-                    this->m_game->m_window->close();
+                    this->m_game->m_window.close();
                 }
                 else if (msg == "save")
                 {
@@ -284,7 +284,7 @@ void ProgramStateMain::handleInput()
                 else if (msg == "exit")
                 {
                     //this->s_exit();
-                    this->m_game->m_window->close();
+                    this->m_game->m_window.close();
                 }
                 else
                 {
@@ -338,7 +338,7 @@ void ProgramStateMain::handleInput()
         /* Close the window */
         case sf::Event::Closed:
         {
-            this->m_game->m_window->close();
+            this->m_game->m_window.close();
             break;
         }
 
@@ -354,10 +354,10 @@ void ProgramStateMain::handleInput()
             std::cout << "event.size.width " << event.size.width << " " << event.size.height<< std::endl;
             m_guiView.setSize(event.size.width, event.size.height);
             this->guiSystem.at("infoBar").setDimensions(sf::Vector2f(event.size.width / this->guiSystem.at("infoBar").entries.size(), 30));
-            this->guiSystem.at("infoBar").setPosition(this->m_game->m_window->mapPixelToCoords(sf::Vector2i(0, event.size.height - 16), this->m_guiView));
+            this->guiSystem.at("infoBar").setPosition(this->m_game->m_window.mapPixelToCoords(sf::Vector2i(0, event.size.height - 16), this->m_guiView));
             this->guiSystem.at("infoBar").show();
 
-            this->m_game->m_background.setPosition(this->m_game->m_window->mapPixelToCoords(sf::Vector2i(0, 0), this->m_guiView));
+            this->m_game->m_background.setPosition(this->m_game->m_window.mapPixelToCoords(sf::Vector2i(0, 0), this->m_guiView));
             this->m_game->m_background.setScale(
                 float(event.size.width) / float(this->m_game->m_background.getTexture()->getSize().x),
                 float(event.size.height) / float(this->m_game->m_background.getTexture()->getSize().y));
@@ -394,7 +394,7 @@ void ProgramStateMain::handleInput()
 
                 if(m_editState == EditState::ROADING)
                 {
-                    sf::Vector2f mousePosWorld = this->m_game->m_window->mapPixelToCoords(sf::Mouse::getPosition(*this->m_game->m_window),this->m_gameView);
+                    sf::Vector2f mousePosWorld = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_gameView);
                     m_world->deleteObject(mousePosWorld);
                 }
             }

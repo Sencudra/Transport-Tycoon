@@ -668,7 +668,7 @@ void World::drawMap(ScreenView& gameView)
 				(n_y >= gameView.getViewRect().topLeft.y - 64 &&
 					n_y <= gameView.getViewRect().bottomRight.y + 64))
 			{
-				m_tileMap->m_map[x][y]->draw(n_x, n_y, *(m_engine->m_window));
+				m_tileMap->m_map[x][y]->draw(n_x, n_y, (m_engine->m_window));
 				//std::cout << "X: " << x << "Y: " << y << std::endl;
 			}
 		

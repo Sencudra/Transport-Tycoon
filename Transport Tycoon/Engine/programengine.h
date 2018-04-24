@@ -39,7 +39,7 @@ namespace ng {
 
         TextureManager* m_texmng;
         sf::Sprite m_background;
-        sf::RenderWindow* m_window;
+        sf::RenderWindow m_window;
         boost::property_tree::ptree m_iniFile;
 
         std::map<std::string, gui::GuiStyle> stylesheets;

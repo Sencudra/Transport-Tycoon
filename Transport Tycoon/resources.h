@@ -12,6 +12,11 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
+#include "imgui.h"
+#include "imgui-sfml.h"
+
+#include <glut.h> // OpenGL
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /// NAMESPACE RS
