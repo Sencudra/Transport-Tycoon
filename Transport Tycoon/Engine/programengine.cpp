@@ -6,7 +6,18 @@
 #include "resources.h"
 #include "IOutput.h"
 
+#include <array>
+
 using namespace ng;
+
+struct Rect
+{
+	float x;
+	float y;
+	float w;
+	float h;
+};
+
 
 
 ProgramEngine::ProgramEngine()
@@ -18,7 +29,7 @@ ProgramEngine::ProgramEngine()
     m_iniFile = this->boostIni();
     this->renderIni();
 
-
+	ImGui::CreateContext();
     m_texmng = new TextureManager();
     this->loadTextures();
     this->loadFonts();
@@ -126,7 +137,7 @@ void ProgramEngine::loop()
         time = time/800;
 
         fps_time = fps_clock.getElapsedTime();
-        std::cout << 1.0f/fps_time.asSeconds() << std::endl;
+        //std::cout << 1.0f/fps_time.asSeconds() << std::endl;
         fps_clock.restart().asSeconds();
 
         sf::Time elapsed = clock.restart();
@@ -139,16 +150,15 @@ void ProgramEngine::loop()
         state->handleInput();
 		ImGui::SFML::Update(m_window, elapsed);
 		
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
+
         state->update(dt);
 		
 
         m_window.clear(sf::Color::Black);
 
-        state->draw(dt);
-
+        state->draw(dt);		
 		ImGui::SFML::Render(m_window);
-
 		m_window.display();
 		
     }
@@ -213,11 +223,20 @@ void ProgramEngine::loadTextures()
 
 void ProgramEngine::loadFonts()
 {
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Regular.ttf", 20);
+	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Bold.ttf", 20);
+	io.Fonts->AddFontFromFileTTF("media/fonts/ARCADECLASSIC.TTF", 28);
+
+	unsigned char * pixels;
+	int width, height, bytes_per_pixels;
+	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height, &bytes_per_pixels);
+
+
     sf::Font mainFont, secondFont;
     mainFont.loadFromFile("media/fonts/RobotoSlab-Bold.ttf");
     secondFont.loadFromFile("media/fonts/RobotoSlab-Regular.ttf");
-    //font.loadFromFile("media/RobotoSlab-Light.ttf");
-    //font.loadFromFile("media/RobotoSlab-Thin.ttf");
     this->fonts["main_font"] = mainFont;
     this->fonts["second_font"] = secondFont;
 
