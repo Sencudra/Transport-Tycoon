@@ -187,6 +187,9 @@
     <ClInclude Include="Engine\Mechanics\Pathfinder\Pathfinder.h">
       <Filter>Исходные файлы\Engine\Mechanics\Pathfinder</Filter>
     </ClInclude>
+    <ClInclude Include="MyImgui.h">
+      <Filter>Исходные файлы\ImGui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="tycoon.ini">

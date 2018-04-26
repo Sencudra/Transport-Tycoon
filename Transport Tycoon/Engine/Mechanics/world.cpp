@@ -31,7 +31,7 @@ World::World(int mode, ng::ProgramEngine* engine, ProgramStateMain *state):
     m_oneDayTimer = 0;
     m_isPause = false;
 	m_drawFlag = false;
-    m_timePerDay = 1.5;
+    m_timePerDay = 2.5;
 }
 
 World::~World()

@@ -167,6 +167,7 @@
     <ClInclude Include="Map\cell.h" />
     <ClInclude Include="Map\map.h" />
     <ClInclude Include="Map\tile.h" />
+    <ClInclude Include="MyImgui.h" />
     <ClInclude Include="Objects\object.h" />
     <ClInclude Include="Objects\vehicle.h" />
     <ClInclude Include="Player\player.h" />

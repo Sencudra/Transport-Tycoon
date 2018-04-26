@@ -132,7 +132,7 @@ void ProgramStateStart::update(const float dt)
 {
 
 	// DEMO
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
 	// Setup GUi Appearance
 

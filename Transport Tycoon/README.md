@@ -9,5 +9,7 @@ Working on this project, i am using:
 4. ImGui and ImGui binding for use with SFML
 5. OpenGL (included in repository) to avoid linking problems with ImGui
 
+
 ### ToDo list:
 1. Background scaling (main menu)
+2. Write a short topic on creating own widgets

@@ -6,7 +6,7 @@
 #include "programstatemain.h"
 #include "player.h"
 
-
+#include "MyImGui.h"
 
 ProgramStateMain::ProgramStateMain(int mode, ng::ProgramEngine* game)
 {
@@ -89,12 +89,14 @@ void ProgramStateMain::draw(const float dt)
     this->m_world->draw(this->m_gameView);
 
     this->m_game->m_window.setView(this->m_guiView);
-    for(auto gui : this->guiSystem) this->m_game->m_window.draw(gui.second);
+    //for(auto gui : this->guiSystem) this->m_game->m_window.draw(gui.second);
 
+	// DEMO
+	ImGui::ShowDemoWindow();
+	
 
     return;
 }
-
 
 void ProgramStateMain::update(const float dt)
 {
@@ -115,7 +117,7 @@ void ProgramStateMain::update(const float dt)
     this->guiSystem.at("toolBar").setEntryText(3, " Road");
     this->guiSystem.at("toolBar").setEntryText(4, " Vehicle");
     this->guiSystem.at("toolBar").setEntryText(5, " Exit");
-
+	this->showImGui();
     return;
 }
 
@@ -135,7 +137,6 @@ void ProgramStateMain::s_speed()
     m_world->x2Speed();
     this->guiSystem.at("toolBar").highlight(1);
 }
-
 
 void ProgramStateMain::handleInput()
 {
@@ -357,10 +358,10 @@ void ProgramStateMain::handleInput()
             this->guiSystem.at("infoBar").setPosition(this->m_game->m_window.mapPixelToCoords(sf::Vector2i(0, event.size.height - 16), this->m_guiView));
             this->guiSystem.at("infoBar").show();
 
-            this->m_game->m_background.setPosition(this->m_game->m_window.mapPixelToCoords(sf::Vector2i(0, 0), this->m_guiView));
+            /*this->m_game->m_background.setPosition(this->m_game->m_window.mapPixelToCoords(sf::Vector2i(0, 0), this->m_guiView));
             this->m_game->m_background.setScale(
                 float(event.size.width) / float(this->m_game->m_background.getTexture()->getSize().x),
-                float(event.size.height) / float(this->m_game->m_background.getTexture()->getSize().y));
+                float(event.size.height) / float(this->m_game->m_background.getTexture()->getSize().y));*/
             break;
         }
 
@@ -409,3 +410,56 @@ void ProgramStateMain::handleInput()
     return;
 }
 
+void ProgramStateMain::showImGui()
+{
+	this->bottomBar();
+}
+
+void ProgramStateMain::bottomBar()
+{
+	ImGuiContext* g = ImGui::GetCurrentContext();
+	ImGuiStyle& s = ImGui::GetStyle();
+	ImGuiIO& IO = ImGui::GetIO();
+
+	float xSizeCoef = 0.98f;
+
+	ImGui::SetNextWindowSize(ImVec2(g->IO.DisplaySize.x*xSizeCoef, 10 + g->FontBaseSize + g->Style.FramePadding.y));
+	ImGui::SetNextWindowPos(ImVec2((g->IO.DisplaySize.x - g->NextWindowData.SizeVal.x) / 2.0f, g->IO.DisplaySize.y - g->NextWindowData.SizeVal.y));
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar  | ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoInputs;
+
+	ImVec4 bgColor = (ImVec4)ImColor(15, 15, 15, 255);
+	ImVec4 sepColor = (ImVec4)ImColor::HSV(0, 0, 0, 0);
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3);
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 7));
+
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, bgColor);
+	ImGui::PushStyleColor(ImGuiCol_Separator, sepColor);
+
+	ImGui::Begin("BottomBar", NULL, window_flags);
+	{
+		float money = this->m_world->m_player.getBalance();
+
+		ImGui::Columns(3, "word-wrapping");
+		ImGui::Separator();
+		ImGui::TextWrapped("Day %d", this->m_world->getDayCount());
+			
+		ImGui::NextColumn();
+		ImGui::TextWrapped(" -- Current state -- ");
+		ImGui::NextColumn();		
+		ImGui::TextWrapped(" Money: %d $", this->m_world->m_player.getBalance());
+		ImGui::Columns(1);
+		ImGui::Separator();
+			
+	}
+
+	ImGui::PopStyleVar(4);
+	ImGui::PopStyleColor(2);
+
+	ImGui::End();
+}

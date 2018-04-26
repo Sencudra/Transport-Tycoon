@@ -37,6 +37,7 @@ public:
 
     int getTileMapSize(){return m_tileMap->getMapSize();}
     rs::Rectangle getTileMapEdges(){return m_tileMap->getMapEdges();}
+	int getDayCount() { return m_day; }
 
     float m_day;
     Player m_player;

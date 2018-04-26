@@ -26,7 +26,10 @@ public:
     virtual void handleInput();
 
 private:
-    void drawMap(int dt);
+    //void drawMap(int dt);
+
+	void showImGui();
+	void bottomBar();
 
     /* Tool box signals maintenance */
     void s_speed();
