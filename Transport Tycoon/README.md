@@ -11,5 +11,11 @@ Working on this project, i am using:
 
 
 ### ToDo list:
-1. Background scaling (main menu)
-2. Write a short topic on creating own widgets
+1. Background scaling (main menu).
+2. Top Nav with Icons.
+3. Object Selection.
+4. Add all products, factories.
+5. Add vechicle animation.
+6. Solve problem with render.
+7. Serialization
+4. Write a short topic on creating own widgets.
