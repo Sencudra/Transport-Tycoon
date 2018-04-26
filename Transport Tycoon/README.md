@@ -8,3 +8,6 @@ Working on this project, i am using:
 3. Boost 
 4. ImGui and ImGui binding for use with SFML
 5. OpenGL (included in repository) to avoid linking problems with ImGui
+
+### ToDo list:
+1. Background scaling (main menu)

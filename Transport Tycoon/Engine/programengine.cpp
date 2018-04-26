@@ -34,7 +34,7 @@ ProgramEngine::ProgramEngine()
     this->loadTextures();
     this->loadFonts();
     this->loadStylesheets();
-    this->m_background.setTexture(*this->m_texmng->getTextureRef("flat1"));
+    //this->m_background.setTexture(*this->m_texmng->getTextureRef("bg1"));
 
 	m_ioutput = new IOutput();
 
@@ -170,6 +170,7 @@ void ProgramEngine::loadTextures()
 
     //Background
     m_texmng->loadTexture("flat1", "media/images/flat1.jpg");
+	m_texmng->loadTexture("bg1", "media/images/bg1.jpg");
 
     //Textures
     m_texmng->loadTexture("bg_deepwater",       "media/textures/land/deepwater.png");
@@ -220,14 +221,25 @@ void ProgramEngine::loadTextures()
 
 
 }
+// Text Sizes available in px
+enum TextSize
+{
+	PxSize_18 = 18, PxSize_20 = 20, PxSize_22 = 22, 
+	PxSize_24 = 24, PxSize_26 = 26, PxSize_28 = 28,
+	PxSize_30 = 30, PxSize_32 = 32, PxSize_34 = 34,
+	PxSize_36 = 36, PxSize_38 = 38, PxSize_40 = 40,
+};
+
+
 
 void ProgramEngine::loadFonts()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
-	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Regular.ttf", 20);
-	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Bold.ttf", 20);
-	io.Fonts->AddFontFromFileTTF("media/fonts/ARCADECLASSIC.TTF", 28);
+	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Regular.ttf", TextSize::PxSize_20);
+	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Bold.ttf", TextSize::PxSize_20);
+	io.Fonts->AddFontFromFileTTF("media/fonts/ARCADECLASSIC.TTF", TextSize::PxSize_32);
+	io.Fonts->AddFontFromFileTTF("media/fonts/ARCADECLASSIC.TTF", TextSize::PxSize_20);
 
 	unsigned char * pixels;
 	int width, height, bytes_per_pixels;

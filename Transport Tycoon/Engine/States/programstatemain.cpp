@@ -83,7 +83,7 @@ void ProgramStateMain::draw(const float dt)
     this->m_game->m_window.clear(sf::Color::Black);
 
     this->m_game->m_window.setView(this->m_guiView);
-    this->m_game->m_window.draw(this->m_game->m_background);
+    //this->m_game->m_window.draw(this->m_game->m_background);
 
     this->m_game->m_window.setView(this->m_gameView);
     this->m_world->draw(this->m_gameView);
