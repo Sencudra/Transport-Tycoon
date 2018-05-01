@@ -1,6 +1,8 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
+#define BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE
+
 #include <string>
 #include <iostream>
 #include <vector>
@@ -12,7 +14,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
-#include "imgui.h"
+
 #include "imgui-sfml.h"
 
 #include <glut.h> // OpenGL
@@ -30,6 +32,8 @@ namespace rs {
 //const int G_SPR_NUM_REQ = 8; // Required sprite amount for correct work
 const float G_PROGRAM_VERSION = 1.0;
 const int   G_DEFAULT_MAP_SIZE = 256;
+const char  G_PROGRAM_NAME[20] = "Transport Paradise";
+
 
 enum class TileType {VOID, WATER, DEEPWATER,SAND, PLAIN, FOREST,STONE,
                      ROCKS, SNOW};

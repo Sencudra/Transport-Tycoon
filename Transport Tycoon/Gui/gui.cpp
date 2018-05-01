@@ -1,139 +1,260 @@
 #include "gui.h"
 
+#include "programengine.h"
+#include "programstate.h"
+#include "programstatemain.h"
+#include "world.h"
+#include "IconsKenney.h"
+//#include "imgui.h"
+//#include "imgui_internal.h"
+
+#include "myImGui.h"
+
 using namespace gui;
 
-sf::Vector2f Gui::getSize()
+
+// Menu Gui
+
+GuiMenu::GuiMenu(ng::ProgramEngine* game)
 {
-    return sf::Vector2f(this->dimensions.x, this->dimensions.y * this->entries.size());
-}
-
-int Gui::getEntry(const sf::Vector2f mousePos)
-{
-    /* If there are no entries then outside the menu. */
-    if(entries.size() == 0) return -1;
-    if(!this->visible) return -1;
-
-    for(size_t i = 0; i < this->entries.size(); ++i)
-    {
-        /* Translate point to use the entry's local coordinates. */
-        sf::Vector2f point = mousePos;
-        point += this->entries[i].shape.getOrigin();
-        point -= this->entries[i].shape.getPosition();
-
-        if(point.x < 0 || point.x > this->entries[i].shape.getScale().x*this->dimensions.x) continue;
-        if(point.y < 0 || point.y > this->entries[i].shape.getScale().y*this->dimensions.y) continue;
-        return i;
-    }
-
-    return -1;
+	this->m_game = game;
+	
+	// variables
+	
+	bool m_show_settings = false;
 }
 
 
-void Gui::setEntryText(int entry, std::string text)
+GuiMenu::~GuiMenu()
 {
-    if(entry >= entries.size() || entry < 0) return;
 
-    //sf::String str = sf::String(text);
-
-    entries[entry].text.setString(text);
-
-    return;
 }
 
-void Gui::setDimensions(sf::Vector2f dimensions)
+void GuiMenu::menu(bool gShow)
 {
-    this->dimensions = dimensions;
+	// Setup Menu Block Size
+	sf::Vector2f windowSize = sf::Vector2f(this->m_game->m_window.getSize());
+	sf::Vector2f menuSize = sf::Vector2f(windowSize.x*0.4f, windowSize.y*0.4f);
+	sf::Vector2f menuPos;
 
-    for(auto& entry : entries)
-    {
-        entry.shape.setSize(dimensions);
-        entry.text.setCharacterSize(dimensions.y-style.borderSize-padding);
-    }
+	if (windowSize.x - menuSize.x >= 0)
+		menuPos = sf::Vector2f((windowSize.x - menuSize.x) / 2.0f, (windowSize.y - menuSize.y) / 2.0f);
+	else
+		menuPos = sf::Vector2f(0, 0);
 
-    return;
+	ImGui::SetNextWindowBgAlpha(0.0f);
+	ImGui::SetNextWindowSize(menuSize, ImGuiCond_Always);
+	ImGui::SetNextWindowPos(menuPos, ImGuiCond_Always);
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
+
+	ImGui::Begin("Menu", NULL, window_flags); // begin window
+	{
+
+
+		ImVec2 size = ImVec2(menuSize.x, menuSize.y / 8.0f); // Size for buttons
+
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.ButtonTextAlign = ImVec2(0.5f, 0.5f);
+		style.WindowBorderSize = 0.0f;					// Invisible border size
+		style.ItemSpacing = ImVec2(5, 10);				// Menu item spacing
+
+
+		ImFontAtlas* atlas = ImGui::GetIO().Fonts;
+		ImFont* fontName = atlas->Fonts[3];
+		ImFont* fontMenu = atlas->Fonts[2];
+
+
+		ImGui::BeginGroup();
+		{
+
+			ImGui::PushFont(fontName);
+			{
+				ImVec2 textSize = ImGui::CalcTextSize(rs::G_PROGRAM_NAME);
+				ImVec2 textPos = ImVec2((menuSize.x - textSize.x) / 2.0f, 0);
+				ImGui::SetCursorPos(textPos);
+				ImGui::Text(rs::G_PROGRAM_NAME);
+				//ImGui::InvisibleButton("Transport Paradise", size);
+			}
+			ImGui::PopFont();
+
+			ImGui::PushFont(fontMenu);
+			{
+				//ImGui::SetCursorPos(ImVec2(textPos / 2.0f, 0););
+				if (ImGui::Button("New Game", size)) {
+					this->m_game->pushState(new ProgramStateMain(0, this->m_game));
+
+				}
+				if (ImGui::Button("Load Game", size)) {
+					this->m_game->pushState(new ProgramStateMain(1, this->m_game));
+
+				}
+				if (ImGui::Button("Settings", size)) {
+					this->m_show_settings = !(this->m_show_settings);
+
+				}
+				if (ImGui::Button("Exit", size)) {
+					this->m_game->m_window.close();
+
+				}
+				ImGui::EndGroup();
+			}
+			ImGui::PopFont();
+		}
+	}
+	ImGui::End(); // end window
+
+				  // Other windows
+
+	if (m_show_settings) this->settings();
 }
 
-void Gui::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void GuiMenu::settings()
 {
-    if(!visible) return;
+	char windowTitle[255] = "Settings";
+	sf::Vector2f windowSize = sf::Vector2f(this->m_game->m_window.getSize());
+	sf::Vector2f menuSize = sf::Vector2f(windowSize.x*0.4f, windowSize.y*0.4f);
+	sf::Vector2f menuPos;
 
-    /* Draw each entry of the menu. */
-    for(auto entry : this->entries)
-    {
-        /* Draw the entry. */
-        target.draw(entry.shape);
-        target.draw(entry.text);
-    }
+	if (windowSize.x - menuSize.x >= 0)
+		menuPos = sf::Vector2f((windowSize.x - menuSize.x) / 2.0f, (windowSize.y - menuSize.y) / 2.0f);
+	else
+		menuPos = sf::Vector2f(0, 0);
 
-    return;
+	//ImGui::SetNextWindowBgAlpha(0.0f);
+	ImGui::SetNextWindowSize(menuSize, ImGuiCond_Always);
+	ImGui::SetNextWindowPos(menuPos, ImGuiCond_Always);
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove;
+
+	ImGui::Begin("Settings", NULL, window_flags); // begin window
+	{
+
+		// Window title text edit
+		ImGui::InputText("Window title", windowTitle, 255);
+
+		if (ImGui::Button("Update window title")) {
+			// this code gets if user clicks on the button
+			// yes, you could have written if(ImGui::InputText(...))
+			// but I do this to show how buttons work :)
+			this->m_game->m_window.setTitle(windowTitle);
+		}
+	}
+	ImGui::End();
 }
 
-void Gui::show()
+// Game Gui
+
+GuiGame::GuiGame(World* world)
 {
-    sf::Vector2f offset(0.0f, 0.0f);
-
-    this->visible = true;
-
-    /* Draw each entry of the menu. */
-    for(auto& entry : this->entries)
-    {
-        /* Set the origin of the entry. */
-        sf::Vector2f origin = this->getOrigin();
-        origin -= offset;
-        entry.shape.setOrigin(origin);
-        entry.text.setOrigin(origin);
-
-        /* Compute the position of the entry. */
-        entry.shape.setPosition(this->getPosition());
-        entry.text.setPosition(this->getPosition());
-
-        if(this->horizontal) offset.x += this->dimensions.x;
-        else offset.y += this->dimensions.y;
-    }
-
-    return;
+	this->m_world = world;
 }
 
-void Gui::hide()
-{
-    this->visible = false;
 
-    return;
+GuiGame::~GuiGame()
+{
+
 }
 
-/* Highlights an entry of the menu. */
-void Gui::highlight(const int entry)
-{
-    for(int i = 0; i < entries.size(); ++i)
-    {
-        if(i == entry && entries[i].isHighlighted == false)
-        {
-            entries[i].isHighlighted = true;
-            entries[i].shape.setFillColor(style.bodyHighlightCol);
-            entries[i].shape.setOutlineColor(style.borderHighlightCol);
-            entries[i].text.setFillColor(style.textHighlightCol);
-        }
-        else
-        {
-            entries[i].isHighlighted = false;
-            entries[i].shape.setFillColor(style.bodyCol);
-            entries[i].shape.setOutlineColor(style.borderCol);
-            entries[i].text.setFillColor(style.textCol);
-        }
-    }
 
-    return;
+void GuiGame::infoBar(bool gShow)
+{
+	ImGuiContext* g = ImGui::GetCurrentContext();
+	ImGuiStyle& s = ImGui::GetStyle();
+	ImGuiIO& IO = ImGui::GetIO();
+
+	float xSizeCoef = 0.98f;
+
+	ImGui::SetNextWindowSize(ImVec2(g->IO.DisplaySize.x*xSizeCoef, 10 + g->FontBaseSize + g->Style.FramePadding.y));
+	ImGui::SetNextWindowPos(ImVec2((g->IO.DisplaySize.x - g->NextWindowData.SizeVal.x) / 2.0f, g->IO.DisplaySize.y - g->NextWindowData.SizeVal.y));
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoInputs;
+
+	ImVec4 bgColor = (ImVec4)ImColor(15, 15, 15, 255);
+	ImVec4 sepColor = (ImVec4)ImColor::HSV(0, 0, 0, 0);
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3);
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 7));
+
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, bgColor);
+	ImGui::PushStyleColor(ImGuiCol_Separator, sepColor);
+
+	ImGui::Begin("BottomBar", NULL, window_flags);
+	{
+		float money = this->m_world->m_player.getBalance();
+
+		ImGui::Columns(3, "word-wrapping");
+		ImGui::Separator();
+		ImGui::TextWrapped("Day %d", this->m_world->getDayCount());
+
+		ImGui::NextColumn();
+		ImGui::TextWrapped(" -- Current state -- ");
+		ImGui::NextColumn();
+		ImGui::TextWrapped(" Money: %d $", this->m_world->m_player.getBalance());
+		ImGui::Columns(1);
+		ImGui::Separator();
+
+	}
+
+	ImGui::PopStyleVar(4);
+	ImGui::PopStyleColor(2);
+
+	ImGui::End();
 }
 
-/* Return the message bound to the entry. */
-std::string Gui::activate(const int entry)
+void GuiGame::toolBar(bool gShow)
 {
-    if(entry == -1) return "null";
-    return entries[entry].message;
-}
+	//ImGui::ImageButton
+	ImGuiIO& io = ImGui::GetIO();
+	ImGuiContext& g = *GImGui;
 
-std::string Gui::activate(sf::Vector2f mousePos)
-{
-    int entry = this->getEntry(mousePos);
-    return this->activate(entry);
+
+	ImTextureID my_tex_id = io.Fonts->TexID;
+	float my_tex_w = (float)io.Fonts->TexWidth;
+	float my_tex_h = (float)io.Fonts->TexHeight;
+
+	//g.FontBaseSize = 20;
+	ImGui::ShowDemoWindow();
+
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10,10));
+
+	ImGui::BeginMainMenuBar();
+	{
+		ImFontAtlas* atlas = ImGui::GetIO().Fonts;
+		ImFont* font = atlas->Fonts[0];
+		font->DisplayOffset.y = 5; // magic
+		ImGui::PushFont(font);
+
+		ImGui::Button(ICON_KI_PAUSE);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Pause button");
+
+		ImGui::Button(ICON_KI_FORWARD);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Fast Forward button");
+
+		ImGui::Button(ICON_KI_COG);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Settings");
+
+		ImGui::Button(ICON_KI_SAVE);
+		if (ImGui::IsItemHovered())
+			ImGui::SetTooltip("Save / Load button");
+
+
+		font->DisplayOffset.y = 0; // magic
+		ImGui::PopFont();
+
+		//int frame_padding = -1; 
+		//ImGui::ImageButton(my_tex_id, ImVec2(32, 32), ImVec2(0, 0), ImVec2(32.0f / my_tex_w, 32 / my_tex_h), -1, ImColor(0, 0, 0, 255));
+
+
+	}
+	ImGui::EndMainMenuBar();
+	ImGui::PopStyleVar(1);
+
 }

@@ -29,7 +29,6 @@ private:
     //void drawMap(int dt);
 
 	void showImGui();
-	void bottomBar();
 
     /* Tool box signals maintenance */
     void s_speed();
@@ -50,8 +49,9 @@ private:
     float m_zoomLevel;
 
     sf::View m_guiView;
+	gui::GuiGame* m_gui;
 
-    std::map<std::string, gui::Gui> guiSystem;
+    //std::map<std::string, gui::Gui> guiSystem;
 
     Object* m_focusObject;
 

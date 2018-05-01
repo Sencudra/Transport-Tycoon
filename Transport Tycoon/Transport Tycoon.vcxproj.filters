@@ -190,6 +190,9 @@
     <ClInclude Include="MyImgui.h">
       <Filter>Исходные файлы\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="IconsKenney.h">
+      <Filter>Исходные файлы\Engine\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="tycoon.ini">

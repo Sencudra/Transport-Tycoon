@@ -18,17 +18,15 @@ public:
 private:
 
 	float setupScale();
-	void showSettings();
+	void  showImGui();
 
 private:
+	
 
-	bool showSettingsPanel;
-	//char windowTitle[255];
+	gui::GuiMenu* m_gui_menu;
 
-    std::map<std::string, gui::Gui> guiSystem;
-
-    sf::View view;
-	sf::Music music;
+    sf::View m_view;
+	sf::Music m_music;
 	sf::Sprite m_background;
 };
 

@@ -6,32 +6,38 @@
 #include "programstatemain.h"
 #include "player.h"
 
-#include "MyImGui.h"
+#include "gui.h"
+
 
 ProgramStateMain::ProgramStateMain(int mode, ng::ProgramEngine* game)
 {
 
-
-    std::cout << "PROGRAMSTATEMAIN::constructor..." << std::endl;
+    std::cout << "ProgramStateMain::ProgramStateMain" << std::endl;
 
     this->m_game = game;
 
     if(mode == 1)
     {
+		// load from file
         m_world = new World(1, game, this);
     }
     else
     {
+		// new game
         m_world = new World(0, game, this);
     }
 
+	// Gui Setup
+
+	this->m_gui = new gui::GuiGame(m_world);
+
     /* View setup */
     sf::Vector2f pos = sf::Vector2f(this->m_game->m_window.getSize());
-
     sf::Vector2f centre(0, this->m_world->getTileMapSize()*0.5*32);
     this->m_gameView = ScreenView(pos);
     m_gameView.setCenter(centre);           // Centre the camera on the map
 
+	// for static background
     sf::FloatRect guiView = sf::FloatRect(sf::Vector2f(0,0),pos);
     m_guiView = View(guiView);
 
@@ -41,39 +47,11 @@ ProgramStateMain::ProgramStateMain(int mode, ng::ProgramEngine* game)
 
     m_focusObject = nullptr;
 
-
-    this->guiSystem.emplace("infoBar", gui::Gui(sf::Vector2f(this->m_game->m_window.getSize().x / 5 , 24), 2, true, this->m_game->stylesheets.at("button"),
-        {
-            std::make_pair("time",          "time"),
-            std::make_pair("funds",         "funds"),
-            std::make_pair("population",    "population"),
-            std::make_pair("employment",    "employment"),
-            std::make_pair("current tile",  "tile")
-        }));
-
-    this->guiSystem.at("infoBar").setPosition(sf::Vector2f(0,this->m_game->m_window.getSize().y-24));
-    this->guiSystem.at("infoBar").show();
-
-    this->guiSystem.emplace("toolBar", gui::Gui(sf::Vector2f(this->m_game->m_window.getSize().x / 6 , 24), 10, true, this->m_game->stylesheets.at("button"),
-        {
-            std::make_pair("time",          "time"),
-            std::make_pair("speed",         "speed"),
-            std::make_pair("save",          "save"),
-            std::make_pair("build road",    "setup_road"),
-            std::make_pair("setup car",     "setup_car"),
-            std::make_pair("exit",          "exit")
-        }));
-    sf::Vector2f toolBarPos = sf::Vector2f(0,0);
-    this->guiSystem.at("toolBar").setPosition(toolBarPos);
-    this->guiSystem.at("toolBar").show();
-
-    //std::cout << "POS: " << this->guiSystem.at("infoBar").getPosition().y << std::endl;
-
 }
 
 ProgramStateMain::~ProgramStateMain()
 {
-    std::cout << "PROGRAMSTATEMAIN::destructor..." << std::endl;
+    std::cout << "ProgramStateMain::~ProgramStateMain" << std::endl;
     delete m_world;
 }
 
@@ -82,18 +60,14 @@ void ProgramStateMain::draw(const float dt)
 
     this->m_game->m_window.clear(sf::Color::Black);
 
-    this->m_game->m_window.setView(this->m_guiView);
+    //this->m_game->m_window.setView(this->m_guiView);
     //this->m_game->m_window.draw(this->m_game->m_background);
 
     this->m_game->m_window.setView(this->m_gameView);
     this->m_world->draw(this->m_gameView);
 
-    this->m_game->m_window.setView(this->m_guiView);
-    //for(auto gui : this->guiSystem) this->m_game->m_window.draw(gui.second);
-
-	// DEMO
-	ImGui::ShowDemoWindow();
-	
+	// DEMO Imgui
+	//ImGui::ShowDemoWindow();
 
     return;
 }
@@ -105,26 +79,14 @@ void ProgramStateMain::update(const float dt)
 
     m_world->update(dt);
 
-    this->guiSystem.at("infoBar").setEntryText(0, " Days: " + std::to_string(int(this->m_world->m_day)));
-    this->guiSystem.at("infoBar").setEntryText(1, " $: " + std::to_string(m_world->m_player.getBalance()));
-    this->guiSystem.at("infoBar").setEntryText(2, " " + m_world->m_player.getCompanyName());
-    this->guiSystem.at("infoBar").setEntryText(3, " Player: " + m_world->m_player.getPlayerName());
-    this->guiSystem.at("infoBar").setEntryText(4, "");
-
-    this->guiSystem.at("toolBar").setEntryText(0, " Pause");
-    this->guiSystem.at("toolBar").setEntryText(1, " Speed Up");
-    this->guiSystem.at("toolBar").setEntryText(2, " Save");
-    this->guiSystem.at("toolBar").setEntryText(3, " Road");
-    this->guiSystem.at("toolBar").setEntryText(4, " Vehicle");
-    this->guiSystem.at("toolBar").setEntryText(5, " Exit");
 	this->showImGui();
+
     return;
 }
 
 void ProgramStateMain::s_pause()
 {
     m_world->switchPause();
-    this->guiSystem.at("toolBar").highlight(0);
 }
 
 void ProgramStateMain::s_save()
@@ -135,7 +97,7 @@ void ProgramStateMain::s_save()
 void ProgramStateMain::s_speed()
 {
     m_world->x2Speed();
-    this->guiSystem.at("toolBar").highlight(1);
+   
 }
 
 void ProgramStateMain::handleInput()
@@ -234,74 +196,74 @@ void ProgramStateMain::handleInput()
 				}
 
                 /* Tool Box panel handling */
-                std::string msg = this->guiSystem.at("toolBar").activate(mousePos);
+                //std::string msg = this->guiSystem.at("toolBar").activate(mousePos);
 
-                if(msg == "time")
-                {
-                    this->s_pause();
-                }
-                else if (msg == "speed")
-                {
-                    if(m_world->isPause())
-                        this->s_pause();
-                    this->s_speed();
-                }
-                else if (msg == "exit_game")
-                {
-                    this->m_game->m_window.close();
-                }
-                else if (msg == "save")
-                {
-                    this->s_pause();
-                    this->s_save();
-                    this->s_pause();
-                }
-                else if (msg == "setup_road")
-                {
-                    if(this->m_editState != EditState::ROADING)
-                    {
-                        this->m_editState = EditState::ROADING;
-                        this->guiSystem.at("toolBar").highlight(3);
-                    }
-                    else if(this->m_editState == EditState::ROADING)
-                    {
-                        this->m_editState = EditState::NONE;
-                        this->guiSystem.at("toolBar").highlight(3);     //unhighlight
-                    }
-                }
-                else if (msg == "setup_car")
-                {
-                    if(this->m_editState != EditState::CARSETUP)
-                    {
-                        this->m_editState = EditState::CARSETUP;
-                        this->guiSystem.at("toolBar").highlight(4);
-                    }
-                    else if (this->m_editState == EditState::CARSETUP)
-                    {
-                        this->m_editState = EditState::NONE;
-                        this->guiSystem.at("toolBar").highlight(4);
-                    }
-                }
-                else if (msg == "exit")
-                {
-                    //this->s_exit();
-                    this->m_game->m_window.close();
-                }
-                else
-                {
-                    // actions
-                    if(this->m_editState == EditState::ROADING)
-                    {
-                        m_world->addRoad(mousePosWorld.x, mousePosWorld.y);
-                    }
+                //if(msg == "time")
+                //{
+                //    this->s_pause();
+                //}
+                //else if (msg == "speed")
+                //{
+                //    if(m_world->isPause())
+                //        this->s_pause();
+                //    this->s_speed();
+                //}
+                //else if (msg == "exit_game")
+                //{
+                //    this->m_game->m_window.close();
+                //}
+                //else if (msg == "save")
+                //{
+                //    this->s_pause();
+                //    this->s_save();
+                //    this->s_pause();
+                //}
+                //else if (msg == "setup_road")
+                //{
+                //    if(this->m_editState != EditState::ROADING)
+                //    {
+                //        this->m_editState = EditState::ROADING;
+                //        this->guiSystem.at("toolBar").highlight(3);
+                //    }
+                //    else if(this->m_editState == EditState::ROADING)
+                //    {
+                //        this->m_editState = EditState::NONE;
+                //        this->guiSystem.at("toolBar").highlight(3);     //unhighlight
+                //    }
+                //}
+                //else if (msg == "setup_car")
+                //{
+                //    if(this->m_editState != EditState::CARSETUP)
+                //    {
+                //        this->m_editState = EditState::CARSETUP;
+                //        this->guiSystem.at("toolBar").highlight(4);
+                //    }
+                //    else if (this->m_editState == EditState::CARSETUP)
+                //    {
+                //        this->m_editState = EditState::NONE;
+                //        this->guiSystem.at("toolBar").highlight(4);
+                //    }
+                //}
+                //else if (msg == "exit")
+                //{
+                //    //this->s_exit();
+                //    this->m_game->m_window.close();
+                //}
+                //else
+                //{
+                //    // actions
+                //    if(this->m_editState == EditState::ROADING)
+                //    {
+                //        m_world->addRoad(mousePosWorld.x, mousePosWorld.y);
+                //    }
 
-                    if(this->m_editState == EditState::CARSETUP)
-                    {
-                        m_focusObject = m_world->addVehicle(mousePosWorld.x, mousePosWorld.y);
-                        if(m_focusObject == nullptr)
-                            std::cout << "wrong place" << std::endl;
-                    }
-                }
+                //    if(this->m_editState == EditState::CARSETUP)
+                //    {
+                //        m_focusObject = m_world->addVehicle(mousePosWorld.x, mousePosWorld.y);
+                //        if(m_focusObject == nullptr)
+                //            std::cout << "wrong place" << std::endl;
+                //    }
+                //}
             }
             break;
         }
@@ -351,17 +313,9 @@ void ProgramStateMain::handleInput()
             m_gameView.setSize(event.size.width, event.size.height);
             m_gameView.zoom(m_zoomLevel);
 
+			m_guiView.setSize(event.size.width, event.size.height);
 
-            std::cout << "event.size.width " << event.size.width << " " << event.size.height<< std::endl;
-            m_guiView.setSize(event.size.width, event.size.height);
-            this->guiSystem.at("infoBar").setDimensions(sf::Vector2f(event.size.width / this->guiSystem.at("infoBar").entries.size(), 30));
-            this->guiSystem.at("infoBar").setPosition(this->m_game->m_window.mapPixelToCoords(sf::Vector2i(0, event.size.height - 16), this->m_guiView));
-            this->guiSystem.at("infoBar").show();
 
-            /*this->m_game->m_background.setPosition(this->m_game->m_window.mapPixelToCoords(sf::Vector2i(0, 0), this->m_guiView));
-            this->m_game->m_background.setScale(
-                float(event.size.width) / float(this->m_game->m_background.getTexture()->getSize().x),
-                float(event.size.height) / float(this->m_game->m_background.getTexture()->getSize().y));*/
             break;
         }
 
@@ -412,54 +366,6 @@ void ProgramStateMain::handleInput()
 
 void ProgramStateMain::showImGui()
 {
-	this->bottomBar();
-}
-
-void ProgramStateMain::bottomBar()
-{
-	ImGuiContext* g = ImGui::GetCurrentContext();
-	ImGuiStyle& s = ImGui::GetStyle();
-	ImGuiIO& IO = ImGui::GetIO();
-
-	float xSizeCoef = 0.98f;
-
-	ImGui::SetNextWindowSize(ImVec2(g->IO.DisplaySize.x*xSizeCoef, 10 + g->FontBaseSize + g->Style.FramePadding.y));
-	ImGui::SetNextWindowPos(ImVec2((g->IO.DisplaySize.x - g->NextWindowData.SizeVal.x) / 2.0f, g->IO.DisplaySize.y - g->NextWindowData.SizeVal.y));
-
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar  | ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings |
-		ImGuiWindowFlags_NoInputs;
-
-	ImVec4 bgColor = (ImVec4)ImColor(15, 15, 15, 255);
-	ImVec4 sepColor = (ImVec4)ImColor::HSV(0, 0, 0, 0);
-
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3);
-	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 0));
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 7));
-
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, bgColor);
-	ImGui::PushStyleColor(ImGuiCol_Separator, sepColor);
-
-	ImGui::Begin("BottomBar", NULL, window_flags);
-	{
-		float money = this->m_world->m_player.getBalance();
-
-		ImGui::Columns(3, "word-wrapping");
-		ImGui::Separator();
-		ImGui::TextWrapped("Day %d", this->m_world->getDayCount());
-			
-		ImGui::NextColumn();
-		ImGui::TextWrapped(" -- Current state -- ");
-		ImGui::NextColumn();		
-		ImGui::TextWrapped(" Money: %d $", this->m_world->m_player.getBalance());
-		ImGui::Columns(1);
-		ImGui::Separator();
-			
-	}
-
-	ImGui::PopStyleVar(4);
-	ImGui::PopStyleColor(2);
-
-	ImGui::End();
+	this->m_gui->infoBar(true);
+	this->m_gui->toolBar(true);
 }

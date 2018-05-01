@@ -42,7 +42,7 @@ namespace ng {
         sf::RenderWindow m_window;
         boost::property_tree::ptree m_iniFile;
 
-        std::map<std::string, gui::GuiStyle> stylesheets;
+       // std::map<std::string, gui::GuiStyle> stylesheets;
         std::map<std::string, sf::Font> fonts;
 
     private:

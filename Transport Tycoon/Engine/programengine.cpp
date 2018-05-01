@@ -8,6 +8,10 @@
 
 #include <array>
 
+#include <imgui.h>
+#include <imgui_internal.h>
+#include "IconsKenney.h"
+
 using namespace ng;
 
 struct Rect
@@ -224,6 +228,7 @@ void ProgramEngine::loadTextures()
 // Text Sizes available in px
 enum TextSize
 {
+	PxSize_12 = 12, PxSize_14 = 14, PxSize_16 = 16,
 	PxSize_18 = 18, PxSize_20 = 20, PxSize_22 = 22, 
 	PxSize_24 = 24, PxSize_26 = 26, PxSize_28 = 28,
 	PxSize_30 = 30, PxSize_32 = 32, PxSize_34 = 34,
@@ -236,6 +241,14 @@ void ProgramEngine::loadFonts()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
+
+	// Merging default font with icons
+	static const ImWchar icons_ranges[] = { ICON_MIN_KI, ICON_MAX_KI, 0 };
+	ImFontConfig icons_config;
+	icons_config.MergeMode = true;
+	icons_config.PixelSnapH = true;
+	io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_KI, TextSize::PxSize_20, &icons_config, icons_ranges);
+
 	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Regular.ttf", TextSize::PxSize_20);
 	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Bold.ttf", TextSize::PxSize_20);
 	io.Fonts->AddFontFromFileTTF("media/fonts/ARCADECLASSIC.TTF", TextSize::PxSize_32);
@@ -246,23 +259,18 @@ void ProgramEngine::loadFonts()
 	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height, &bytes_per_pixels);
 
 
-    sf::Font mainFont, secondFont;
-    mainFont.loadFromFile("media/fonts/RobotoSlab-Bold.ttf");
-    secondFont.loadFromFile("media/fonts/RobotoSlab-Regular.ttf");
-    this->fonts["main_font"] = mainFont;
-    this->fonts["second_font"] = secondFont;
 
     return;
 }
 
 void ProgramEngine::loadStylesheets()
 {
-    this->stylesheets["button"] = gui::GuiStyle(&this->fonts.at("second_font"), 1,
-        sf::Color(0xc6,0xc6,0xc6), sf::Color(0x94,0x94,0x94), sf::Color(0x00,0x00,0x00),
-        sf::Color(0x61,0x61,0x61), sf::Color(0x94,0x94,0x94), sf::Color(0x00,0x00,0x00));
-    this->stylesheets["text"] = gui::GuiStyle(&this->fonts.at("main_font"), 0,
-        sf::Color(0x00,0x00,0x00,0x00), sf::Color(0x00,0x00,0x00), sf::Color(0xff,0xff,0xff),
-        sf::Color(0x00,0x00,0x00,0x00), sf::Color(0x00,0x00,0x00), sf::Color(0xff,0x00,0x00));
+    //this->stylesheets["button"] = gui::GuiStyle(&this->fonts.at("second_font"), 1,
+    //    sf::Color(0xc6,0xc6,0xc6), sf::Color(0x94,0x94,0x94), sf::Color(0x00,0x00,0x00),
+	//     sf::Color(0x61,0x61,0x61), sf::Color(0x94,0x94,0x94), sf::Color(0x00,0x00,0x00));
+    //this->stylesheets["text"] = gui::GuiStyle(&this->fonts.at("main_font"), 0,
+    //    sf::Color(0x00,0x00,0x00,0x00), sf::Color(0x00,0x00,0x00), sf::Color(0xff,0xff,0xff),
+    //    sf::Color(0x00,0x00,0x00,0x00), sf::Color(0x00,0x00,0x00), sf::Color(0xff,0x00,0x00));
 
     return;
 }
