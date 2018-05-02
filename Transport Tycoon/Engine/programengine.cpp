@@ -240,16 +240,19 @@ enum TextSize
 void ProgramEngine::loadFonts()
 {
 	ImGuiIO& io = ImGui::GetIO();
+	ImFontConfig icons_config;
+
 	io.Fonts->AddFontDefault();
 
-	// Merging default font with icons
+	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Regular.ttf", TextSize::PxSize_18);
+
+	// Merging previous font with icons
 	static const ImWchar icons_ranges[] = { ICON_MIN_KI, ICON_MAX_KI, 0 };
-	ImFontConfig icons_config;
+	
 	icons_config.MergeMode = true;
 	icons_config.PixelSnapH = true;
-	io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_KI, TextSize::PxSize_20, &icons_config, icons_ranges);
+	io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_KI, TextSize::PxSize_18, &icons_config, icons_ranges);
 
-	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Regular.ttf", TextSize::PxSize_20);
 	io.Fonts->AddFontFromFileTTF("media/fonts/RobotoSlab-Bold.ttf", TextSize::PxSize_20);
 	io.Fonts->AddFontFromFileTTF("media/fonts/ARCADECLASSIC.TTF", TextSize::PxSize_32);
 	io.Fonts->AddFontFromFileTTF("media/fonts/ARCADECLASSIC.TTF", TextSize::PxSize_20);
@@ -257,9 +260,6 @@ void ProgramEngine::loadFonts()
 	unsigned char * pixels;
 	int width, height, bytes_per_pixels;
 	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height, &bytes_per_pixels);
-
-
-
     return;
 }
 

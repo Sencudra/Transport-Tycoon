@@ -63,7 +63,7 @@
 #define ICON_KI_SEARCH_EQUAL u8"\ue938"
 #define ICON_KI_LOCK u8"\ue939"
 #define ICON_KI_UNLOCK u8"\ue93a"
-#define ICON_KI_USER u8"\ue93b"
+#define ICON_KI_USER u8"\ue93b" //
 #define ICON_KI_USERS u8"\ue93c"
 #define ICON_KI_USERS_ALT u8"\ue93d"
 #define ICON_KI_SIGN_IN u8"\ue93e"
@@ -100,7 +100,7 @@
 #define ICON_KI_POINTER u8"\ue95d"
 #define ICON_KI_EXIT u8"\ue95e"
 #define ICON_KI_FIGURE u8"\ue95f"
-#define ICON_KI_CAR u8"\ue960"
+#define ICON_KI_CAR u8"\ue960" // 
 #define ICON_KI_COIN u8"\ue961"
 #define ICON_KI_KEY u8"\ue962"
 #define ICON_KI_CUB u8"\ue963"

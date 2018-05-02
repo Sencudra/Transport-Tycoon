@@ -5,9 +5,6 @@
 #include "programstatemain.h"
 #include "world.h"
 #include "IconsKenney.h"
-//#include "imgui.h"
-//#include "imgui_internal.h"
-
 #include "myImGui.h"
 
 using namespace gui;
@@ -148,6 +145,7 @@ void GuiMenu::settings()
 GuiGame::GuiGame(World* world)
 {
 	this->m_world = world;
+	bool m_isPauseBtnActive = false;
 }
 
 
@@ -208,53 +206,120 @@ void GuiGame::infoBar(bool gShow)
 
 void GuiGame::toolBar(bool gShow)
 {
+	ImGui::ShowDemoWindow();
+
 	//ImGui::ImageButton
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiContext& g = *GImGui;
 
+	int pcc = 0; // push color counter
+	int pvc = 0; // push variable counter
 
-	ImTextureID my_tex_id = io.Fonts->TexID;
-	float my_tex_w = (float)io.Fonts->TexWidth;
-	float my_tex_h = (float)io.Fonts->TexHeight;
+	ImVec4 btHoveredColor = (ImVec4)ImColor(146, 146, 146, 50);
+	ImVec4 btBgColor = (ImVec4)ImColor(0, 0, 0, 0);
+	ImVec4 btAcColor = (ImVec4)ImColor(15, 135, 250, 255);
 
-	//g.FontBaseSize = 20;
-	ImGui::ShowDemoWindow();
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btHoveredColor); ++pcc;
+	ImGui::PushStyleColor(ImGuiCol_Button, btBgColor);  ++pcc;
 
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10,10));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10)); ++pvc;
 
 	ImGui::BeginMainMenuBar();
 	{
+
+		// Using special y offset for icons
 		ImFontAtlas* atlas = ImGui::GetIO().Fonts;
-		ImFont* font = atlas->Fonts[0];
-		font->DisplayOffset.y = 5; // magic
-		ImGui::PushFont(font);
+		ImFont* fontIcon = atlas->Fonts[1];
+		
+		int offset = 2;
+		int zeroOffset = 0;
 
-		ImGui::Button(ICON_KI_PAUSE);
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Pause button");
+		{	// First section
 
-		ImGui::Button(ICON_KI_FORWARD);
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Fast Forward button");
+			// Play//Stop
+			fontIcon->DisplayOffset.y = offset;
+			bool flagPush = false;
+			if (m_isPauseBtnActive) // Color manipulations
+			{
+				ImGui::PushStyleColor(ImGuiCol_Button, btAcColor);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btAcColor);
+				flagPush = true;
+			}
+			if (!m_isPauseBtnActive)
+			{
+				if (ImGui::Button(ICON_KI_PAUSE))
+				{
+					m_isPauseBtnActive = !m_isPauseBtnActive;
+					this->m_world->switchPause();
+				}
+			}
+			else
+			{
+				if (ImGui::Button(ICON_KI_STOP))
+				{
+					m_isPauseBtnActive = !m_isPauseBtnActive;
+					this->m_world->switchPause();
+				}
+			}
+			if(flagPush) ImGui::PopStyleColor(2);
+			fontIcon->DisplayOffset.y = zeroOffset;
 
-		ImGui::Button(ICON_KI_COG);
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Settings");
-
-		ImGui::Button(ICON_KI_SAVE);
-		if (ImGui::IsItemHovered())
-			ImGui::SetTooltip("Save / Load button");
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Pause button");
 
 
-		font->DisplayOffset.y = 0; // magic
-		ImGui::PopFont();
 
-		//int frame_padding = -1; 
-		//ImGui::ImageButton(my_tex_id, ImVec2(32, 32), ImVec2(0, 0), ImVec2(32.0f / my_tex_w, 32 / my_tex_h), -1, ImColor(0, 0, 0, 255));
+			fontIcon->DisplayOffset.y = offset;
+			ImGui::Button(ICON_KI_FORWARD);
+			fontIcon->DisplayOffset.y = zeroOffset;
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Fast Forward button");
 
+			fontIcon->DisplayOffset.y = offset;
+			ImGui::Button(ICON_KI_COG);
+			fontIcon->DisplayOffset.y = zeroOffset;
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Settings");
+
+			fontIcon->DisplayOffset.y = offset;
+			ImGui::Button(ICON_KI_SAVE);
+			fontIcon->DisplayOffset.y = zeroOffset;
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Save / Load button");
+		}
+		ImGui::VerticalSeparator();
+		{
+			fontIcon->DisplayOffset.y = offset;
+			ImGui::Button("?");
+			fontIcon->DisplayOffset.y = zeroOffset;
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Map");
+
+			fontIcon->DisplayOffset.y = offset;
+			ImGui::Button(ICON_KI_USER);
+			fontIcon->DisplayOffset.y = zeroOffset;
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Company profile");
+
+		}
+		ImGui::VerticalSeparator();
+		{
+			fontIcon->DisplayOffset.y = offset;
+			ImGui::Button(ICON_KI_WRENCH);
+			fontIcon->DisplayOffset.y = zeroOffset;
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Building tool");
+
+			fontIcon->DisplayOffset.y = offset;
+			ImGui::Button(ICON_KI_CAR);
+			fontIcon->DisplayOffset.y = zeroOffset;
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Vehicle");
+		}
 
 	}
 	ImGui::EndMainMenuBar();
-	ImGui::PopStyleVar(1);
+	ImGui::PopStyleColor(pcc);
+	ImGui::PopStyleVar(pvc);
 
 }

@@ -50,6 +50,8 @@ namespace gui {
 
 	private:
 		World * m_world;
+	
+		bool m_isPauseBtnActive;
 
 	};
 

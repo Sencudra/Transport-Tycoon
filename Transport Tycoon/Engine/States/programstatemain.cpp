@@ -8,6 +8,9 @@
 
 #include "gui.h"
 
+#include <imgui.h>
+#include <imgui_internal.h>
+
 
 ProgramStateMain::ProgramStateMain(int mode, ng::ProgramEngine* game)
 {
@@ -366,6 +369,14 @@ void ProgramStateMain::handleInput()
 
 void ProgramStateMain::showImGui()
 {
+	// Enable default font
+	ImFontAtlas* atlas = ImGui::GetIO().Fonts;
+	ImFont* font = atlas->Fonts[1];
+	ImGui::PushFont(font);
+
+
 	this->m_gui->infoBar(true);
 	this->m_gui->toolBar(true);
+
+	ImGui::PopFont();
 }
