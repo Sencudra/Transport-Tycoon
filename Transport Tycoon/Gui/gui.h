@@ -10,6 +10,8 @@ namespace ng {
 	class ProgramEngine;
 }
 class World;
+class ImVec2;
+class ImFont;
 
 
 namespace gui {
@@ -48,10 +50,15 @@ namespace gui {
 		void infoBar(bool gShow = true);
 		void toolBar(bool gShow = true);
 
+		void psbtn(ImVec2 buttonRect, ImFont* fontIcon); // Play / Stop button
+		void spbtn(ImVec2 buttonRect, ImFont* fontIcon); // Speed butt
+		void svbtn(ImVec2 buttonRect, ImFont* fontIcon); // Save button
+
 	private:
 		World * m_world;
 	
 		bool m_isPauseBtnActive;
+		bool m_isSpeedBtnActive;
 
 	};
 

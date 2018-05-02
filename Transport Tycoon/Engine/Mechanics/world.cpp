@@ -30,7 +30,9 @@ World::World(int mode, ng::ProgramEngine* engine, ProgramStateMain *state):
 
     m_oneDayTimer = 0;
     m_isPause = false;
+	m_isSpeed = false;
 	m_drawFlag = false;
+
     m_timePerDay = 2.5;
 }
 
@@ -598,6 +600,19 @@ int min(int a, int b, int c)
 	return std::min(std::min(a, b), c);
 }
 
+
+void World::switchPause()
+{
+	m_isPause == true ? m_isPause = false : m_isPause = true;
+	std::cout << "World::switchPause: pause mode is " << m_isPause << std::endl;
+}
+
+void World::x2Speed()
+{
+	if (m_isSpeed == true) { m_timePerDay *= 2; m_isSpeed = false; }
+	else { m_timePerDay /= 2; m_isSpeed = true; }
+	std::cout << "World::x2Speed: speed set is " << m_timePerDay << std::endl;
+}
 
 void World::drawMap(ScreenView& gameView)
 {

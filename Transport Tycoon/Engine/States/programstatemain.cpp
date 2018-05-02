@@ -374,9 +374,9 @@ void ProgramStateMain::showImGui()
 	ImFont* font = atlas->Fonts[1];
 	ImGui::PushFont(font);
 
-
 	this->m_gui->infoBar(true);
 	this->m_gui->toolBar(true);
+	ImGui::ShowDemoWindow();
 
 	ImGui::PopFont();
 }

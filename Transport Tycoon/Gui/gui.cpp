@@ -145,7 +145,9 @@ void GuiMenu::settings()
 GuiGame::GuiGame(World* world)
 {
 	this->m_world = world;
+
 	bool m_isPauseBtnActive = false;
+	bool m_isSpeedBtnActive = false;
 }
 
 
@@ -206,113 +208,87 @@ void GuiGame::infoBar(bool gShow)
 
 void GuiGame::toolBar(bool gShow)
 {
-	ImGui::ShowDemoWindow();
 
-	//ImGui::ImageButton
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiContext& g = *GImGui;
 
 	int pcc = 0; // push color counter
 	int pvc = 0; // push variable counter
+	float buttonSize = 40.0f;
 
 	ImVec4 btHoveredColor = (ImVec4)ImColor(146, 146, 146, 50);
 	ImVec4 btBgColor = (ImVec4)ImColor(0, 0, 0, 0);
 	ImVec4 btAcColor = (ImVec4)ImColor(15, 135, 250, 255);
 
+	ImVec2 buttonRect = ImVec2(buttonSize, buttonSize);
+
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btHoveredColor); ++pcc;
 	ImGui::PushStyleColor(ImGuiCol_Button, btBgColor);  ++pcc;
 
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10)); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 10)); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 8)); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 10)); ++pvc;
+
 
 	ImGui::BeginMainMenuBar();
 	{
-
+		
 		// Using special y offset for icons
 		ImFontAtlas* atlas = ImGui::GetIO().Fonts;
 		ImFont* fontIcon = atlas->Fonts[1];
 		
-		int offset = 2;
-		int zeroOffset = 0;
+		bool flagPush = false;
 
 		{	// First section
 
-			// Play//Stop
-			fontIcon->DisplayOffset.y = offset;
-			bool flagPush = false;
-			if (m_isPauseBtnActive) // Color manipulations
-			{
-				ImGui::PushStyleColor(ImGuiCol_Button, btAcColor);
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btAcColor);
-				flagPush = true;
-			}
-			if (!m_isPauseBtnActive)
-			{
-				if (ImGui::Button(ICON_KI_PAUSE))
-				{
-					m_isPauseBtnActive = !m_isPauseBtnActive;
-					this->m_world->switchPause();
-				}
-			}
-			else
-			{
-				if (ImGui::Button(ICON_KI_STOP))
-				{
-					m_isPauseBtnActive = !m_isPauseBtnActive;
-					this->m_world->switchPause();
-				}
-			}
-			if(flagPush) ImGui::PopStyleColor(2);
-			fontIcon->DisplayOffset.y = zeroOffset;
-
+			// Play/Stop
+			this->psbtn(buttonRect, fontIcon);
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Pause button");
 
 
-
-			fontIcon->DisplayOffset.y = offset;
-			ImGui::Button(ICON_KI_FORWARD);
-			fontIcon->DisplayOffset.y = zeroOffset;
+			// Speed button
+			this->spbtn(buttonRect, fontIcon);
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Fast Forward button");
 
-			fontIcon->DisplayOffset.y = offset;
-			ImGui::Button(ICON_KI_COG);
-			fontIcon->DisplayOffset.y = zeroOffset;
+			fontIcon->DisplayOffset.y = 2;
+			ImGui::Button(ICON_KI_COG, buttonRect);
+			fontIcon->DisplayOffset.y = 0;
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Settings");
-
-			fontIcon->DisplayOffset.y = offset;
-			ImGui::Button(ICON_KI_SAVE);
-			fontIcon->DisplayOffset.y = zeroOffset;
+			
+			// Save button
+			this->svbtn(buttonRect, fontIcon);
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Save / Load button");
 		}
 		ImGui::VerticalSeparator();
 		{
-			fontIcon->DisplayOffset.y = offset;
-			ImGui::Button("?");
-			fontIcon->DisplayOffset.y = zeroOffset;
+			fontIcon->DisplayOffset.y = 2;
+			ImGui::Button("?", buttonRect);
+			fontIcon->DisplayOffset.y = 0;
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Map");
 
-			fontIcon->DisplayOffset.y = offset;
-			ImGui::Button(ICON_KI_USER);
-			fontIcon->DisplayOffset.y = zeroOffset;
+			fontIcon->DisplayOffset.y = 2;
+			ImGui::Button(ICON_KI_USER, buttonRect);
+			fontIcon->DisplayOffset.y = 0;
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Company profile");
 
 		}
 		ImGui::VerticalSeparator();
 		{
-			fontIcon->DisplayOffset.y = offset;
-			ImGui::Button(ICON_KI_WRENCH);
-			fontIcon->DisplayOffset.y = zeroOffset;
+			fontIcon->DisplayOffset.y = 2;
+			ImGui::Button(ICON_KI_WRENCH, buttonRect);
+			fontIcon->DisplayOffset.y = 0;
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Building tool");
 
-			fontIcon->DisplayOffset.y = offset;
-			ImGui::Button(ICON_KI_CAR);
-			fontIcon->DisplayOffset.y = zeroOffset;
+			fontIcon->DisplayOffset.y = 2;
+			ImGui::Button(ICON_KI_CAR, buttonRect);
+			fontIcon->DisplayOffset.y = 0;
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Vehicle");
 		}
@@ -323,3 +299,133 @@ void GuiGame::toolBar(bool gShow)
 	ImGui::PopStyleVar(pvc);
 
 }
+
+void gui::GuiGame::psbtn(ImVec2 buttonRect, ImFont* fontIcon)
+{	// Play/Stop button manipulator
+
+	ImVec4 btAcColor = (ImVec4)ImColor(15, 135, 250, 255);
+	bool flagPush = false;
+
+	if (m_isPauseBtnActive) // Color manipulations
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, btAcColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btAcColor);
+		flagPush = true;
+	}
+	fontIcon->DisplayOffset.y = 2;
+	if (ImGui::Button(ICON_KI_PAUSE, buttonRect))
+	{
+		m_isPauseBtnActive = !m_isPauseBtnActive;
+		this->m_world->switchPause();
+
+		// Checks for other buttons enabled and disable
+		if (m_isSpeedBtnActive)
+		{
+			m_isSpeedBtnActive = !m_isSpeedBtnActive;
+			this->m_world->x2Speed();
+		}
+	}
+	fontIcon->DisplayOffset.y = 0;
+	if (flagPush) ImGui::PopStyleColor(2);
+}
+
+void gui::GuiGame::spbtn(ImVec2 buttonRect, ImFont* fontIcon)
+{	// Speed button manipulator
+
+	ImVec4 btAcColor = (ImVec4)ImColor(15, 135, 250, 255);
+	bool flagPush = false;
+
+	if (m_isSpeedBtnActive) // Color manipulations
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, btAcColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btAcColor);
+		flagPush = true;
+	}
+
+	fontIcon->DisplayOffset.y = 2;
+	if (ImGui::Button(ICON_KI_FORWARD, buttonRect))
+	{
+		m_isSpeedBtnActive = !m_isSpeedBtnActive;
+		this->m_world->x2Speed();
+
+		// Checks for other buttons enabled and disable
+		if (m_isPauseBtnActive)
+		{
+			m_isPauseBtnActive = !m_isPauseBtnActive;
+			this->m_world->switchPause();
+		}
+	}
+	fontIcon->DisplayOffset.y = 0;
+	if (flagPush) ImGui::PopStyleColor(2);
+
+}
+
+void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
+{
+	
+	//ImGuiWindow* window = ImGui::GetCurrentWindow();
+	ImGuiStyle& style = ImGui::GetStyle();
+	// Current window style settings
+	int pcc = 0; // push color counter
+	int pvc = 0; // push variable counter
+
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10)); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10)); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 5)); ++pvc;
+
+	ImVec4 darkColor = (ImVec4)ImColor(0, 0, 0, 200);
+	style.Colors[ImGuiCol_ModalWindowDarkening] = darkColor;
+	
+	
+	fontIcon->DisplayOffset.y = 2;
+	if (ImGui::Button(ICON_KI_SAVE, buttonRect))
+	{
+		ImGui::OpenPopup("Save Game");
+		this->m_world->switchPause();
+	}
+	fontIcon->DisplayOffset.y = 0;
+		
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings;
+
+	if (ImGui::BeginPopupModal("Save Game", NULL, window_flags))
+	{
+		
+		ImGui::Text("Input save name or choose old.");
+
+		static bool selected[3] = { false, false, false };
+		ImGui::Selectable("main.c", &selected[0]); ImGui::SameLine(300); ImGui::Text(" 2,345 bytes");
+		ImGui::Selectable("Hello.cpp", &selected[1]); ImGui::SameLine(300); ImGui::Text("12,345 bytes");
+		ImGui::Selectable("Hello.h", &selected[2]); ImGui::SameLine(300); ImGui::Text(" 2,345 bytes");
+		
+		
+		if (ImGui::Button("Save"))
+			ImGui::OpenPopup("Continue?");
+
+		if (ImGui::BeginPopupModal("Continue?"))
+		{
+			ImGui::Text("This file will be overwritten.\nOperation cannot be undone!\n\n");
+			ImGui::Separator();
+			if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+			ImGui::SetItemDefaultFocus();
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+			ImGui::EndPopup();
+		}
+
+		if (ImGui::Button("Close"))
+		{
+			ImGui::CloseCurrentPopup();
+			this->m_world->switchPause();
+		}
+			
+		ImGui::EndPopup();
+	}
+
+	ImGui::PopStyleVar(pvc);
+
+	// Selectables
+	// Stacked modules
+
+}
+

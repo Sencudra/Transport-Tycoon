@@ -43,8 +43,8 @@ public:
     Player m_player;
 
     bool isPause(){return m_isPause;}
-    void switchPause(){m_isPause == true ? m_isPause = false : m_isPause = true;}
-    void x2Speed(){m_timePerDay == 1.5 ? m_timePerDay = 0.75 : m_timePerDay = 1.5;}
+	void switchPause();
+	void x2Speed();
 
 	bool* getDrawnFlag() { return &m_drawFlag; }
 
@@ -57,6 +57,7 @@ private:
 private:
 
     bool m_isPause;
+	bool m_isSpeed;
 	bool m_drawFlag;
 
     ng::ProgramEngine* m_engine;
