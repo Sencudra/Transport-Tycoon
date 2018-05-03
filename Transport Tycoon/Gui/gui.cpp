@@ -6,6 +6,7 @@
 #include "world.h"
 #include "IconsKenney.h"
 #include "myImGui.h"
+#include "IOutput.h"
 
 using namespace gui;
 
@@ -14,6 +15,12 @@ using namespace gui;
 
 GuiMenu::GuiMenu(ng::ProgramEngine* game)
 {
+
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.ButtonTextAlign = ImVec2(0.5f, 0.5f);
+	style.WindowBorderSize = 0.0f;					// Invisible border size
+	style.ItemSpacing = ImVec2(5, 10);				// Menu item spacing
+
 	this->m_game = game;
 	
 	// variables
@@ -42,20 +49,19 @@ void GuiMenu::menu(bool gShow)
 	ImGui::SetNextWindowBgAlpha(0.0f);
 	ImGui::SetNextWindowSize(menuSize, ImGuiCond_Always);
 	ImGui::SetNextWindowPos(menuPos, ImGuiCond_Always);
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar |
+									ImGuiWindowFlags_NoResize |
+									ImGuiWindowFlags_NoMove |
+									ImGuiWindowFlags_NoScrollbar;
 
 	ImGui::Begin("Menu", NULL, window_flags); // begin window
 	{
 
-
 		ImVec2 size = ImVec2(menuSize.x, menuSize.y / 8.0f); // Size for buttons
 
-		ImGuiStyle& style = ImGui::GetStyle();
-		style.ButtonTextAlign = ImVec2(0.5f, 0.5f);
-		style.WindowBorderSize = 0.0f;					// Invisible border size
-		style.ItemSpacing = ImVec2(5, 10);				// Menu item spacing
-
+		//ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.5f, 0.5f));
+		//ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.5f, 0.5f));
+		//ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.5f, 0.5f));
 
 		ImFontAtlas* atlas = ImGui::GetIO().Fonts;
 		ImFont* fontName = atlas->Fonts[3];
@@ -71,13 +77,11 @@ void GuiMenu::menu(bool gShow)
 				ImVec2 textPos = ImVec2((menuSize.x - textSize.x) / 2.0f, 0);
 				ImGui::SetCursorPos(textPos);
 				ImGui::Text(rs::G_PROGRAM_NAME);
-				//ImGui::InvisibleButton("Transport Paradise", size);
 			}
 			ImGui::PopFont();
 
 			ImGui::PushFont(fontMenu);
 			{
-				//ImGui::SetCursorPos(ImVec2(textPos / 2.0f, 0););
 				if (ImGui::Button("New Game", size)) {
 					this->m_game->pushState(new ProgramStateMain(0, this->m_game));
 
@@ -101,7 +105,6 @@ void GuiMenu::menu(bool gShow)
 	}
 	ImGui::End(); // end window
 
-				  // Other windows
 
 	if (m_show_settings) this->settings();
 }
@@ -142,12 +145,20 @@ void GuiMenu::settings()
 
 // Game Gui
 
-GuiGame::GuiGame(World* world)
+GuiGame::GuiGame(ng::ProgramEngine* game, World* world)
 {
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.ButtonTextAlign = ImVec2(0.5f, 0.5f);
+	style.WindowBorderSize = 0.0f;					// Invisible border size
+	style.ItemSpacing = ImVec2(5, 10);				// Menu item spacing
+
 	this->m_world = world;
+	this->m_game = game;
 
 	bool m_isPauseBtnActive = false;
 	bool m_isSpeedBtnActive = false;
+
+	this->m_game->m_ioutput->getSaveList(m_file_list);
 }
 
 
@@ -372,6 +383,8 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10)); ++pvc;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10)); ++pvc;
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 5)); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3); ++pvc;
 
 	ImVec4 darkColor = (ImVec4)ImColor(0, 0, 0, 200);
 	style.Colors[ImGuiCol_ModalWindowDarkening] = darkColor;
@@ -380,6 +393,7 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 	fontIcon->DisplayOffset.y = 2;
 	if (ImGui::Button(ICON_KI_SAVE, buttonRect))
 	{
+		this->m_game->m_ioutput->getSaveList(m_file_list);
 		ImGui::OpenPopup("Save Game");
 		this->m_world->switchPause();
 	}
@@ -392,11 +406,30 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 	{
 		
 		ImGui::Text("Input save name or choose old.");
+		char str0[128] = "Hello, world!";
+		ImGui::InputText("##Filename", str0, IM_ARRAYSIZE(str0));
+		ImGui::SameLine();
+		ImGui::ShowHelpMarker("Hold SHIFT or use mouse to select text.\n"
+								"CTRL+Left/Right to word jump.\n"
+								"CTRL+A or double-click to select all.\n"
+								"CTRL+X,CTRL+C,CTRL+V clipboard.\n"
+								"CTRL+Z,CTRL+Y undo/redo.\n" 
+								"ESCAPE to revert.\n");
 
-		static bool selected[3] = { false, false, false };
-		ImGui::Selectable("main.c", &selected[0]); ImGui::SameLine(300); ImGui::Text(" 2,345 bytes");
-		ImGui::Selectable("Hello.cpp", &selected[1]); ImGui::SameLine(300); ImGui::Text("12,345 bytes");
-		ImGui::Selectable("Hello.h", &selected[2]); ImGui::SameLine(300); ImGui::Text(" 2,345 bytes");
+		//this->m_game->m_ioutput->getSaveList();
+		
+
+		static bool selected[100] = { false }; //FIX ME
+		//static std::vector<bool> selected;
+		int c = 0;
+		for (auto i : m_file_list)
+		{
+			ImGui::Selectable(i.first.c_str(), &selected[c]); ImGui::SameLine(300); ImGui::Text(i.second.c_str());
+			++c;
+		}
+		////ImGui::Selectable("main.c", &selected[0]); ImGui::SameLine(300); ImGui::Text(" 2,345 bytes");
+		//ImGui::Selectable("Hello.cpp", &selected[1]); ImGui::SameLine(300); ImGui::Text("12,345 bytes");
+		//ImGui::Selectable("Hello.h", &selected[2]); ImGui::SameLine(300); ImGui::Text(" 2,345 bytes");
 		
 		
 		if (ImGui::Button("Save"))
@@ -406,13 +439,17 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 		{
 			ImGui::Text("This file will be overwritten.\nOperation cannot be undone!\n\n");
 			ImGui::Separator();
-			if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+			if (ImGui::Button("OK", ImVec2(120, 0)))
+			{
+
+				ImGui::CloseCurrentPopup();
+			}
 			ImGui::SetItemDefaultFocus();
 			ImGui::SameLine();
 			if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
 			ImGui::EndPopup();
 		}
-
+		ImGui::SameLine();
 		if (ImGui::Button("Close"))
 		{
 			ImGui::CloseCurrentPopup();

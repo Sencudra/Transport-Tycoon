@@ -42,7 +42,7 @@ namespace gui {
 	{
 	public:
 
-		GuiGame(World* world);
+		GuiGame(ng::ProgramEngine* game, World* world);
 		~GuiGame();
 
 		// Gui modules are shown if gShow == 'true'
@@ -56,6 +56,10 @@ namespace gui {
 
 	private:
 		World * m_world;
+		ng::ProgramEngine* m_game;
+
+		std::vector<std::pair<std::string, std::string>> m_file_list;
+		
 	
 		bool m_isPauseBtnActive;
 		bool m_isSpeedBtnActive;

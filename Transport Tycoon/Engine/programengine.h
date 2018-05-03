@@ -41,6 +41,7 @@ namespace ng {
         sf::Sprite m_background;
         sf::RenderWindow m_window;
         boost::property_tree::ptree m_iniFile;
+		IOutput* m_ioutput; // IO file working
 
        // std::map<std::string, gui::GuiStyle> stylesheets;
         std::map<std::string, sf::Font> fonts;
@@ -52,7 +53,7 @@ namespace ng {
 
     private:
         sf::Clock* m_clock;
-		IOutput* m_ioutput;
+		
     };
 }
 

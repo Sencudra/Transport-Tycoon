@@ -9,14 +9,12 @@ ProgramStateStart::ProgramStateStart(ng::ProgramEngine* game)
 	this->m_game = game;
 
 	bool showSettingsPanel = false;
-	//windowTitle[255] = char("Settings");
 
 	if (!m_music.openFromFile("media/sound/music/play1.ogg"))
 		std::cout << "ERROR while opening music file" << std::endl;
 	
 	//music.setVolume(10);
 	//music.play();
-
 
 	this->m_background.setTexture(*m_game->m_texmng->getTextureRef("bg1"));
 	float scale = setupScale();
@@ -25,6 +23,8 @@ ProgramStateStart::ProgramStateStart(ng::ProgramEngine* game)
 
 	// Gui setup 
 	m_gui_menu = new gui::GuiMenu(game);
+
+	
 
 
 
@@ -99,6 +99,8 @@ void ProgramStateStart::draw(const float dt)
 void ProgramStateStart::showImGui()
 {
 	this->m_gui_menu->menu();
+	//this->m_game->pushState(new ProgramStateMain(0, this->m_game));
+	
 }
 
 

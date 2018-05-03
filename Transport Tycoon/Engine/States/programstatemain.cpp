@@ -32,7 +32,7 @@ ProgramStateMain::ProgramStateMain(int mode, ng::ProgramEngine* game)
 
 	// Gui Setup
 
-	this->m_gui = new gui::GuiGame(m_world);
+	this->m_gui = new gui::GuiGame(m_game, m_world);
 
     /* View setup */
     sf::Vector2f pos = sf::Vector2f(this->m_game->m_window.getSize());
