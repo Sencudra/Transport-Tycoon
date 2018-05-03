@@ -64,6 +64,10 @@ namespace gui {
 		bool m_isPauseBtnActive;
 		bool m_isSpeedBtnActive;
 
+		bool m_showSaveWindow;
+
+		std::vector<char> m_fileName;
+
 	};
 
 }

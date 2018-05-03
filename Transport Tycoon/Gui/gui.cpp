@@ -155,8 +155,14 @@ GuiGame::GuiGame(ng::ProgramEngine* game, World* world)
 	this->m_world = world;
 	this->m_game = game;
 
+	std::string dN = "default.svt"; // Default file name
+	std::vector<char> mfileName(dN.begin(), dN.end());
+
 	bool m_isPauseBtnActive = false;
 	bool m_isSpeedBtnActive = false;
+
+	//
+	bool m_showSaveWindow = false;
 
 	this->m_game->m_ioutput->getSaveList(m_file_list);
 }
@@ -376,6 +382,12 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 	
 	//ImGuiWindow* window = ImGui::GetCurrentWindow();
 	ImGuiStyle& style = ImGui::GetStyle();
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings;
+
+	ImVec4 darkColor = (ImVec4)ImColor(0, 0, 0, 200);
+	ImVec4 btBgColor = (ImVec4)ImColor(0, 0, 0, 0);
 	// Current window style settings
 	int pcc = 0; // push color counter
 	int pvc = 0; // push variable counter
@@ -386,62 +398,62 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3); ++pvc;
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3); ++pvc;
 
-	ImVec4 darkColor = (ImVec4)ImColor(0, 0, 0, 200);
+	
 	style.Colors[ImGuiCol_ModalWindowDarkening] = darkColor;
-	
-	
+		
 	fontIcon->DisplayOffset.y = 2;
 	if (ImGui::Button(ICON_KI_SAVE, buttonRect))
 	{
-		this->m_game->m_ioutput->getSaveList(m_file_list);
+		fontIcon->DisplayOffset.y = 0;
+
+		this->m_game->m_ioutput->getSaveList(m_file_list); // get list of save files available
+
+		m_showSaveWindow = true; // window flag
+
 		ImGui::OpenPopup("Save Game");
 		this->m_world->switchPause();
 	}
 	fontIcon->DisplayOffset.y = 0;
 		
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings;
 
-	if (ImGui::BeginPopupModal("Save Game", NULL, window_flags))
+
+	if (ImGui::BeginPopupModal("Save Game", &m_showSaveWindow, window_flags))
 	{
+		ImGui::PopStyleColor(1); // back to previous color style
 		
-		ImGui::Text("Input save name or choose old.");
-		char str0[128] = "Hello, world!";
-		ImGui::InputText("##Filename", str0, IM_ARRAYSIZE(str0));
+		ImGui::Text("Input save name or choose old.");		
+		if (!m_file_list.empty()) { std::string temp = m_file_list[0].first; m_fileName.assign(temp.begin(), temp.end()); }
+
+
+		ImGui::PushItemWidth(350);
+		ImGui::InputText("##Filename", m_fileName.data(), IM_ARRAYSIZE(m_fileName.data()));
+		ImGui::PopItemWidth();
 		ImGui::SameLine();
-		ImGui::ShowHelpMarker("Hold SHIFT or use mouse to select text.\n"
-								"CTRL+Left/Right to word jump.\n"
-								"CTRL+A or double-click to select all.\n"
-								"CTRL+X,CTRL+C,CTRL+V clipboard.\n"
-								"CTRL+Z,CTRL+Y undo/redo.\n" 
-								"ESCAPE to revert.\n");
-
-		//this->m_game->m_ioutput->getSaveList();
-		
-
-		static bool selected[100] = { false }; //FIX ME
-		//static std::vector<bool> selected;
-		int c = 0;
-		for (auto i : m_file_list)
+		if(ImGui::Button("Save"))
 		{
-			ImGui::Selectable(i.first.c_str(), &selected[c]); ImGui::SameLine(300); ImGui::Text(i.second.c_str());
-			++c;
-		}
-		////ImGui::Selectable("main.c", &selected[0]); ImGui::SameLine(300); ImGui::Text(" 2,345 bytes");
-		//ImGui::Selectable("Hello.cpp", &selected[1]); ImGui::SameLine(300); ImGui::Text("12,345 bytes");
-		//ImGui::Selectable("Hello.h", &selected[2]); ImGui::SameLine(300); ImGui::Text(" 2,345 bytes");
-		
-		
-		if (ImGui::Button("Save"))
-			ImGui::OpenPopup("Continue?");
 
+		}
+
+
+		int selected = 0;
+
+		ImGui::PushItemWidth(-1);
+		ImGui::ListBox("##ListBox", &selected, m_file_list);
+		ImGui::PopItemWidth();		
+		ImGui::Separator();
+		/*if (ImGui::Button("Save"))
+			ImGui::OpenPopup("Continue?");*/
+
+		ImGui::Button("Return to Menu"); ImGui::SameLine();
+		ImGui::Button("Return to Desctop");
+
+		// Modals
 		if (ImGui::BeginPopupModal("Continue?"))
 		{
 			ImGui::Text("This file will be overwritten.\nOperation cannot be undone!\n\n");
 			ImGui::Separator();
 			if (ImGui::Button("OK", ImVec2(120, 0)))
 			{
-
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SetItemDefaultFocus();
@@ -450,19 +462,18 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 			ImGui::EndPopup();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Close"))
+		/*if (ImGui::Button("Close"))
 		{
 			ImGui::CloseCurrentPopup();
 			this->m_world->switchPause();
-		}
+		}*/
 			
+		ImGui::PushStyleColor(ImGuiCol_Button, btBgColor);  ++pcc;
 		ImGui::EndPopup();
 	}
 
 	ImGui::PopStyleVar(pvc);
 
-	// Selectables
-	// Stacked modules
-
+	
 }
 
