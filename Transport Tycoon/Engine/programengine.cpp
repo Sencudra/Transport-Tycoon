@@ -152,17 +152,14 @@ void ProgramEngine::loop()
 
 		
         state->handleInput();
+
+		
 		ImGui::SFML::Update(m_window, elapsed);
-		
-		//ImGui::ShowDemoWindow();
-
-        state->update(dt);
-		
-
-        m_window.clear(sf::Color::Black);
-
-        state->draw(dt);		
+		m_window.clear(sf::Color::Black);
+		state->update(dt);
+		state->draw(dt);
 		ImGui::SFML::Render(m_window);
+		
 		m_window.display();
 		
     }

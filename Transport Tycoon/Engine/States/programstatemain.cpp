@@ -58,10 +58,10 @@ ProgramStateMain::~ProgramStateMain()
     delete m_world;
 }
 
+
 void ProgramStateMain::draw(const float dt)
 {
-
-    this->m_game->m_window.clear(sf::Color::Black);
+	// DEMO Imgui
 
     //this->m_game->m_window.setView(this->m_guiView);
     //this->m_game->m_window.draw(this->m_game->m_background);
@@ -69,8 +69,7 @@ void ProgramStateMain::draw(const float dt)
     this->m_game->m_window.setView(this->m_gameView);
     this->m_world->draw(this->m_gameView);
 
-	// DEMO Imgui
-	//ImGui::ShowDemoWindow();
+	
 
     return;
 }
@@ -81,8 +80,9 @@ void ProgramStateMain::update(const float dt)
     m_gameView.changeView();
 
     m_world->update(dt);
-
+	
 	this->showImGui();
+	
 
     return;
 }
@@ -109,6 +109,7 @@ void ProgramStateMain::handleInput()
 
     while(this->m_game->m_window.pollEvent(event))      
     {
+		ImGui::SFML::ProcessEvent(event);
         switch(event.type)
         {
         case sf::Event::MouseMoved:
@@ -369,6 +370,7 @@ void ProgramStateMain::handleInput()
 
 void ProgramStateMain::showImGui()
 {
+	
 	// Enable default font
 	ImFontAtlas* atlas = ImGui::GetIO().Fonts;
 	ImFont* font = atlas->Fonts[1];
@@ -376,7 +378,7 @@ void ProgramStateMain::showImGui()
 
 	this->m_gui->infoBar(true);
 	this->m_gui->toolBar(true);
-	ImGui::ShowDemoWindow();
+	
 
 	ImGui::PopFont();
 }

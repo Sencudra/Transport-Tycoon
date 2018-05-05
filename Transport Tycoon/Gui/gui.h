@@ -66,7 +66,9 @@ namespace gui {
 
 		bool m_showSaveWindow;
 
-		std::vector<char> m_fileName;
+		//std::vector<char> m_fileName;
+		char m_fileName[50];
+		int m_fileSelected;
 
 	};
 

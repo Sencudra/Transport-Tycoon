@@ -4,6 +4,7 @@
 
 #include <utility>
 
+
 ProgramStateStart::ProgramStateStart(ng::ProgramEngine* game)
 {
 	this->m_game = game;
@@ -83,7 +84,7 @@ float ProgramStateStart::setupScale()
 
 void ProgramStateStart::draw(const float dt)
 {
-
+	
     this->m_game->m_window.clear(sf::Color::Black);
 
     //this->m_game->m_window.setView(this->view);
