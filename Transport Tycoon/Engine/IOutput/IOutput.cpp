@@ -1,13 +1,13 @@
-#include "IOutput.h"
-#include "map.h"
-
 #include <string>
 #include <iostream>
-#include <boost\filesystem.hpp>
+#include <fstream>
 
-#ifdef WIN32
-#define stat _stat
-#endif
+#include <boost\filesystem.hpp>
+#include <boost\archive\text_iarchive.hpp>
+#include <boost\archive\text_oarchive.hpp>
+
+#include "world.h"
+#include "IOutput.h"
 
 
 IOutput::IOutput()
@@ -15,22 +15,33 @@ IOutput::IOutput()
 
 }
 
-IOutput::IOutput(World* world)
+IOutput::IOutput(std::string defaultPath) : m_defaultPath(defaultPath)
 {
-	this->m_world = world;
+	
 }
+
 
 
 IOutput::~IOutput()
 {
 }
 
-void IOutput::saveGameToFile()
+void IOutput::saveGameToFile(std::string filename)
 {
-		
+	std::cout << "SAVED GOD" << std::endl;
+
+	std::string finalPath = this->m_defaultPath + filename + ".txt";
+
+	std::ofstream ofs(finalPath);
+
+	boost::archive::text_oarchive oa(ofs);
+
+	oa << m_world;
+
+
 }
 
-void IOutput::loadGameFromFile()
+void IOutput::loadGameFromFile(std::string filename)
 {
 
 }

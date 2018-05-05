@@ -40,7 +40,8 @@ ProgramEngine::ProgramEngine()
     this->loadStylesheets();
     //this->m_background.setTexture(*this->m_texmng->getTextureRef("bg1"));
 
-	m_ioutput = new IOutput();
+	std::string defPath = "C:/Users/vladt/source/repos/Transport Tycoon/Transport Tycoon/saves/";
+	m_ioutput = new IOutput(defPath);
 
     m_clock = new sf::Clock();
 
@@ -166,6 +167,10 @@ void ProgramEngine::loop()
 	ImGui::SFML::Shutdown();
 }
 
+void ng::ProgramEngine::io_setupIO(World * world) { m_ioutput->updateWorld(world); }
+
+void ng::ProgramEngine::io_saveGame(std::string filename){ m_ioutput->saveGameToFile(filename); }
+
 void ProgramEngine::loadTextures()
 {
 
@@ -231,8 +236,6 @@ enum TextSize
 	PxSize_30 = 30, PxSize_32 = 32, PxSize_34 = 34,
 	PxSize_36 = 36, PxSize_38 = 38, PxSize_40 = 40,
 };
-
-
 
 void ProgramEngine::loadFonts()
 {

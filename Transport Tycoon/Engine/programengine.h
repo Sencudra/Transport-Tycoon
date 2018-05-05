@@ -34,6 +34,14 @@ namespace ng {
 
         void loop();
 
+		// IOutput interface
+
+		void io_setupIO(World* world);
+		void io_saveGame(std::string filename);
+		void io_loadGame(std::string filename) {}
+
+
+
     public:
         std::stack<ProgramState*> states;
 

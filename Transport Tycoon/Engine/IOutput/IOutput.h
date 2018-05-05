@@ -1,29 +1,28 @@
 #pragma once
 
-// include headers that implement a archive in simple text format
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
-
 class World;
 
 class IOutput
 {
 public:
 
-	IOutput(World* world);
+	IOutput(std::string defaultPath);
 	IOutput();
 
-	void saveGameToFile();
-	void loadGameFromFile();
+	void saveGameToFile(std::string defaultPath);
+	void loadGameFromFile(std::string defaultPath);
 
 	void getSaveList(std::vector<std::pair<std::string, std::string>>& m_file_list);
 
 	~IOutput();
 
 
+	void updateWorld(World* world) { m_world = world; }
+
+
 private:
 	World * m_world;
+	std::string m_defaultPath; // default path to save folder
 
 
 };

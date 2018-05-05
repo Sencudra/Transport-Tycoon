@@ -3,10 +3,13 @@
 
 #include <iostream>
 
-
 #include "object.h"
 #include "map.h"
 #include "player.h"
+
+
+#include <boost\archive\text_iarchive.hpp>
+#include <boost\archive\text_oarchive.hpp>
 
 
 class Player;
@@ -49,6 +52,16 @@ public:
 	bool* getDrawnFlag() { return &m_drawFlag; }
 
 private:
+
+	// Serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & m_timePerDay;
+		ar & m_oneDayTimer;
+	}
+
     void drawMap(ScreenView& gameView);
 
     void updateRoadDirection(int a, int b);

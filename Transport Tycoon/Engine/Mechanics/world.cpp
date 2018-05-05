@@ -14,6 +14,11 @@
 World::World(int mode, ng::ProgramEngine* engine, ProgramStateMain *state):
     m_engine(engine), m_state(state)
 {
+	// io initialising 
+
+	engine->io_setupIO(this);
+
+	// mode loading
     if(mode == 1)
     {
         loadFromFile();

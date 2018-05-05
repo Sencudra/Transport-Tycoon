@@ -411,7 +411,7 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 		m_showSaveWindow = true; // window flag
 
 		ImGui::OpenPopup("Save Game");
-		this->m_world->switchPause();
+		//this->m_world->switchPause(); // in the future we can pause the game while saving
 	}
 	fontIcon->DisplayOffset.y = 0;
 		
@@ -435,9 +435,9 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 			{
 				ImGui::OpenPopup("Continue"); // Ask for a confirm
 			}
-			else
+			else if(std::string(m_fileName) != "" )
 			{
-				std::cout << m_fileName << std::endl;
+				this->m_game->io_saveGame(std::string(m_fileName)); // Passing filename to IO module
 			}
 		}
 
@@ -460,7 +460,7 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 			ImGui::Separator();
 			if (ImGui::Button("OK", ImVec2(120, 0)))
 			{
-				std::cout << m_fileName << std::endl;
+				this->m_game->io_saveGame(std::string(m_fileName)); // Passing filename to IO module
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SetItemDefaultFocus();
@@ -469,12 +469,7 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 			ImGui::EndPopup();
 		}
 		ImGui::SameLine();
-		/*if (ImGui::Button("Close"))
-		{
-			ImGui::CloseCurrentPopup();
-			this->m_world->switchPause();
-		}*/
-			
+		
 		ImGui::PushStyleColor(ImGuiCol_Button, btBgColor);  ++pcc;
 		ImGui::EndPopup();
 	}
