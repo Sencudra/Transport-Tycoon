@@ -26,7 +26,7 @@ public:
     ~Map();
 
     /* Returns 4 map corners */
-    rs::Rectangle getMapEdges();
+	rs::Rectangle getMapEdges();
 
     int getMapSize(){return m_mapSize;}
     void setMapSize(int size){m_mapSize = size;}
@@ -79,6 +79,22 @@ private:
 
     // key value for map generating
     double m_range;
+
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+
+		ar & m_mapSize;
+		for (int i = 0; i < m_mapSize; ++i)
+		{
+			for (int j = 0; j < m_mapSize; ++j)
+				ar & m_map[i][j];
+		}
+	}
+
 
 };
 

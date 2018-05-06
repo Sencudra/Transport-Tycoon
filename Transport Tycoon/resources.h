@@ -19,6 +19,11 @@
 
 #include <glut.h> // OpenGL
 
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/vector.hpp>
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /// NAMESPACE RS
@@ -35,6 +40,11 @@ const int   G_DEFAULT_MAP_SIZE = 256;
 const char  G_PROGRAM_NAME[20] = "Transport Paradise";
 
 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// TileType and it's serializations method
+//
+
 enum class TileType {VOID, WATER, DEEPWATER,SAND, PLAIN, FOREST,STONE,
                      ROCKS, SNOW};
 
@@ -47,14 +57,31 @@ enum class RoadType {   ROAD_0_PATH1, ROAD_1_PATH1, ROAD_1_PATH2, ROAD_1_PATH3, 
                         ROAD_2_PATH1, ROAD_2_PATH2, ROAD_2_PATH3, ROAD_2_PATH4, ROAD_2_PATH5, ROAD_2_PATH6,
                         ROAD_3_PATH1, ROAD_3_PATH2, ROAD_3_PATH3, ROAD_3_PATH4, ROAD_4_PATH1  };
 
+
 enum class IndustryType {COALMINE, POWERSTATION, IRONOREMINE, STEELMILL,
                          FARM, FACTORY, FOREST, SAWMILL, OILWELLS,
                          OILRIG, OILREFINERY, BANK};
 
+
 enum class MapSprites {DEEP_WATER, WATER, SAND, PLAIN, FOREST, STONE,
                        MOUNTAIN_STONE, SNOW};
 
+enum class ActionState { NONE, PANNING };
+enum class EditState { NONE, ROADING, CARSETUP, ROUTING, DELETING };
+
 enum class Color { WHITE, RED, GREEN, NONE};
+
+namespace boost {
+	namespace serialization {
+
+		template<class Archive, class T>
+		void serialize(Archive & ar, T & c, const unsigned int version)
+		{
+			ar & int(c);
+		}
+
+	} // namespace serialization
+} // namespace boost
 
 
 template <typename T>
@@ -84,8 +111,6 @@ struct Cargo
 
 };
 
-
-
 struct Point
 {
     int x;
@@ -98,8 +123,6 @@ struct Point
         return;
     }
 };
-
-
 
 struct Rectangle
 {

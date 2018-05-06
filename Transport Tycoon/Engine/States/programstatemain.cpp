@@ -45,8 +45,8 @@ ProgramStateMain::ProgramStateMain(int mode, ng::ProgramEngine* game)
     m_guiView = View(guiView);
 
     this->m_zoomLevel = 1.0f;
-    this->m_actionState = ActionState::NONE;
-    this->m_editState = EditState::NONE;
+    this->m_actionState = rs::ActionState::NONE;
+    this->m_editState = rs::EditState::NONE;
 
     m_focusObject = nullptr;
 
@@ -116,7 +116,7 @@ void ProgramStateMain::handleInput()
         {
 
             /* Pan the camera */
-            if(this->m_actionState == ActionState::PANNING)
+            if(this->m_actionState == rs::ActionState::PANNING)
             {
                 rs::Rectangle mapEdges = m_world->getTileMapEdges();
 
@@ -149,14 +149,12 @@ void ProgramStateMain::handleInput()
         /* Press mouse button */
         case sf::Event::MouseButtonPressed:
         {
-
-
             /* Start panning */
             if(event.mouseButton.button == sf::Mouse::Middle)
             {
-                if(this->m_actionState != ActionState::PANNING)
+                if(this->m_actionState != rs::ActionState::PANNING)
                 {
-                    this->m_actionState = ActionState::PANNING;
+                    this->m_actionState = rs::ActionState::PANNING;
                     this->m_panningAnchor = sf::Mouse::getPosition(this->m_game->m_window);
                 }
             }
@@ -174,22 +172,34 @@ void ProgramStateMain::handleInput()
                 sf::Vector2f mousePos = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_guiView);
                 sf::Vector2f mousePosWorld = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_gameView);
 
-                if(m_focusObject != nullptr && m_editState == EditState::NONE)
-                {					
-                    m_focusObject->m_isSelected = false;
-                    m_focusObject->m_sprite.setColor(Color::White);
+				if (m_focusObject != nullptr && m_editState == rs::EditState::NONE)
+				{
+					m_focusObject->m_isSelected = false;
+					m_focusObject->m_sprite.setColor(Color::White);
 					std::cout << "ProgramStateMain::handleInput: Object unselected" << std::endl;
-                }
+				}
 
 				// Selecting object
-				if (m_focusObject != nullptr && m_editState == EditState::NONE)
+				if (m_focusObject != nullptr && m_editState == rs::EditState::NONE)
 				{
 					m_focusObject = m_world->selectObject(mousePosWorld);
 					std::cout << "ProgramStateMain::handleInput: Object selected" << std::endl;
 				}
 
+				if(this->m_editState == rs::EditState::ROADING)
+				{
+				    m_world->addRoad(mousePosWorld.x, mousePosWorld.y);
+				}
+
+				if(this->m_editState == rs::EditState::CARSETUP)
+				{
+				    m_focusObject = m_world->addVehicle(mousePosWorld.x, mousePosWorld.y);
+				    if(m_focusObject == nullptr)
+				        std::cout << "wrong place" << std::endl;
+				}
+				
 				// Adding task for vechicle
-				if (m_focusObject != nullptr && m_editState == EditState::ROUTING)
+				if (m_focusObject != nullptr && m_editState == rs::EditState::ROUTING)
 				{	
 					rs::Point task;
 					task.setValues(mousePosWorld.x, mousePosWorld.y);
@@ -198,80 +208,9 @@ void ProgramStateMain::handleInput()
 					std::cout << "ProgramStateMain::handleInput: Task added for vechicle" << std::endl;
 
 				}
-
-                /* Tool Box panel handling */
-                //std::string msg = this->guiSystem.at("toolBar").activate(mousePos);
-
-                //if(msg == "time")
-                //{
-                //    this->s_pause();
-                //}
-                //else if (msg == "speed")
-                //{
-                //    if(m_world->isPause())
-                //        this->s_pause();
-                //    this->s_speed();
-                //}
-                //else if (msg == "exit_game")
-                //{
-                //    this->m_game->m_window.close();
-                //}
-                //else if (msg == "save")
-                //{
-                //    this->s_pause();
-                //    this->s_save();
-                //    this->s_pause();
-                //}
-                //else if (msg == "setup_road")
-                //{
-                //    if(this->m_editState != EditState::ROADING)
-                //    {
-                //        this->m_editState = EditState::ROADING;
-                //        this->guiSystem.at("toolBar").highlight(3);
-                //    }
-                //    else if(this->m_editState == EditState::ROADING)
-                //    {
-                //        this->m_editState = EditState::NONE;
-                //        this->guiSystem.at("toolBar").highlight(3);     //unhighlight
-                //    }
-                //}
-                //else if (msg == "setup_car")
-                //{
-                //    if(this->m_editState != EditState::CARSETUP)
-                //    {
-                //        this->m_editState = EditState::CARSETUP;
-                //        this->guiSystem.at("toolBar").highlight(4);
-                //    }
-                //    else if (this->m_editState == EditState::CARSETUP)
-                //    {
-                //        this->m_editState = EditState::NONE;
-                //        this->guiSystem.at("toolBar").highlight(4);
-                //    }
-                //}
-                //else if (msg == "exit")
-                //{
-                //    //this->s_exit();
-                //    this->m_game->m_window.close();
-                //}
-                //else
-                //{
-                //    // actions
-                //    if(this->m_editState == EditState::ROADING)
-                //    {
-                //        m_world->addRoad(mousePosWorld.x, mousePosWorld.y);
-                //    }
-
-                //    if(this->m_editState == EditState::CARSETUP)
-                //    {
-                //        m_focusObject = m_world->addVehicle(mousePosWorld.x, mousePosWorld.y);
-                //        if(m_focusObject == nullptr)
-                //            std::cout << "wrong place" << std::endl;
-                //    }
-                //}
             }
             break;
         }
-
 
         /* Release mouse button */
         case sf::Event::MouseButtonReleased:
@@ -279,11 +218,10 @@ void ProgramStateMain::handleInput()
             /* Stop panning */
             if(event.mouseButton.button == sf::Mouse::Middle)
             {
-                this->m_actionState = ActionState::NONE;
+                this->m_actionState = rs::ActionState::NONE;
             }
             break;
         }
-
 
         /* Zoom the view */
         case sf::Event::MouseWheelMoved:
@@ -301,14 +239,12 @@ void ProgramStateMain::handleInput()
             break;
         }
 
-
         /* Close the window */
         case sf::Event::Closed:
         {
             this->m_game->m_window.close();
             break;
         }
-
 
         /* Resize the window */
         case sf::Event::Resized:
@@ -318,11 +254,8 @@ void ProgramStateMain::handleInput()
             m_gameView.zoom(m_zoomLevel);
 
 			m_guiView.setSize(event.size.width, event.size.height);
-
-
             break;
         }
-
 
         case sf::Event::KeyPressed:
         {
@@ -330,7 +263,7 @@ void ProgramStateMain::handleInput()
             {
                 if(m_focusObject != nullptr)
                 {
-                    m_editState = EditState::NONE;
+                    m_editState = rs::EditState::NONE;
                     m_focusObject->m_isSelected = false;
                     m_focusObject->m_sprite.setColor(Color::White);
                 }
@@ -338,7 +271,7 @@ void ProgramStateMain::handleInput()
 			if (event.key.code == sf::Keyboard::T)
 			{
 				if (m_focusObject != nullptr && m_focusObject->m_objectType == rs::ObjectType::VECHICALE)
-					m_editState = EditState::ROUTING;
+					m_editState = rs::EditState::ROUTING;
 			}
             if(event.key.code == sf::Keyboard::C)
             {
@@ -351,7 +284,7 @@ void ProgramStateMain::handleInput()
 
                 }
 
-                if(m_editState == EditState::ROADING)
+                if(m_editState == rs::EditState::ROADING)
                 {
                     sf::Vector2f mousePosWorld = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_gameView);
                     m_world->deleteObject(mousePosWorld);

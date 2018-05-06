@@ -407,7 +407,6 @@ void World::saveToFile()
 {
     boost::property_tree::ptree root;
 
-
     /* World DATA */
     boost::property_tree::ptree world;
     world.put("day", this->m_day);

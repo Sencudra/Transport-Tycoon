@@ -3,8 +3,7 @@
 #include <fstream>
 
 #include <boost\filesystem.hpp>
-#include <boost\archive\text_iarchive.hpp>
-#include <boost\archive\text_oarchive.hpp>
+#include "resources.h"
 
 #include "world.h"
 #include "IOutput.h"
@@ -34,7 +33,7 @@ void IOutput::saveGameToFile(std::string filename)
 
 	std::ofstream ofs(finalPath);
 
-	boost::archive::text_oarchive oa(ofs);
+	boost::archive::binary_oarchive oa(ofs);
 
 	oa << m_world;
 

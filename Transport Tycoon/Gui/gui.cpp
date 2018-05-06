@@ -162,6 +162,8 @@ GuiGame::GuiGame(ng::ProgramEngine* game, World* world)
 
 	bool m_isPauseBtnActive = false;
 	bool m_isSpeedBtnActive = false;
+	bool m_isRoadBuilderBtnActive = false;
+	bool m_isVehicleBuilderBtnActive = false;
 
 	bool m_showSaveWindow = false;
 
@@ -260,13 +262,13 @@ void GuiGame::toolBar(bool gShow)
 		{	// First section
 
 			// Play/Stop
-			this->psbtn(buttonRect, fontIcon);
+			this->pauseButton(buttonRect, fontIcon);
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Pause button");
 
 
 			// Speed button
-			this->spbtn(buttonRect, fontIcon);
+			this->speedButton(buttonRect, fontIcon);
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Fast Forward button");
 
@@ -277,7 +279,7 @@ void GuiGame::toolBar(bool gShow)
 				ImGui::SetTooltip("Settings");
 			
 			// Save button
-			this->svbtn(buttonRect, fontIcon);
+			this->saveButton(buttonRect, fontIcon);
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Save / Load button");
 		}
@@ -298,9 +300,8 @@ void GuiGame::toolBar(bool gShow)
 		}
 		ImGui::VerticalSeparator();
 		{
-			fontIcon->DisplayOffset.y = 2;
-			ImGui::Button(ICON_KI_WRENCH, buttonRect);
-			fontIcon->DisplayOffset.y = 0;
+
+			this->roadBuilderButton(buttonRect, fontIcon);
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Building tool");
 
@@ -318,7 +319,7 @@ void GuiGame::toolBar(bool gShow)
 
 }
 
-void gui::GuiGame::psbtn(ImVec2 buttonRect, ImFont* fontIcon)
+void gui::GuiGame::pauseButton(ImVec2 buttonRect, ImFont* fontIcon)
 {	// Play/Stop button manipulator
 
 	ImVec4 btAcColor = (ImVec4)ImColor(15, 135, 250, 255);
@@ -337,7 +338,8 @@ void gui::GuiGame::psbtn(ImVec2 buttonRect, ImFont* fontIcon)
 		this->m_world->switchPause();
 
 		// Checks for other buttons enabled and disable
-		if (m_isSpeedBtnActive)
+
+		if(m_isSpeedBtnActive)
 		{
 			m_isSpeedBtnActive = !m_isSpeedBtnActive;
 			this->m_world->x2Speed();
@@ -347,7 +349,7 @@ void gui::GuiGame::psbtn(ImVec2 buttonRect, ImFont* fontIcon)
 	if (flagPush) ImGui::PopStyleColor(2);
 }
 
-void gui::GuiGame::spbtn(ImVec2 buttonRect, ImFont* fontIcon)
+void gui::GuiGame::speedButton(ImVec2 buttonRect, ImFont* fontIcon)
 {	// Speed button manipulator
 
 	ImVec4 btAcColor = (ImVec4)ImColor(15, 135, 250, 255);
@@ -378,8 +380,8 @@ void gui::GuiGame::spbtn(ImVec2 buttonRect, ImFont* fontIcon)
 
 }
 
-void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
-{
+void gui::GuiGame::saveButton(ImVec2 buttonRect, ImFont* fontIcon)
+{	// Save optionsand more..
 	
 	ImGuiStyle& style = ImGui::GetStyle();
 
@@ -409,6 +411,14 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 		this->m_game->m_ioutput->getSaveList(m_file_list); // get list of save files available
 
 		m_showSaveWindow = true; // window flag
+
+		if (m_isRoadBuilderBtnActive)
+		{
+			m_isRoadBuilderBtnActive = !m_isRoadBuilderBtnActive;
+			this->m_game->setEditState(rs::EditState::NONE);
+		}
+
+
 
 		ImGui::OpenPopup("Save Game");
 		//this->m_world->switchPause(); // in the future we can pause the game while saving
@@ -479,3 +489,32 @@ void gui::GuiGame::svbtn(ImVec2 buttonRect, ImFont* fontIcon)
 	
 }
 
+void gui::GuiGame::roadBuilderButton(ImVec2 buttonRect, ImFont* fontIcon)
+{	// Place road
+	ImVec4 btAcColor = (ImVec4)ImColor(15, 135, 250, 255);
+	bool flagPush = false;
+
+	if (m_isRoadBuilderBtnActive) // Color manipulations
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, btAcColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btAcColor);
+		flagPush = true;
+	}
+	fontIcon->DisplayOffset.y = 2;
+	if (ImGui::Button(ICON_KI_WRENCH, buttonRect))
+	{
+		if(m_isRoadBuilderBtnActive)this->m_game->setEditState(rs::EditState::NONE);
+		else this->m_game->setEditState(rs::EditState::ROADING);
+
+		m_isRoadBuilderBtnActive = !m_isRoadBuilderBtnActive;
+	}
+	fontIcon->DisplayOffset.y = 0;
+	if (flagPush) ImGui::PopStyleColor(2);
+
+}
+
+void gui::GuiGame::vehicleBuilderButton(ImVec2 buttonRect, ImFont* fontIcon)
+{	// Place vechicle
+
+
+}

@@ -33,7 +33,6 @@ private:
 
 };
 
-
 class Object
 {
 public:
@@ -63,13 +62,27 @@ public:
     bool m_isSelected;
 
 	int x, y; 
+	rs::ObjectType m_objectType;
 
     float m_x;
     float m_y;
     sf::Texture* m_texture;
     sf::Sprite m_sprite;
 
-    rs::ObjectType m_objectType;
+private:
+	friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+		// When the class Archive corresponds to an output archive, the
+		// & operator is defined similar to <<.  Likewise, when the class Archive
+		// is a type of input archive the & operator is defined similar to >>.
+
+		ar & x;
+		ar & y;
+		ar & m_objectType;
+
+    }
 };
 
 class DynamicObject: public Object
@@ -108,6 +121,38 @@ private:
 
     std::vector<PPoint*>*  m_path;
 
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		// serialize base class information
+		ar & boost::serialization::base_object<Object>(*this);
+
+		ar & m_isActive;
+
+		ar & m_cargoLoaded;
+		ar & m_capacity;
+
+
+		// Later
+		//ar & m_moveTask; 
+		//rs::Resources m_cargoType;
+		
+
+		//Map* m_map;
+		//Player* m_player;
+
+		//float m_speedX;
+		//float m_speedY;
+
+		//float m_acceleration;
+
+		//PathFinder* m_finder;
+
+		//std::vector<PPoint*>*  m_path;
+	}
+
 };
 
 class Industries : public Object
@@ -139,6 +184,23 @@ protected:
     //std::vector<rs::Cargo> m_storage;
     bool m_isActive;
 
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		// serialize base class information
+		ar & boost::serialization::base_object<Object>(*this);
+
+		ar & m_isActive;
+
+		ar & m_storage;
+		ar & m_capacity;
+		ar & m_workSpeed;
+		ar &  m_type;
+
+	}
+
 };
 
 class Road : public Object
@@ -160,6 +222,19 @@ private:
 
 private:
     rs::RoadType m_type;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		// serialize base class information
+		ar & boost::serialization::base_object<Object>(*this);
+		
+		ar & m_type;
+
+	}
+
 };
 
 

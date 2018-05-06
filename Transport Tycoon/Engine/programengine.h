@@ -40,6 +40,8 @@ namespace ng {
 		void io_saveGame(std::string filename);
 		void io_loadGame(std::string filename) {}
 
+		// StateMain connections
+		void setEditState(rs::EditState state);
 
 
     public:

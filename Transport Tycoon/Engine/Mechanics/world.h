@@ -8,10 +8,6 @@
 #include "player.h"
 
 
-#include <boost\archive\text_iarchive.hpp>
-#include <boost\archive\text_oarchive.hpp>
-
-
 class Player;
 class ProgramStateMain;
 class ScreenView;
@@ -53,16 +49,7 @@ public:
 
 private:
 
-	// Serialization
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version)
-	{
-		ar & m_timePerDay;
-		ar & m_oneDayTimer;
-	}
-
-    void drawMap(ScreenView& gameView);
+	void drawMap(ScreenView& gameView);
 
     void updateRoadDirection(int a, int b);
 
@@ -71,7 +58,7 @@ private:
 
     bool m_isPause;
 	bool m_isSpeed;
-	bool m_drawFlag;
+	bool m_drawFlag; // Tiles draw for one time helper
 
     ng::ProgramEngine* m_engine;
     ProgramStateMain* m_state;
@@ -87,6 +74,30 @@ private:
     float m_timePerDay;
     float m_oneDayTimer;
 
+
+private: 
+	// Serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{ 
+		// When the class Archive corresponds to an output archive, the
+		// & operator is defined similar to <<.  Likewise, when the class Archive
+		// is a type of input archive the & operator is defined similar to >>.
+
+		ar & m_day;
+		ar & m_player;
+
+		ar & m_isPause;
+		ar & m_isSpeed;
+
+		ar & m_objDynamContainer;
+
+		//ar & m_objStaticContainer;
+
+		ar & m_tileMap;
+
+	}
 };
 
 #endif // WORLD_H

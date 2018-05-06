@@ -47,14 +47,23 @@ public:
 
     int m_tileHeight;
 
+private:
+	// Serialization
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		// When the class Archive corresponds to an output archive, the
+		// & operator is defined similar to <<.  Likewise, when the class Archive
+		// is a type of input archive the & operator is defined similar to >>.
+
+		ar & m_tileType;
+		if (m_tileStatObj && m_tileStatObj->m_objectType == rs::ObjectType::ROAD) ar & m_tileStatObj;
+		ar & m_tileHeight;
+
+	}
+
 };
-
-
-
-
-
-
-
 
 
 

@@ -50,23 +50,23 @@ namespace gui {
 		void infoBar(bool gShow = true);
 		void toolBar(bool gShow = true);
 
-		void psbtn(ImVec2 buttonRect, ImFont* fontIcon); // Play / Stop button
-		void spbtn(ImVec2 buttonRect, ImFont* fontIcon); // Speed butt
-		void svbtn(ImVec2 buttonRect, ImFont* fontIcon); // Save button
+		void pauseButton(ImVec2 buttonRect, ImFont* fontIcon); // Play / Stop button
+		void speedButton(ImVec2 buttonRect, ImFont* fontIcon); // Speed butt
+		void saveButton(ImVec2 buttonRect, ImFont* fontIcon); // Save button
+		void roadBuilderButton(ImVec2 buttonRect, ImFont* fontIcon); // Place road
+		void vehicleBuilderButton(ImVec2 buttonRect, ImFont* fontIcon); // Place vechicle
 
 	private:
 		World * m_world;
 		ng::ProgramEngine* m_game;
-
-		std::vector<std::pair<std::string, std::string>> m_file_list;
 		
-	
 		bool m_isPauseBtnActive;
 		bool m_isSpeedBtnActive;
-
+		bool m_isRoadBuilderBtnActive;
+		bool m_isVehicleBuilderBtnActive;
+	
 		bool m_showSaveWindow;
-
-		//std::vector<char> m_fileName;
+		std::vector<std::pair<std::string, std::string>> m_file_list;
 		char m_fileName[50];
 		int m_fileSelected;
 

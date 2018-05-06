@@ -1,16 +1,20 @@
 
 
 #include <iostream>
-#include "programstate.h"
-#include "programengine.h"
-#include "resources.h"
-#include "IOutput.h"
-
 #include <array>
 
 #include <imgui.h>
 #include <imgui_internal.h>
+
+#include "resources.h"
+#include "programengine.h"
+#include "programstate.h"
+#include "programstatemain.h"
+
+#include "IOutput.h"
 #include "IconsKenney.h"
+
+
 
 using namespace ng;
 
@@ -21,7 +25,6 @@ struct Rect
 	float w;
 	float h;
 };
-
 
 
 ProgramEngine::ProgramEngine()
@@ -169,7 +172,20 @@ void ProgramEngine::loop()
 
 void ng::ProgramEngine::io_setupIO(World * world) { m_ioutput->updateWorld(world); }
 
-void ng::ProgramEngine::io_saveGame(std::string filename){ m_ioutput->saveGameToFile(filename); }
+void ng::ProgramEngine::io_saveGame(std::string filename){ 
+
+	sf::Clock clock;
+	m_ioutput->saveGameToFile(filename);
+	float time = clock.getElapsedTime().asSeconds();
+	std::cout << "TIME: " << time << std::endl;
+
+}
+
+void ng::ProgramEngine::setEditState(rs::EditState state)
+{
+	ProgramStateMain* stateMain = dynamic_cast<ProgramStateMain*> (this->peekState());
+	stateMain->setEditState(state);
+}
 
 void ProgramEngine::loadTextures()
 {

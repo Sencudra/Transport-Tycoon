@@ -5,6 +5,7 @@ Player::Player()
     m_companyName = "New Company";
     m_playerName = "Player1";
     m_balance = 20000;
+	m_color = rs::Color::GREEN;
 }
 
 Player::Player(int balance, std::string m_companyName, std::string m_playerName):

@@ -10,9 +10,6 @@
 class World;
 class Object;
 
-enum class ActionState{NONE, PANNING};
-enum class EditState{NONE, ROADING, CARSETUP, ROUTING, DELETING};
-
 
 class ProgramStateMain : public ProgramState
 {
@@ -24,6 +21,8 @@ public:
     virtual void draw(const float dt);
     virtual void update(const float dt);
     virtual void handleInput();
+
+	void setEditState(rs::EditState state) { m_editState = state; }
 
 private:
     //void drawMap(int dt);
@@ -44,8 +43,8 @@ private:
     // View manipulation
     ScreenView m_gameView;
     sf::Vector2i m_panningAnchor;   // mouse anchor
-    ActionState m_actionState;      // mouse activity
-    EditState m_editState;
+    rs::ActionState m_actionState;      // mouse activity
+    rs::EditState m_editState;
     float m_zoomLevel;
 
     sf::View m_guiView;
