@@ -29,9 +29,9 @@ void IOutput::saveGameToFile(std::string filename)
 {
 	std::cout << "SAVED GOD" << std::endl;
 
-	std::string finalPath = this->m_defaultPath + filename + ".txt";
+	std::string finalPath = this->m_defaultPath + filename + ".svt";
 
-	std::ofstream ofs(finalPath);
+	std::ofstream ofs(finalPath, std::fstream::out | std::fstream::binary);
 
 	boost::archive::binary_oarchive oa(ofs);
 
@@ -42,7 +42,17 @@ void IOutput::saveGameToFile(std::string filename)
 
 void IOutput::loadGameFromFile(std::string filename)
 {
+	std::cout << "Loading GOD" << std::endl;
 
+	std::string finalPath = this->m_defaultPath + filename + ".svt";
+
+	std::ifstream ifs(finalPath, std::fstream::binary | std::fstream::in);
+
+	boost::archive::binary_iarchive ia(ifs);
+
+	ia >> m_world;
+
+	std::cout << "Stop";
 }
 
 void IOutput::getSaveList(std::vector<std::pair<std::string, std::string>>& m_file_list)

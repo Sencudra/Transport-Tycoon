@@ -10,6 +10,12 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+World::World()
+{
+	std::cout << "default " << std::endl;
+
+}
+
 
 World::World(int mode, ng::ProgramEngine* engine, ProgramStateMain *state):
     m_engine(engine), m_state(state)
@@ -264,25 +270,25 @@ void World::updateRoadDirection(int a, int b)
 Object* World::addVehicle(float x, float y)
 {
 
-    float a,b;
-    a = x;
-    b = y;
-    rs::isoToTwoD(a, b,64, 32);
+    float x_iso, y_iso;
+	x_iso = x;
+	y_iso = y;
 
-    int x1 , y1;
+    rs::isoToTwoD(x_iso, y_iso, 64, 32);
 
-    x1 = a;
-    y1 = b;
+    int x_2d , y_2d;
+    x_2d = x_iso;
+    y_2d = y_iso;
 
-    if((x1 <= 0 || x1 >= m_tileMap->getMapSize()) || (y1 <= 0 || y1 >= m_tileMap->getMapSize())) return nullptr;
+    if((x_2d <= 0 || x_2d >= m_tileMap->getMapSize()) || (y_2d <= 0 || y_2d >= m_tileMap->getMapSize())) return nullptr;
 
-    rs::twoDToIso(a, b, 64, 32);
+
 
     /* checking for tile availableness */
     bool isTileAvailable;
 
-    (m_tileMap->m_map[x1][y1]->m_tileStatObj != NULL &&
-            m_tileMap->m_map[x1][y1]->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
+    (m_tileMap->m_map[x_2d][y_2d]->m_tileStatObj != NULL &&
+            m_tileMap->m_map[x_2d][y_2d]->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
       ? isTileAvailable = true : isTileAvailable = false;
 
     /* adding new vechicale */
@@ -291,9 +297,9 @@ Object* World::addVehicle(float x, float y)
         /* Check balance */
         if(!m_player.getMoney(250)) return nullptr;
 
-        DynamicObject* car = new DynamicObject(&m_player, m_tileMap, m_engine->m_texmng->getTextureRef("auto"), x1, y1);
+        DynamicObject* car = new DynamicObject(&m_player, m_tileMap, m_engine->m_texmng->getTextureRef("auto"), float(x_2d), float(y_2d));
         m_objDynamContainer.push_back(car);
-		m_tileMap->m_map[x1][y1]->m_tileDynObj.push_back(car);
+		m_tileMap->m_map[x_2d][y_2d]->m_tileDynObj.push_back(car);
 
         return car;
     }
@@ -559,6 +565,7 @@ void World::deleteObject(sf::Vector2f pos)
 
 Object* World::selectObject(sf::Vector2f pos)
 {
+
 	// Object Highlight, Color Green
     for(auto i : m_objDynamContainer)
     {

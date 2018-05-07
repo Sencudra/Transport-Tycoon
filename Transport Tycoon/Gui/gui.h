@@ -30,11 +30,18 @@ namespace gui {
 
 	private:
 		void settings();
+		void loadGame();
 
 
 		ng::ProgramEngine * m_game;
 		
-		bool m_show_settings;
+		bool m_isLoadPanelActive;
+		bool m_isSettingsPanelAxtive;
+
+
+		std::vector<std::pair<std::string, std::string>> m_file_list;
+		char m_fileName[100];
+		int m_fileSelected;
 
 	};
 
@@ -59,6 +66,9 @@ namespace gui {
 	private:
 		World * m_world;
 		ng::ProgramEngine* m_game;
+
+		bool m_isLoadMenuActive;
+
 		
 		bool m_isPauseBtnActive;
 		bool m_isSpeedBtnActive;

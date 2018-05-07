@@ -69,8 +69,6 @@ void ProgramStateMain::draw(const float dt)
     this->m_game->m_window.setView(this->m_gameView);
     this->m_world->draw(this->m_gameView);
 
-	
-
     return;
 }
 
@@ -172,16 +170,14 @@ void ProgramStateMain::handleInput()
                 sf::Vector2f mousePos = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_guiView);
                 sf::Vector2f mousePosWorld = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_gameView);
 
-				if (m_focusObject != nullptr && m_editState == rs::EditState::NONE)
-				{
-					m_focusObject->m_isSelected = false;
-					m_focusObject->m_sprite.setColor(Color::White);
-					std::cout << "ProgramStateMain::handleInput: Object unselected" << std::endl;
-				}
-
 				// Selecting object
-				if (m_focusObject != nullptr && m_editState == rs::EditState::NONE)
+				if ( m_editState == rs::EditState::NONE)
 				{
+					if (m_focusObject)
+					{
+						m_focusObject->m_isSelected = false;
+						m_focusObject->m_sprite.setColor(Color::White);
+					}
 					m_focusObject = m_world->selectObject(mousePosWorld);
 					std::cout << "ProgramStateMain::handleInput: Object selected" << std::endl;
 				}
@@ -270,13 +266,13 @@ void ProgramStateMain::handleInput()
             }
 			if (event.key.code == sf::Keyboard::T)
 			{
-				if (m_focusObject != nullptr && m_focusObject->m_objectType == rs::ObjectType::VECHICALE)
+				if (m_focusObject != nullptr && m_focusObject->m_objectType == rs::ObjectType::VEHICLE)
 					m_editState = rs::EditState::ROUTING;
 			}
             if(event.key.code == sf::Keyboard::C)
             {
 
-                if(m_focusObject != nullptr && m_focusObject->m_objectType == rs::ObjectType::VECHICALE)
+                if(m_focusObject != nullptr && m_focusObject->m_objectType == rs::ObjectType::VEHICLE)
                 {
 
                     m_world->deleteVec(m_focusObject);

@@ -22,6 +22,8 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/export.hpp>
 #include <boost/serialization/vector.hpp>
 
 
@@ -48,7 +50,7 @@ const char  G_PROGRAM_NAME[20] = "Transport Paradise";
 enum class TileType {VOID, WATER, DEEPWATER,SAND, PLAIN, FOREST,STONE,
                      ROCKS, SNOW};
 
-enum class ObjectType {INDUSTRY ,ROAD, VECHICALE};
+enum class ObjectType {INDUSTRY ,ROAD, VEHICLE};
 
 enum class Resources {COAL, IRONORE, GRAIN, LIVESTOCK, STEEL, WOOD, OIL,
                       GOODS, PASSAGERS, MAIL, VALUABLES};
@@ -71,17 +73,7 @@ enum class EditState { NONE, ROADING, CARSETUP, ROUTING, DELETING };
 
 enum class Color { WHITE, RED, GREEN, NONE};
 
-namespace boost {
-	namespace serialization {
 
-		template<class Archive, class T>
-		void serialize(Archive & ar, T & c, const unsigned int version)
-		{
-			ar & int(c);
-		}
-
-	} // namespace serialization
-} // namespace boost
 
 
 template <typename T>
@@ -122,6 +114,14 @@ struct Point
         y = ny;
         return;
     }
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		ar & x;
+		ar & y;
+	}
+
 };
 
 struct Rectangle
@@ -160,6 +160,21 @@ struct IndustryMap
 
     }
 };
+
+
+namespace boost {
+	namespace serialization {
+
+		template<class Archive, class T>
+		void serialize(Archive & ar, T & c, const unsigned int version)
+		{
+			ar & int(c);
+		}
+	} // namespace serialization
+} // namespace boost
+
+
+
 
 }
 

@@ -38,36 +38,19 @@ class Object
 public:
     virtual ~Object(){}
 
-    int createObject(rs::ObjectType type, sf::Texture* texture, float x, float y){
-        m_texture = texture;        
-
-        m_x = x;
-        m_y = y;
-
-		this->x = x;
-		this->y = y;
-
-        m_isSelected = false;
-
-        m_objectType = type;
-
-        return 0;
-    }
+	int createObject(rs::ObjectType type, sf::Texture* texture, float x, float y);
 
     virtual void update(const float dt) = 0;
     virtual void draw(sf::RenderWindow& view) = 0;
 
 
 public:
-    bool m_isSelected;
-
-	int x, y; 
 	rs::ObjectType m_objectType;
+	sf::Texture* m_texture;
+	sf::Sprite m_sprite;
 
-    float m_x;
-    float m_y;
-    sf::Texture* m_texture;
-    sf::Sprite m_sprite;
+	int m_x, m_y;
+    bool m_isSelected;
 
 private:
 	friend class boost::serialization::access;
@@ -78,8 +61,8 @@ private:
 		// & operator is defined similar to <<.  Likewise, when the class Archive
 		// is a type of input archive the & operator is defined similar to >>.
 
-		ar & x;
-		ar & y;
+		ar & m_x;
+		ar & m_y;
 		ar & m_objectType;
 
     }
@@ -88,6 +71,7 @@ private:
 class DynamicObject: public Object
 {
 public:
+	DynamicObject() { ; }
     DynamicObject(Player* player, Map* map, sf::Texture *texture, float x, float y);
     ~DynamicObject();
 
@@ -113,9 +97,12 @@ private:
     Map* m_map;
     Player* m_player;
 
+	float m_x_iso;
+	float m_y_iso;
+
     float m_speedX;
     float m_speedY;
-    float m_acceleration;
+    //float m_acceleration;
 
     PathFinder* m_finder;
 
@@ -129,28 +116,17 @@ private:
 		// serialize base class information
 		ar & boost::serialization::base_object<Object>(*this);
 
+		ar & m_x_iso & m_y_iso;
+		ar & m_speedX & m_speedY;
+
+		ar & m_moveTask;
+
 		ar & m_isActive;
 
+		ar & m_cargoType;
 		ar & m_cargoLoaded;
 		ar & m_capacity;
 
-
-		// Later
-		//ar & m_moveTask; 
-		//rs::Resources m_cargoType;
-		
-
-		//Map* m_map;
-		//Player* m_player;
-
-		//float m_speedX;
-		//float m_speedY;
-
-		//float m_acceleration;
-
-		//PathFinder* m_finder;
-
-		//std::vector<PPoint*>*  m_path;
 	}
 
 };
@@ -158,6 +134,7 @@ private:
 class Industries : public Object
 {
 public:
+	Industries() { ; }
     Industries(rs::ObjectType objType, sf::Texture* texture, rs::IndustryType type, float x, float y);
     ~Industries(){}
 
@@ -195,7 +172,6 @@ private:
 		ar & m_isActive;
 
 		ar & m_storage;
-		ar & m_capacity;
 		ar & m_workSpeed;
 		ar &  m_type;
 
@@ -206,6 +182,7 @@ private:
 class Road : public Object
 {
 public:
+	Road() { ; }
     Road(rs::ObjectType objType,sf::Texture* texture, rs::RoadType type);
     ~Road(){}
 

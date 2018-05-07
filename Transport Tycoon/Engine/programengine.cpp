@@ -31,6 +31,7 @@ ProgramEngine::ProgramEngine()
 {
     std::cout << "ENGINE::ProgramEngine:: game setup" << std::endl;
 
+	m_active_state = nullptr;
     //  boostIni() must be first
     //  reading config data from ini file
     m_iniFile = this->boostIni();
@@ -61,10 +62,10 @@ ProgramEngine::~ProgramEngine()
     delete m_clock;
 }
 
-
 void ProgramEngine::pushState(ProgramState *state)
 {
     this->states.push(state);
+	m_active_state = this->peekState();
 
     return;
 }
@@ -73,6 +74,7 @@ void ProgramEngine::popState()
 {
     delete this->states.top();
     this->states.pop();
+	m_active_state = this->peekState();
 
     return;
 }
@@ -82,7 +84,6 @@ void ProgramEngine::changeState(ProgramState *state)
     if(!this->states.empty())
         popState();
     pushState(state);
-
     return;
 }
 
@@ -117,8 +118,6 @@ int ProgramEngine::renderIni()
 	m_window.setVerticalSyncEnabled(true);
     m_window.setFramerateLimit(60);
 
-	
-
     // console output
     std::cout << "CONFIG::Width: "  << screenWidth << std::endl;
     std::cout << "CONFIG::Height: " << screenHeight << std::endl;
@@ -151,19 +150,19 @@ void ProgramEngine::loop()
         sf::Time elapsed = clock.restart();
         float dt = elapsed.asSeconds();
 
-        if(peekState() == nullptr) continue;
-        ProgramState* state = peekState();
-
+        if(m_active_state == nullptr) continue;
 		
-        state->handleInput();
+		m_active_state->handleInput();
 
 		
 		ImGui::SFML::Update(m_window, elapsed);
 		m_window.clear(sf::Color::Black);
-		state->update(dt);
-		state->draw(dt);
-		ImGui::SFML::Render(m_window);
+		m_active_state->update(dt);
+
 		
+		m_active_state->draw(dt);
+		
+		ImGui::SFML::Render(m_window);
 		m_window.display();
 		
     }
@@ -177,8 +176,17 @@ void ng::ProgramEngine::io_saveGame(std::string filename){
 	sf::Clock clock;
 	m_ioutput->saveGameToFile(filename);
 	float time = clock.getElapsedTime().asSeconds();
-	std::cout << "TIME: " << time << std::endl;
+	std::cout << "ng::ProgramEngine::io_saveGame: TIME SAVING: " << time << std::endl;
 
+}
+
+void ng::ProgramEngine::io_loadGame(std::string filename)
+{
+
+	sf::Clock clock;
+	m_ioutput->loadGameFromFile(filename);
+	float time = clock.getElapsedTime().asSeconds();
+	std::cout << "ng::ProgramEngine::io_loadGame: TIME LOADING: " << time << std::endl;
 }
 
 void ng::ProgramEngine::setEditState(rs::EditState state)

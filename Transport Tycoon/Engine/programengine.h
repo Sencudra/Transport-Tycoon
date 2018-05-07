@@ -38,17 +38,18 @@ namespace ng {
 
 		void io_setupIO(World* world);
 		void io_saveGame(std::string filename);
-		void io_loadGame(std::string filename) {}
+		void io_loadGame(std::string filename);
 
 		// StateMain connections
 		void setEditState(rs::EditState state);
 
 
     public:
+		ProgramState * m_active_state;
         std::stack<ProgramState*> states;
 
         TextureManager* m_texmng;
-        sf::Sprite m_background;
+        //sf::Sprite m_background;
         sf::RenderWindow m_window;
         boost::property_tree::ptree m_iniFile;
 		IOutput* m_ioutput; // IO file working

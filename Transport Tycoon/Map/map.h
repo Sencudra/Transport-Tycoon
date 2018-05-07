@@ -35,16 +35,19 @@ public:
     rs::TileType getTileType(const int cellHeight) const;
 
 private:
-
+		
     void loadIndustryMaps();
 
     /* Methods that maintain tilemap */
 
     int generateMap();
+
+	int initialiseEmptyMap();
     int initialiseMap();
     int generateObjects();
 
     bool isValid(int x, int y, Tile*** map, rs::IndustryType type);
+
 
 
     /* Methods that maintain landscape generation */
@@ -83,18 +86,32 @@ private:
 
 private:
 	friend class boost::serialization::access;
+
+	BOOST_SERIALIZATION_SPLIT_MEMBER()
+
 	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version)
+	void save(Archive & ar, const unsigned int version) const
 	{
 
-		ar & m_mapSize;
+		ar << m_mapSize;
 		for (int i = 0; i < m_mapSize; ++i)
 		{
 			for (int j = 0; j < m_mapSize; ++j)
-				ar & m_map[i][j];
+				ar << m_map[i][j];
 		}
 	}
+	template<class Archive>
+	void load(Archive & ar, const unsigned int version)
+	{
 
+		ar >> m_mapSize;
+		initialiseEmptyMap();
+		for (int i = 0; i < m_mapSize; ++i)
+		{
+			for (int j = 0; j < m_mapSize; ++j)
+				ar >> m_map[i][j];
+		}
+	}
 
 };
 

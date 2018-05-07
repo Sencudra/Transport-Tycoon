@@ -8,6 +8,8 @@
 //#include "animation_handler.hpp"
 
 class Object;
+class Industries;
+class Road;
 
 std::string tileTypeToStr(rs::TileType type);
 
@@ -58,7 +60,11 @@ private:
 		// is a type of input archive the & operator is defined similar to >>.
 
 		ar & m_tileType;
-		if (m_tileStatObj && m_tileStatObj->m_objectType == rs::ObjectType::ROAD) ar & m_tileStatObj;
+
+		ar.template register_type<Industries>();
+		ar.template register_type<Road>();
+
+		ar & m_tileStatObj;
 		ar & m_tileHeight;
 
 	}

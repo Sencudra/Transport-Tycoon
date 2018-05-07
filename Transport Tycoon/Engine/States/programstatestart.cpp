@@ -17,6 +17,10 @@ ProgramStateStart::ProgramStateStart(ng::ProgramEngine* game)
 	//music.setVolume(10);
 	//music.play();
 
+	sf::Vector2f pos = sf::Vector2f(this->m_game->m_window.getSize());
+	sf::FloatRect guiView = sf::FloatRect(sf::Vector2f(0, 0), pos);
+	m_view = View(guiView);
+
 	this->m_background.setTexture(*m_game->m_texmng->getTextureRef("bg1"));
 	float scale = setupScale();
 	this->m_background.setScale(scale, scale);
@@ -24,10 +28,6 @@ ProgramStateStart::ProgramStateStart(ng::ProgramEngine* game)
 
 	// Gui setup 
 	m_gui_menu = new gui::GuiMenu(game);
-
-	
-
-
 
 }
 
@@ -85,14 +85,12 @@ float ProgramStateStart::setupScale()
 void ProgramStateStart::draw(const float dt)
 {
 	
-    this->m_game->m_window.clear(sf::Color::Black);
+    //this->m_game->m_window.clear(sf::Color::Black);
 
-    //this->m_game->m_window.setView(this->view);
-    this->m_game->m_window.draw(this->m_background);
+    this->m_game->m_window.setView(this->m_view);
+    this->m_game->m_window.draw(m_background);
 
 	this->showImGui();
-
-    //for(auto gui : this->guiSystem) this->m_game->m_window.draw(gui.second);
 
     return;
 }

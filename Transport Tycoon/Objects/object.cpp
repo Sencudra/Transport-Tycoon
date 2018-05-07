@@ -7,26 +7,146 @@
 #include "resources.h"
 
 
+int Object::createObject(rs::ObjectType type, sf::Texture* texture, float x, float y)
+{
+	m_objectType = type;
+	m_texture = texture;
+	m_x = x;
+	m_y = y;
+
+	m_isSelected = false;
+	
+	return 0;
+}
+
 DynamicObject::DynamicObject(Player *player, Map* map, sf::Texture* texture, float x, float y)
 {
 
 	m_map = map;
-    createObject(rs::ObjectType::VECHICALE, texture, x, y);
-    m_player = player;
+	createObject(rs::ObjectType::VEHICLE, texture, x, y);
+	m_player = player;
 
-    m_cargoType = rs::Resources::COAL;
-    m_capacity = 20;
-    m_cargoLoaded = 0;
+	m_cargoType = rs::Resources::COAL;
+	m_capacity = 20;
+	m_cargoLoaded = 0;
 
-    m_finder = new PathFinder(map);
+	m_finder = new PathFinder(map);
 
-    m_x = x;
-    m_y = y;
+	m_x_iso = m_x = x;
+	m_y_iso = m_y = y;
 
-    m_speedX = 0;
-    m_speedY = 0;
+	m_speedX = 0;
+	m_speedY = 0;
 
-    m_sprite.setTexture(*texture);
+	m_sprite.setTexture(*texture);
+}
+
+
+DynamicObject::~DynamicObject()
+{
+	delete m_finder;
+}
+
+void DynamicObject::update(const float dt)
+{
+
+	if (m_path != nullptr && m_path->empty())
+	{
+		if (m_moveTask.front().x == this->m_x && m_moveTask.front().y == this->m_y)
+		{
+			std::cout << "DynamicObject::update: Task DONE" << std::endl;
+			m_moveTask.push_back(*m_moveTask.begin());
+			m_moveTask.erase(m_moveTask.begin());
+			moveTaskSetup(m_moveTask.back(), m_moveTask.front());
+			cargoExchange();
+		}
+		m_speedX = 0;
+		m_speedY = 0;
+	}
+	if (m_path != nullptr && !m_path->empty())
+	{
+		if (m_path->front()->x > m_x_iso - 0.05 && m_path->front()->x < m_x_iso + 0.05 &&
+			m_path->front()->y > m_y_iso - 0.05 && m_path->front()->y < m_y_iso + 0.05)
+		{
+			m_x_iso = m_x = m_path->front()->x;
+			m_y_iso = m_y = m_path->front()->y;
+
+			m_path->erase(m_path->begin());
+
+			if (m_path->size() != 0 && m_path != nullptr)
+			{
+				int x, y;
+				x = m_path->front()->x;
+				y = m_path->front()->y;
+
+				m_speedX = x - m_x;
+				m_speedY = y - m_y;
+			}
+		}
+	}
+
+	m_x_iso += (m_speedX*dt);
+	m_y_iso += (m_speedY*dt);
+
+	// Changing object's tile
+	if (m_x != m_x_iso || m_y != m_y_iso)
+	{
+		int counter = 0;
+		bool isFound = false;
+		for (Object* i : this->m_map->m_map[m_x][m_y]->m_tileDynObj)
+		{
+			if (i == this)
+			{
+				this->m_map->m_map[m_x][m_y]->m_tileDynObj.erase(this->m_map->m_map[m_x][m_y]->m_tileDynObj.begin() + counter);
+				isFound = true;
+			}
+			counter++;
+		}
+		if (!isFound)
+		{
+			std::cout << "ERROR DynamicObject::update: Object not found on tile" << std::endl;
+		}
+		else
+		{
+			m_x = round(m_x_iso);
+			m_y = round(m_y_iso);
+			this->m_map->m_map[m_x][m_y]->m_tileDynObj.push_back(this);
+		}
+
+	}
+}
+
+void DynamicObject::draw(sf::RenderWindow& view)
+{
+	if (m_path != nullptr && !m_path->empty())
+	{	// Draw next tile and previous tile
+
+		float nextTileX = m_path->front()->x;
+		float nextTileY = m_path->front()->y;
+
+		rs::twoDToIso(nextTileX, nextTileY, 64, 32);
+
+		m_map->m_map[m_path->front()->x][m_path->front()->y]->partDraw(nextTileX, nextTileY, view);
+
+		if (m_path->front()->cameFrom != nullptr)
+		{
+			int x1, y1;
+			x1 = m_path->front()->cameFrom->x;
+			y1 = m_path->front()->cameFrom->y;
+			float prevTileX = m_path->front()->cameFrom->x;
+			float prevTileY = m_path->front()->cameFrom->y;
+			rs::twoDToIso(prevTileX, prevTileY, 64, 32);
+
+			m_map->m_map[x1][y1]->partDraw(prevTileX, prevTileY, view);
+		}
+	}
+
+	float x, y;
+	x = m_x_iso;
+	y = m_y_iso;
+	rs::twoDToIso(x, y, 64, 32);
+	m_sprite.setPosition(x + 27, y + 11); // TO GET TO THE CENTER
+	view.draw(m_sprite);
 }
 
 void DynamicObject::moveTaskSetup(rs::Point start, rs::Point end)
@@ -92,113 +212,6 @@ void DynamicObject::cargoExchange()
     }
 }
 
-void DynamicObject::update(const float dt)
-{
-
-    if(m_path != nullptr && m_path->empty())
-    {
-        if(m_moveTask.front().x == this->x && m_moveTask.front().y == this->y)
-        {
-			//std::cout << "Task DONE" << std::endl;
-            m_moveTask.push_back(*m_moveTask.begin());
-            m_moveTask.erase(m_moveTask.begin());
-            moveTaskSetup(m_moveTask.back(), m_moveTask.front());
-            cargoExchange();
-        }
-        m_speedX = 0;
-        m_speedY = 0;
-    }
-    if(m_path != nullptr && !m_path->empty())
-    {
-        if(m_path->front()->x > m_x - 0.05 && m_path->front()->x < m_x + 0.05 &&
-           m_path->front()->y > m_y - 0.05 && m_path->front()->y < m_y + 0.05)
-        {
-            m_x = m_path->front()->x;
-            m_y = m_path->front()->y;
-
-
-            m_path->erase(m_path->begin());
-            if(m_path->size() != 0 && m_path != nullptr)
-            {
-                float x,y;
-                x = m_path->front()->x;
-                y =  m_path->front()->y;
-
-                m_speedX = x - m_x;
-                m_speedY = y - m_y;
-            }
-        }
-    }
-
-	m_x += (m_speedX*dt);
-	m_y += (m_speedY*dt);
-	
-	// Changing object's tile
-	if (round(m_x) != this->x ||
-		round(m_y) != this->y)
-	{
-		int counter = 0;
-		bool isFound = false;
-		for (Object* i : this->m_map->m_map[x][y]->m_tileDynObj)
-		{
-			if (i == this)
-			{
-				this->m_map->m_map[x][y]->m_tileDynObj.erase(this->m_map->m_map[x][y]->m_tileDynObj.begin() + counter);
-				isFound = true;
-			}
-			counter++;
-		}
-		if (!isFound)
-		{
-			std::cout << "ERROR DynamicObject::update: Object not found on tile" << std::endl;
-		}
-		else
-		{
-			this->x = round(m_x);
-			this->y = round(m_y);
-			this->m_map->m_map[x][y]->m_tileDynObj.push_back(this);
-		}
-
-	}
-}
-
-DynamicObject::~DynamicObject()
-{
-    delete m_finder;
-}
-
-void DynamicObject::draw(sf::RenderWindow& view)
-{
-	if (m_path != nullptr && !m_path->empty())
-	{	// Draw next tile and previous tile
-
-		float nextTileX = m_path->front()->x;
-		float nextTileY = m_path->front()->y;
-
-		rs::twoDToIso(nextTileX, nextTileY, 64, 32);
-
-		m_map->m_map[m_path->front()->x][m_path->front()->y]->partDraw(nextTileX, nextTileY, view);
-
-		if (m_path->front()->cameFrom != nullptr)
-		{
-			int x1, y1;
-			x1 = m_path->front()->cameFrom->x;
-			y1 = m_path->front()->cameFrom->y;
-			float prevTileX = m_path->front()->cameFrom->x;
-			float prevTileY = m_path->front()->cameFrom->y;
-			rs::twoDToIso(prevTileX, prevTileY, 64, 32);
-
-			m_map->m_map[x1][y1]->partDraw(prevTileX, prevTileY, view);
-		}
-	}
-
-    float x,y;
-    x = m_x;
-    y = m_y;
-    rs::twoDToIso(x,y, 64, 32);
-    m_sprite.setPosition(x+27,y+11); // TO GET TO THE CENTER
-    view.draw(m_sprite);
-}
 
 void DynamicObject::addTask(rs::Point task)
 {
@@ -256,11 +269,16 @@ Industries::Industries(rs::ObjectType objType, sf::Texture* texture, rs::Industr
         break;
     }
 
+	float x1, y1;
+	x1 = x;
+	y1 = y;
+	rs::twoDToIso(x1, y1, 64, 32);
+
     m_storage = 0;
 
     m_type = type;
 
-    m_sprite.setPosition(sf::Vector2f(x, y-(m_texture->getSize().y)+pointMapping));
+    m_sprite.setPosition(sf::Vector2f(x1, y1-(m_texture->getSize().y)+pointMapping));
     m_sprite.setTexture(*texture);
 
     m_isActive = true;
@@ -277,7 +295,6 @@ void Industries::update(const float dt)
 
 void Industries::draw(sf::RenderWindow& view)
 {
-
     view.draw(this->m_sprite);
 }
 

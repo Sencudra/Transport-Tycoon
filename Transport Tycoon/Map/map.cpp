@@ -88,6 +88,25 @@ int Map::generateMap()
     return 0;
 }
 
+int Map::initialiseEmptyMap()
+{
+	int size = m_mapSize;
+	m_map = new Tile**[size];
+	for (int i = 0; i < size; ++i)
+	{
+		m_map[i] = new Tile*[size];
+		for (int j = 0; j < size; ++j)
+		{
+			int height = 0;
+
+			rs::TileType tileType = rs::TileType::VOID;
+
+			//m_map[i][j] = new Tile(height, getTileTexture(height), tileType, m_world->getDrawnFlag());
+		}
+	}
+	return 0;
+}
+
 
 int Map::initialiseMap()
 {
@@ -177,19 +196,11 @@ int Map::generateObjects()
 
                     if(isCreated)
                     {
-                        float a, b; 
-						a = x;  
-						b = y;
-
-                        rs::twoDToIso(a,b,64,32);
-
                         sf::Texture* newTexture = m_engine->m_texmng->getTextureRef(type);
 
-                        Object* newObject = new Industries(rs::ObjectType::INDUSTRY , newTexture, type, a, b);
+                        Object* newObject = new Industries(rs::ObjectType::INDUSTRY , newTexture, type, x, y);
 
-                        //m_world->addObject(newObject);
-
-
+                        m_world->addObject(newObject);
 
                         int rows = m_industryMaps[type].m_sizeX;
                         int columns = m_industryMaps[type].m_sizeY;

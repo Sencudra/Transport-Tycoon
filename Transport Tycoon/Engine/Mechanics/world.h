@@ -15,6 +15,7 @@ class ScreenView;
 class World
 {
 public:
+	World();
     World(int mode, ng::ProgramEngine* engine, ProgramStateMain* state);
     ~World();
 
@@ -91,9 +92,13 @@ private:
 		ar & m_isPause;
 		ar & m_isSpeed;
 
+		ar.template register_type<Industries>();
+		ar.template register_type<Road>();
+		ar.template register_type<DynamicObject>();
+
 		ar & m_objDynamContainer;
 
-		//ar & m_objStaticContainer;
+		ar & m_objStaticContainer;
 
 		ar & m_tileMap;
 

@@ -24,8 +24,9 @@ GuiMenu::GuiMenu(ng::ProgramEngine* game)
 	this->m_game = game;
 	
 	// variables
-	
-	bool m_show_settings = false;
+	this->m_fileSelected = -1;
+	m_isLoadPanelActive = false;
+	m_isSettingsPanelAxtive = false;
 }
 
 
@@ -67,6 +68,7 @@ void GuiMenu::menu(bool gShow)
 		ImFontAtlas* atlas = ImGui::GetIO().Fonts;
 		ImFont* fontName = atlas->Fonts[3];
 		ImFont* fontMenu = atlas->Fonts[2];
+		ImFont* fontRegular = atlas->Fonts[1];
 
 
 		ImGui::BeginGroup();
@@ -88,11 +90,14 @@ void GuiMenu::menu(bool gShow)
 
 				}
 				if (ImGui::Button("Load Game", size)) {
-					this->m_game->pushState(new ProgramStateMain(1, this->m_game));
-
+					m_isLoadPanelActive = true;
+					this->m_game->m_ioutput->getSaveList(m_file_list); // get list of save files available
+					ImGui::OpenPopup("Load Game##1");
+					
+					//this->m_game->pushState(new ProgramStateMain(1, this->m_game));
 				}
 				if (ImGui::Button("Settings", size)) {
-					this->m_show_settings = !(this->m_show_settings);
+					this->m_isSettingsPanelAxtive = !(this->m_isSettingsPanelAxtive);
 
 				}
 				if (ImGui::Button("Exit", size)) {
@@ -103,11 +108,25 @@ void GuiMenu::menu(bool gShow)
 			}
 			ImGui::PopFont();
 		}
+
+
+		ImGui::PushFont(fontRegular);
+
+		if (m_isLoadPanelActive) this->loadGame();
+
+		ImGui::PopFont();
+
+
 	}
+
+	
+
 	ImGui::End(); // end window
 	
 
-	if (m_show_settings) this->settings();
+	if (m_isSettingsPanelAxtive) this->settings();
+	
+	
 }
 
 void GuiMenu::settings()
@@ -143,6 +162,62 @@ void GuiMenu::settings()
 		}
 	}
 	ImGui::End();
+}
+
+void gui::GuiMenu::loadGame()
+{
+	ImGuiStyle& style = ImGui::GetStyle();
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings;
+
+	ImVec4 darkColor = (ImVec4)ImColor(0, 0, 0, 200);
+	ImVec4 btBgColor = (ImVec4)ImColor(0, 0, 0, 0);
+	// Current window style settings
+	int pcc = 0; // push color counter
+	int pvc = 0; // push variable counter
+
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10)); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10)); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 5)); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3); ++pvc;
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3); ++pvc;
+
+	style.Colors[ImGuiCol_ModalWindowDarkening] = darkColor;
+	ImGui::SetNextWindowSize(ImVec2(400, 200), ImGuiCond_Always);
+
+	if (ImGui::BeginPopupModal("Load Game##1", &m_isLoadPanelActive, window_flags))
+	{
+		//ImGui::PopStyleColor(1); // back to previous color style
+
+		if (m_file_list.empty())
+		{
+			ImGui::Text("No Files to load");
+		}
+		else
+		{
+			ImGui::Text("Choose file to load game:");
+
+			ImGui::PushItemWidth(-1);
+			if (ImGui::ListBox("##LoadListBox", &m_fileSelected, m_file_list))
+			{
+				strcpy_s(m_fileName, m_file_list[m_fileSelected].first.data());
+			}
+			ImGui::PopItemWidth();
+			ImGui::Separator();
+
+			if (ImGui::Button("load") && m_fileSelected != -1) {
+				this->m_game->io_loadGame(std::string(m_fileName)); // Passing filename to IO module
+			}
+
+		}
+		//ImGui::PushStyleColor(ImGuiCol_Button, btBgColor);  ++pcc;
+		ImGui::EndPopup();
+	}
+
+	ImGui::PopStyleVar(pvc);
+
+
 }
 
 // Game Gui
@@ -305,9 +380,9 @@ void GuiGame::toolBar(bool gShow)
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Building tool");
 
-			fontIcon->DisplayOffset.y = 2;
-			ImGui::Button(ICON_KI_CAR, buttonRect);
-			fontIcon->DisplayOffset.y = 0;
+	
+
+			this->vehicleBuilderButton(buttonRect, fontIcon);
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Vehicle");
 		}
@@ -418,8 +493,6 @@ void gui::GuiGame::saveButton(ImVec2 buttonRect, ImFont* fontIcon)
 			this->m_game->setEditState(rs::EditState::NONE);
 		}
 
-
-
 		ImGui::OpenPopup("Save Game");
 		//this->m_world->switchPause(); // in the future we can pause the game while saving
 	}
@@ -459,7 +532,11 @@ void gui::GuiGame::saveButton(ImVec2 buttonRect, ImFont* fontIcon)
 		ImGui::PopItemWidth();		
 		ImGui::Separator();
 
-		if (ImGui::Button("Return to Menu")) { ; }
+		if (ImGui::Button("Return to Menu")) { 
+			this->m_game->popState();
+		
+		
+		}
 		ImGui::SameLine();
 		if (ImGui::Button("Return to Desctop")) { ; }
 
@@ -515,6 +592,28 @@ void gui::GuiGame::roadBuilderButton(ImVec2 buttonRect, ImFont* fontIcon)
 
 void gui::GuiGame::vehicleBuilderButton(ImVec2 buttonRect, ImFont* fontIcon)
 {	// Place vechicle
+	
+	ImVec4 btAcColor = (ImVec4)ImColor(15, 135, 250, 255);
+	bool flagPush = false;
 
+	if (m_isVehicleBuilderBtnActive) // Color manipulations
+	{
+		ImGui::PushStyleColor(ImGuiCol_Button, btAcColor);
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btAcColor);
+		flagPush = true;
+	}
+	fontIcon->DisplayOffset.y = 2;
+	if (ImGui::Button(ICON_KI_CAR, buttonRect))
+	{
+		if (m_isVehicleBuilderBtnActive)this->m_game->setEditState(rs::EditState::NONE);
+		else this->m_game->setEditState(rs::EditState::CARSETUP);
 
+		m_isVehicleBuilderBtnActive = !m_isVehicleBuilderBtnActive;
+
+		if (m_isRoadBuilderBtnActive)
+			m_isRoadBuilderBtnActive = !m_isRoadBuilderBtnActive;
+
+	}
+	fontIcon->DisplayOffset.y = 0;
+	if (flagPush) ImGui::PopStyleColor(2);
 }
