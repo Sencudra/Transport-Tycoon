@@ -42,16 +42,45 @@ World::World(ng::ProgramEngine* engine, ProgramStateMain *state):
     m_timePerDay = 2.5;
 }
 
-void World::setParameters(ng::ProgramEngine* engine, ProgramStateMain* state)
+void World::WorldLoadSetup(ng::ProgramEngine* engine, ProgramStateMain* state)
 {
-	engine->io_setupIO(this);
+	engine->io_setupIO(this); // Input output module
+
 	this->m_engine = engine;
 	this->m_state = state;
 
-	 m_drawFlag = false;
+	 m_drawFlag = false; // tile rendering flag
 
 	m_timePerDay = 2.5;
 	m_oneDayTimer = 0;
+
+	for (auto i : m_objStaticContainer)
+	{
+		if (i->m_objectType == rs::ObjectType::ROAD)
+		{
+			Road* road = dynamic_cast<Road*>(i);
+			road->loadObject(m_engine->m_texmng->getTextureRef(road->getType()));
+			m_tileMap->m_map[road->m_x][road->m_y]->setObject(road);
+			m_tileMap->m_map[road->m_x][road->m_y]->isMainStatic = true;
+		}
+		if (i->m_objectType == rs::ObjectType::INDUSTRY)
+		{
+			Industry* ind = dynamic_cast<Industry*>(i);
+		
+			ind->loadObject(m_engine->m_texmng->getTextureRef(ind->getType()));
+			m_tileMap->placeIndustry(ind);
+
+		}
+	}
+	for (auto i : m_objDynamContainer)
+	{
+		DynamicObject* dy = dynamic_cast<DynamicObject*> (i);
+		sf::Texture* txRef = m_engine->m_texmng->getTextureRef("auto");
+		dy->loadObject(txRef, m_tileMap, &m_player);
+
+	}
+
+
 
 }
 
@@ -105,15 +134,10 @@ void World::draw(ScreenView& gameView)
 void World::addRoad(float x, float y)
 {
 
-    float a,b;
-    a = x;
-    b = y;
+    float a,b; a = x; b = y;
     rs::isoToTwoD(a, b,64, 32);
 
-    int x1 , y1;
-
-    x1 = a;
-    y1 = b;
+    int x1 , y1; x1 = a; y1 = b;
     if((x1 <= 0 || x1 >= m_tileMap->getMapSize()) || (y1 <= 0 || y1 >= m_tileMap->getMapSize())) return;
 
     /* checking for tile availableness */
@@ -132,7 +156,8 @@ void World::addRoad(float x, float y)
         if(!m_player.getMoney(100)) return;
 
         std::cout << "Add road" << std::endl;
-        Road* road = new Road(rs::ObjectType::ROAD, m_engine->m_texmng->getTextureRef(rs::RoadType::ROAD_0_PATH1), rs::RoadType::ROAD_0_PATH1);
+        Road* road = new Road(rs::ObjectType::ROAD, m_engine->m_texmng->getTextureRef(rs::RoadType::ROAD_0_PATH1),
+			rs::RoadType::ROAD_0_PATH1, x1, y1);
         m_tileMap->m_map[x1][y1]->setObject(road);
 		m_tileMap->m_map[x1][y1]->isMainStatic = true;
 
@@ -362,8 +387,19 @@ void World::deleteObject(sf::Vector2f pos)
     x1 = x;
     y1 = y;
 
-	m_tileMap->m_map[x1][y1]->deleteObject();
+	int j = 0;
+	for (auto i : m_objStaticContainer)
+	{
+		if (i->m_objectType == rs::ObjectType::ROAD && x1 == i->m_x && y1 == i->m_y)
+		{
+			m_objStaticContainer.erase(m_objStaticContainer.begin() + j);
+			break;
+		}
+		++j;
+	}
 
+	m_tileMap->m_map[x1][y1]->deleteObject();
+	
 
     for(int x = x1 - 1; x < x1 + 1; ++x )
         for(int y = y1 - 1; y < y1 + 1; ++y)
@@ -510,7 +546,6 @@ void World::drawMap(ScreenView& gameView)
 					n_y <= gameView.getViewRect().bottomRight.y + 64))
 			{
 				m_tileMap->m_map[x][y]->draw(n_x, n_y, (m_engine->m_window));
-				//std::cout << "X: " << x << "Y: " << y << std::endl;
 			}
 		
 		}

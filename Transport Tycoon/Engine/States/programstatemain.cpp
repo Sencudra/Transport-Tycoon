@@ -16,8 +16,9 @@ ProgramStateMain::ProgramStateMain(World* world, ng::ProgramEngine* engine) :
 {
 	std::cout << "ProgramStateMain::ProgramStateMain" << std::endl;
 	this->m_game = engine;
-	this->m_world->setParameters(engine, this);
-	this->m_world->m_tileMap->loadSetup(world, engine, m_world->getDrawnFlag());
+	
+	this->m_world->m_tileMap->loadMapSetup(world, engine, m_world->getDrawnFlag()); // First
+	this->m_world->WorldLoadSetup(engine, this); // Second
 		
 	this->m_gui = new gui::GuiGame(m_game, m_world);
 

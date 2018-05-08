@@ -42,6 +42,7 @@ public:
 
     virtual void update(const float dt) = 0;
     virtual void draw(sf::RenderWindow& view) = 0;
+	virtual void loadObject(sf::Texture* texture) = 0;
 
 
 public:
@@ -75,10 +76,12 @@ public:
     DynamicObject(Player* player, Map* map, sf::Texture *texture, float x, float y);
     ~DynamicObject();
 
-    virtual void update(const float dt);
-    virtual void draw(sf::RenderWindow& view);
+    virtual void update(const float dt) override;
+    virtual void draw(sf::RenderWindow& view) override;
+	virtual void loadObject(sf::Texture * texture) override { ; }
 
-	void loadSetup();
+	void loadObject(sf::Texture * texture, Map* map, Player* player);
+
     void moveTaskSetup(rs::Point start, rs::Point end);
     void addTask(rs::Point task);
 
@@ -130,15 +133,16 @@ private:
 
 };
 
-class Industries : public Object
+class Industry : public Object
 {
 public:
-	Industries() { ; }
-    Industries(rs::ObjectType objType, sf::Texture* texture, rs::IndustryType type, float x, float y);
-    ~Industries(){}
+	Industry() { ; }
+    Industry(rs::ObjectType objType, sf::Texture* texture, rs::IndustryType type, float x, float y);
+    ~Industry(){}
 
-    virtual void update(const float dt);
-    virtual void draw(sf::RenderWindow& view); //Возможно прорисовывает несколько раз. Проверить
+    virtual void update(const float dt) override;
+    virtual void draw(sf::RenderWindow& view) override; //Возможно прорисовывает несколько раз. Проверить
+	virtual void loadObject(sf::Texture* texture) override;
 
     void setProp(const rs::IndustryType type);
     void setIsActive();
@@ -182,11 +186,12 @@ class Road : public Object
 {
 public:
 	Road() { ; }
-    Road(rs::ObjectType objType,sf::Texture* texture, rs::RoadType type);
+    Road(rs::ObjectType objType, sf::Texture* texture, rs::RoadType type, int x, int y);
     ~Road(){}
 
-    virtual void update(const float dt);
-    virtual void draw(sf::RenderWindow& view);
+    virtual void update(const float dt)override;
+    virtual void draw(sf::RenderWindow& view)override;
+	virtual void loadObject(sf::Texture* texture)override; // loading procedure
 
     void setNewType(sf::Texture* texture, rs::RoadType type)
         {m_type = type; updateSprite(texture);}
@@ -212,14 +217,6 @@ private:
 	}
 
 };
-
-
-
-
-
-
-
-
 
 
 

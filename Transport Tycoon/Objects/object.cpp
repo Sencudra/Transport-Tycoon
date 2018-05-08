@@ -155,9 +155,12 @@ void DynamicObject::draw(sf::RenderWindow& view)
 	view.draw(m_sprite);
 }
 
-void DynamicObject::loadSetup()
-{	// setup after loading
 
+void DynamicObject::loadObject(sf::Texture * texture, Map * map, Player * player)
+{
+	m_texture = texture;
+	m_map = map;
+	m_player = player;
 
 	m_finder = new PathFinder(m_map);
 	if (!m_moveTask.empty())
@@ -169,8 +172,12 @@ void DynamicObject::loadSetup()
 		end.setValues(m_moveTask.front().x, m_moveTask.front().y);
 		moveTaskSetup(start, end);
 	}
-	
+
+	m_sprite.setTexture(*texture);
+	m_map->m_map[m_x][m_y]->m_tileDynObj.push_back(this);
+
 }
+
 
 void DynamicObject::moveTaskSetup(rs::Point start, rs::Point end)
 {
@@ -193,7 +200,7 @@ void DynamicObject::moveTaskSetup(rs::Point start, rs::Point end)
 
 void DynamicObject::cargoExchange()
 {
-    Industries* obj = NULL;
+    Industry* obj = NULL;
 
     for(int x = m_x - 1; x < m_x + 1; ++x)
         for(int y = m_y - 1; y < m_y + 1; ++y)
@@ -202,7 +209,7 @@ void DynamicObject::cargoExchange()
             if(m_map->m_map[x][y]->m_tileStatObj != NULL &&
                m_map->m_map[x][y]->m_tileStatObj->m_objectType == rs::ObjectType::INDUSTRY )
             {
-                obj = dynamic_cast<Industries*> (m_map->m_map[x][y]->m_tileStatObj);
+                obj = dynamic_cast<Industry*> (m_map->m_map[x][y]->m_tileStatObj);
                 continue;
             }
         }
@@ -251,9 +258,9 @@ void DynamicObject::addTask(rs::Point task)
         }
 }
 
-Road::Road(rs::ObjectType objType, sf::Texture* texture, rs::RoadType type)
+Road::Road(rs::ObjectType objType, sf::Texture* texture, rs::RoadType type, int x, int y)
 {
-    createObject(objType, texture,0,0);
+    createObject(objType, texture, x, y);
 
     m_type = type;
     m_sprite.setTexture(*texture);
@@ -270,45 +277,30 @@ void Road::draw(sf::RenderWindow& view)
     view.draw(this->m_sprite);
 }
 
+void Road::loadObject(sf::Texture * texture)
+{
+	m_texture = texture;
+	updateSprite(texture);
+}
+
 void Road::updateSprite(sf::Texture *texture)
 {
     m_sprite.setTexture(*texture);
 }
 
-Industries::Industries(rs::ObjectType objType, sf::Texture* texture, rs::IndustryType type, float x, float y)
+Industry::Industry(rs::ObjectType objType, sf::Texture* texture, rs::IndustryType type, float x, float y)
 {
     createObject(objType,texture,x,y);
 
-    /* different objects have different size and sprite size. */
-    int pointMapping;
-    switch (type) {
-    case rs::IndustryType::COALMINE:
-        pointMapping = 64;
-        break;
-    case rs::IndustryType::POWERSTATION:
-        pointMapping = 48;
-        break;
-    default:
-        break;
-    }
-
-	float x1, y1;
-	x1 = x;
-	y1 = y;
-	rs::twoDToIso(x1, y1, 64, 32);
-
-    m_storage = 0;
-
-    m_type = type;
-
-    m_sprite.setPosition(sf::Vector2f(x1, y1-(m_texture->getSize().y)+pointMapping));
-    m_sprite.setTexture(*texture);
-
-    m_isActive = true;
-    setProp(type);
+	m_type = type;
+	m_storage = 0;
+	m_isActive = true;
+	setProp(type);
+	loadObject(texture);
+    
 }
 
-void Industries::update(const float dt)
+void Industry::update(const float dt)
 {
     if(m_isActive)
     {
@@ -316,12 +308,40 @@ void Industries::update(const float dt)
     }
 }
 
-void Industries::draw(sf::RenderWindow& view)
+void Industry::draw(sf::RenderWindow& view)
 {
     view.draw(this->m_sprite);
 }
 
-void Industries::setProp(const rs::IndustryType type)
+void Industry::loadObject(sf::Texture * texture)
+{ // Loads sprite settings
+	m_texture = texture;
+
+	/* different objects have different sprite size. */
+	int pointMapping;
+	switch (this->m_type) {
+	case rs::IndustryType::COALMINE:
+		pointMapping = 64;
+		break;
+	case rs::IndustryType::POWERSTATION:
+		pointMapping = 48;
+		break;
+	default:
+		break;
+	}
+
+	float x1, y1;
+	x1 = this->m_x;
+	y1 = this->m_y;
+	rs::twoDToIso(x1, y1, 64, 32);
+
+	m_sprite.setTexture(*m_texture);
+	m_sprite.setPosition(sf::Vector2f(x1, y1 - (m_texture->getSize().y) + pointMapping));
+
+
+}
+
+void Industry::setProp(const rs::IndustryType type)
 {
     srand(time(NULL));
 
@@ -365,7 +385,7 @@ void Industries::setProp(const rs::IndustryType type)
     }
 }
 
-void Industries::setIsActive()
+void Industry::setIsActive()
 {
     m_isActive = true;
 }

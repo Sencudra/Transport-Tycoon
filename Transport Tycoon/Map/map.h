@@ -8,6 +8,7 @@ namespace ng { class ProgramEngine;}
 class Object;
 class Tile;
 class World;
+class Industry;
 
 
 class Map
@@ -34,8 +35,9 @@ public:
     sf::Texture &getTileTexture(const int cellHeight) const;
     rs::TileType getTileType(const int cellHeight) const;
 
-	void loadSetup(World* world, ng::ProgramEngine* engine, bool* flag);
+	void loadMapSetup(World* world, ng::ProgramEngine* engine, bool* flag);
 
+	void placeIndustry(Industry* ind);
 
 private:
 		

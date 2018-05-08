@@ -41,9 +41,11 @@ void Tile::draw(int x, int y, sf::RenderWindow& window)
 		window.draw(m_sprite);
 		isSpriteDrawn = *drawFlag;
 
-
-		if (this->isMainStatic == true && m_tileStatObj != NULL)
+		if (this->isMainStatic == true && m_tileStatObj != nullptr)
+		{
 			m_tileStatObj->draw(window);
+		}
+			
 	}
 
 	if (m_tileDynObj.size() != 0)
@@ -80,7 +82,7 @@ void Tile::update()
 
 bool Tile::setObject(Object* obj)
 {
-    if(m_tileStatObj == NULL)
+    if(m_tileStatObj == nullptr)
     {
         obj->m_sprite.setPosition(this->m_sprite.getPosition().x, this->m_sprite.getPosition().y);
         m_tileStatObj = obj;
@@ -94,12 +96,12 @@ bool Tile::setObject(Object* obj)
 
 void Tile::deleteObject()
 {
-	if (this->m_tileStatObj == NULL) return;
+	if (this->m_tileStatObj == nullptr) return;
 
 	if (this->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
 	{
 		delete m_tileStatObj;
-		m_tileStatObj = NULL;
+		m_tileStatObj = nullptr;
 		bool isMainStatic = false;
 	}
 }

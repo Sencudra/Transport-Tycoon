@@ -20,8 +20,9 @@ public:
 	
     World(ng::ProgramEngine* engine, ProgramStateMain* state);
     ~World();
-	void setParameters(ng::ProgramEngine* engine, ProgramStateMain* state);
-    void update(float dt);
+	void WorldLoadSetup(ng::ProgramEngine* engine, ProgramStateMain* state);
+   
+	void update(float dt);
     void draw(ScreenView &gameView);
 
     Object* selectObject(sf::Vector2f pos);
@@ -32,7 +33,6 @@ public:
     void deleteVec(Object* obj);
 
     void addObject(Object* obj){m_objStaticContainer.push_back(obj);}
-
 
     int getTileMapSize(){return m_tileMap->getMapSize();}
     rs::Rectangle getTileMapEdges(){return m_tileMap->getMapEdges();}
@@ -94,7 +94,7 @@ private:
 		ar << m_isPause;
 		ar << m_isSpeed;
 
-		ar.template register_type<Industries>();
+		ar.template register_type<Industry>();
 		ar.template register_type<Road>();
 		ar.template register_type<DynamicObject>();
 
@@ -114,26 +114,15 @@ private:
 		ar >> m_isPause;
 		ar >> m_isSpeed;
 
-		ar.template register_type<Industries>();
+		ar.template register_type<Industry>();
 		ar.template register_type<Road>();
 		ar.template register_type<DynamicObject>();
 
 		ar >> m_objDynamContainer;
-		for (auto i : m_objDynamContainer)
-		{
-			i->m_texture = this->m_engine->m_texmng->getTextureRef("auto");
-			i->m_sprite.setTexture(*(i->m_texture));
-			DynamicObject* obj = dynamic_cast<DynamicObject*> (i);
-			obj->m_map = this->m_tileMap;
-			obj->m_player = (Player*) &this->m_player;
-			obj->loadSetup(); 
-		}
 			
 		ar >> m_objStaticContainer;
 
 		ar >> m_tileMap;
-		//m_tileMap->loadSetup(this, m_engine, &m_drawFlag);
-
 
 	}
 };

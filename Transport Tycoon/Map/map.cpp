@@ -198,33 +198,11 @@ int Map::generateObjects()
                     {
                         sf::Texture* newTexture = m_engine->m_texmng->getTextureRef(type);
 
-                        Object* newObject = new Industries(rs::ObjectType::INDUSTRY , newTexture, type, x, y);
+                        Industry* newObject = new Industry(rs::ObjectType::INDUSTRY , newTexture, type, x, y);
 
                         m_world->addObject(newObject);
-
-                        int rows = m_industryMaps[type].m_sizeX;
-                        int columns = m_industryMaps[type].m_sizeY;
-
-                        for(int i = y - rows + 1, i2 = 0; i <= y, i2 < rows; ++i,++i2)
-                        {
-                            for(int j = x, j2 = 0; j <= x + columns, j2 < columns; ++j,++j2)
-                            {
-
-								// Look in Map::loadIndustryMaps() for more info
-                                if(m_industryMaps[type].m_map[i2][j2] == 'x')
-                                {        
-                                    m_map[j][i]->m_tileStatObj = newObject;
-                                }
-								if (m_industryMaps[type].m_map[i2][j2] == '1')
-								{
-									m_map[j][i]->m_sprite.setTexture(*m_engine->m_texmng->getTextureRef("bg_factory"));
-									m_map[j][i]->m_tileStatObj = newObject;
-									m_map[j][i]->isMainStatic = true;
-								}
-
-                            }
-                        }
-                        m_map[x][y]->m_sprite.setTexture(*m_engine->m_texmng->getTextureRef("bg_red"));
+						
+						this->placeIndustry(newObject);
 
                     }
                 }
@@ -268,6 +246,7 @@ void Map::loadIndustryMaps()
 
 
 }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 /// Height map methods
@@ -441,7 +420,7 @@ rs::TileType Map::getTileType(const int cellHeight) const
     else return rs::TileType::VOID;
 }
 
-void Map::loadSetup(World * world, ng::ProgramEngine * engine, bool* flag)
+void Map::loadMapSetup(World * world, ng::ProgramEngine * engine, bool* flag)
 { // For loading from file
 	m_world = world;
 	m_engine = engine;
@@ -451,12 +430,48 @@ void Map::loadSetup(World * world, ng::ProgramEngine * engine, bool* flag)
 		{
 			m_map[i][j]->drawFlag = this->m_world->getDrawnFlag();
 			m_map[i][j]->isSpriteDrawn = *(m_map[i][j]->drawFlag);
+
+			float x, y;  x = i; y = j;
+			rs::twoDToIso(x, y, 64, 32);
+			m_map[i][j]->m_sprite.setPosition(x, y);
 			m_map[i][j]->m_sprite.setOrigin(sf::Vector2f(0.0f, 0.0f));
 			m_map[i][j]->m_sprite.setTexture(getTileTexture(m_map[i][j]->m_tileHeight));
+			m_map[i][j]->m_tileStatObj = nullptr;
+
 		}
 
 	}
 
 	loadIndustryMaps();
+}
+
+void Map::placeIndustry(Industry * ind)
+{
+	int x, y;
+	rs::IndustryType type = ind->getType();
+	int rows = m_industryMaps[type].m_sizeX;
+	int columns = m_industryMaps[type].m_sizeY;
+	x = ind->m_x;
+	y = ind->m_y;
+
+	for (int i = y - rows + 1, i2 = 0; i <= y, i2 < rows; ++i, ++i2)
+	{
+		for (int j = x, j2 = 0; j <= x + columns, j2 < columns; ++j, ++j2)
+		{
+
+			// Look in Map::loadIndustryMaps() for more info
+			if (m_industryMaps[type].m_map[i2][j2] == 'x')
+			{
+				m_map[j][i]->m_tileStatObj = ind;
+			}
+			if (m_industryMaps[type].m_map[i2][j2] == '1')
+			{
+				m_map[j][i]->m_sprite.setTexture(*m_engine->m_texmng->getTextureRef("bg_factory"));
+				m_map[j][i]->m_tileStatObj = ind;
+				m_map[j][i]->isMainStatic = true;
+			}
+		}
+	}
+
 }
 
