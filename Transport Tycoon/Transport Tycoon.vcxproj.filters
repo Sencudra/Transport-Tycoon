@@ -92,9 +92,6 @@
     <ClCompile Include="Map\cell.cpp">
       <Filter>Исходные файлы\Map</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\vehicle.cpp">
-      <Filter>Исходные файлы\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Map\tile.cpp">
       <Filter>Исходные файлы\Map</Filter>
     </ClCompile>
@@ -171,9 +168,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Resources\texturemanager.h">
       <Filter>Исходные файлы\Engine\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\vehicle.h">
-      <Filter>Исходные файлы\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Map\tile.h">
       <Filter>Исходные файлы\Map</Filter>

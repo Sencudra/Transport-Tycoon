@@ -59,6 +59,8 @@ enum class RoadType {   ROAD_0_PATH1, ROAD_1_PATH1, ROAD_1_PATH2, ROAD_1_PATH3, 
                         ROAD_2_PATH1, ROAD_2_PATH2, ROAD_2_PATH3, ROAD_2_PATH4, ROAD_2_PATH5, ROAD_2_PATH6,
                         ROAD_3_PATH1, ROAD_3_PATH2, ROAD_3_PATH3, ROAD_3_PATH4, ROAD_4_PATH1  };
 
+enum class VehicleType { BUS, MAIL_TRUCK, OIL_TANKER, GOODS_TRUCK, GRAIN_TRUCK, LIVESTOCK_VAN,
+						WOOD_TRUCK, COAL_TRUCK, IRON_ORE_TRUCK, STEEL_TRUCK };
 
 enum class IndustryType {COALMINE, POWERSTATION, IRONOREMINE, STEELMILL,
                          FARM, FACTORY, FOREST, SAWMILL, OILWELLS,
@@ -172,6 +174,28 @@ namespace boost {
 		}
 	} // namespace serialization
 } // namespace boost
+
+
+
+namespace vhs {
+
+
+	enum class enumVehicle { BALOGH, UHL, DW };
+
+	struct Vehicle
+	{
+		std::string name;
+		float price;		// in dollars
+		int speed;			// km/h
+		int runCost;		// Per year
+		int dateDesigned;	// Year
+		int lifespan;		// In years
+		int capacity;		// In tonnes
+	};
+
+}
+
+
 
 
 

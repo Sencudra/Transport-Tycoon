@@ -1,12 +1,17 @@
 #include "texturemanager.h"
 
-TextureManager::TextureManager()
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+
+
+
+DataManager::DataManager()
 {
 
 }
 
 
-void TextureManager::loadTexture(const std::string& name, const std::string& filename)
+void DataManager::loadTexture(const std::string& name, const std::string& filename)
 {
     /* Load the texture */
     sf::Texture tex;
@@ -18,7 +23,7 @@ void TextureManager::loadTexture(const std::string& name, const std::string& fil
     return;
 }
 
-void TextureManager::loadTexture(const rs::IndustryType type, const std::string& filename)
+void DataManager::loadTexture(const rs::IndustryType type, const std::string& filename)
 {
     /* Load the texture */
     sf::Texture tex;
@@ -30,7 +35,7 @@ void TextureManager::loadTexture(const rs::IndustryType type, const std::string&
     return;
 }
 
-void TextureManager::loadTexture(const rs::RoadType type, const std::string& filename)
+void DataManager::loadTexture(const rs::RoadType type, const std::string& filename)
 {
     /* Load the texture */
     sf::Texture tex;
@@ -42,20 +47,55 @@ void TextureManager::loadTexture(const rs::RoadType type, const std::string& fil
     return;
 }
 
+void DataManager::loadVehicleBase()
+{
+	boost::property_tree::ptree pt;
+	boost::property_tree::ini_parser::read_ini("data.ini", pt);
 
-sf::Texture* TextureManager::getTextureRef(const std::string& name)
+	rs::vhs::Vehicle truck_1;
+	truck_1.name			=			  pt.get<std::string>("balogh_truck.name");
+	truck_1.price			=	std::stoi(pt.get<std::string>("balogh_truck.price"));
+	truck_1.speed			=	std::stoi(pt.get<std::string>("balogh_truck.speed"));
+	truck_1.runCost			=	std::stoi(pt.get<std::string>("balogh_truck.run_cost"));
+	truck_1.dateDesigned	=	std::stoi(pt.get<std::string>("balogh_truck.date_designed"));
+	truck_1.lifespan		=	std::stoi(pt.get<std::string>("balogh_truck.lifespan"));
+	truck_1.capacity		=	std::stoi(pt.get<std::string>("balogh_truck.capacity"));
+	
+	this->addToVehiclesBase(rs::vhs::enumVehicle::BALOGH, truck_1);
+	//rs::vhs::Truck truck = dynamic_cast<Truck> (this->getVehicleStruct(s::vhs::enumVehicle::BALOGH));
+
+	std::cout << getVehicleStruct(rs::vhs::enumVehicle::BALOGH).name << std::endl;
+
+
+}
+
+void DataManager::addToVehiclesBase(const rs::vhs::enumVehicle name, rs::vhs::Vehicle obj)
+{
+	vehicles[name] = obj;
+}
+
+
+
+
+
+sf::Texture* DataManager::getTextureRef(const std::string& name)
 {
     return &this->textures.at(name);
 }
 
-sf::Texture* TextureManager::getTextureRef(const rs::IndustryType& type)
+sf::Texture* DataManager::getTextureRef(const rs::IndustryType& type)
 {
     return &this->ind_textures.at(type);
 }
 
-sf::Texture* TextureManager::getTextureRef(const rs::RoadType& type)
+sf::Texture* DataManager::getTextureRef(const rs::RoadType& type)
 {
     return &this->road_textures.at(type);
+}
+
+rs::vhs::Vehicle DataManager::getVehicleStruct(const rs::vhs::enumVehicle name) const
+{
+	return vehicles.at(name);	
 }
 
 

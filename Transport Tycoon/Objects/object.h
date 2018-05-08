@@ -7,6 +7,9 @@
 #include "tile.h"
 
 
+
+
+
 class PathFinder;
 class PPoint;
 class Player;
@@ -67,70 +70,6 @@ private:
 		ar & m_objectType;
 
     }
-};
-
-class DynamicObject: public Object
-{
-public:
-	DynamicObject();
-    DynamicObject(Player* player, Map* map, sf::Texture *texture, float x, float y);
-    ~DynamicObject();
-
-    virtual void update(const float dt) override;
-    virtual void draw(sf::RenderWindow& view) override;
-	virtual void loadObject(sf::Texture * texture) override { ; }
-
-	void loadObject(sf::Texture * texture, Map* map, Player* player);
-
-    void moveTaskSetup(rs::Point start, rs::Point end);
-    void addTask(rs::Point task);
-
-    std::vector<rs::Point> m_moveTask;
-    int m_cargoLoaded;
-    int m_capacity;
-	Map* m_map;
-	Player* m_player;
-
-private:
-    void cargoExchange();
-
-private:
-
-    rs::Resources m_cargoType;
-    bool m_isActive;
-
-	float m_x_iso;//
-	float m_y_iso;//
-
-    float m_speedX;//
-    float m_speedY;//
-    //float m_acceleration;
-
-    PathFinder* m_finder;//
-	
-    std::vector<PPoint*>*  m_path;//
-
-private:
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version)
-	{
-		// serialize base class information
-		ar & boost::serialization::base_object<Object>(*this);
-
-		ar & m_x_iso & m_y_iso;
-		ar & m_speedX & m_speedY;
-
-		ar & m_moveTask;
-
-		ar & m_isActive;
-
-		ar & m_cargoType;
-		ar & m_cargoLoaded;
-		ar & m_capacity;
-
-	}
-
 };
 
 class Industry : public Object
@@ -218,7 +157,92 @@ private:
 
 };
 
+class DynamicObject : public Object
+{
+public:
+	DynamicObject();
+	DynamicObject(Player* player, Map* map, sf::Texture *texture, float x, float y);
+	~DynamicObject();
 
+	virtual void update(const float dt) override;
+	virtual void draw(sf::RenderWindow& view) override;
+	virtual void loadObject(sf::Texture * texture) override { ; }
+
+	void loadObject(sf::Texture * texture, Map* map, Player* player);
+
+	void moveTaskSetup(rs::Point start, rs::Point end);
+	void addTask(rs::Point task);
+
+	std::vector<rs::Point> m_moveTask;
+	int m_cargoLoaded;
+	int m_capacity;
+	Map* m_map;
+	Player* m_player;
+
+private:
+	void cargoExchange();
+
+private:
+
+	rs::Resources m_cargoType;
+	bool m_isActive;
+
+	float m_x_iso;//
+	float m_y_iso;//
+
+	float m_speedX;//
+	float m_speedY;//
+				   //float m_acceleration;
+
+	PathFinder* m_finder;//
+
+	std::vector<PPoint*>*  m_path;//
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		// serialize base class information
+		ar & boost::serialization::base_object<Object>(*this);
+
+		ar & m_x_iso & m_y_iso;
+		ar & m_speedX & m_speedY;
+
+		ar & m_moveTask;
+
+		ar & m_isActive;
+
+		ar & m_cargoType;
+		ar & m_cargoLoaded;
+		ar & m_capacity;
+
+	}
+
+};
+
+class Vehicle : public DynamicObject
+{
+public:
+	Vehicle();
+	Vehicle(const Vehicle &obj);
+	Vehicle(const Vehicle &&obj);
+	~Vehicle();
+
+	int loadVehicle(rs::Cargo cargo) { m_cargo.push_back(cargo); return 0; }
+	int move(float dx, float dy);
+
+private:
+	float m_xPos;
+	float m_yPos;
+
+	int m_speed;
+	bool m_isBroken;
+	bool m_isActive;
+
+	std::vector<rs::Cargo> m_cargo;
+
+};
 
 
 #endif // OBJECT_H

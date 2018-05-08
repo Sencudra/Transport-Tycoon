@@ -31,6 +31,7 @@ namespace ng {
 
         boost::property_tree::ptree boostIni();
         int renderIni();
+		
 
         void loop();
 
@@ -48,7 +49,7 @@ namespace ng {
 		ProgramState * m_active_state;
         std::stack<ProgramState*> states;
 
-        TextureManager* m_texmng;
+        DataManager* m_texmng;
         //sf::Sprite m_background;
         sf::RenderWindow m_window;
         boost::property_tree::ptree m_iniFile;

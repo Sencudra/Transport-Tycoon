@@ -38,10 +38,11 @@ ProgramEngine::ProgramEngine()
     this->renderIni();
 
 	ImGui::CreateContext();
-    m_texmng = new TextureManager();
+    m_texmng = new DataManager();
     this->loadTextures();
     this->loadFonts();
     this->loadStylesheets();
+	m_texmng->loadVehicleBase();
     //this->m_background.setTexture(*this->m_texmng->getTextureRef("bg1"));
 
 	std::string defPath = "C:/Users/vladt/source/repos/Transport Tycoon/Transport Tycoon/saves/";
@@ -110,7 +111,6 @@ int ProgramEngine::renderIni()
     int screenWidth = std::stoi(m_iniFile.get<std::string>("video.screen_width"));
     int screenHeight = std::stoi(m_iniFile.get<std::string>("video.screen_height"));
 
-    //m_window = new sf::RenderWindow(sf::VideoMode(screenWidth, screenHeight,8), windowName);
 	
 	m_window.create(sf::VideoMode(screenWidth, screenHeight, 8), windowName);
 
