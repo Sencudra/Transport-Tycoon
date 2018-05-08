@@ -4,7 +4,8 @@
 
 Tile::Tile()
 {
-
+	this->isSpriteDrawn = false;
+	this->isMainStatic = false;
 }
 
 Tile::~Tile()

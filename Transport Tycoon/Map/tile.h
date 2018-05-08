@@ -52,20 +52,30 @@ public:
 private:
 	// Serialization
 	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version)
-	{
-		// When the class Archive corresponds to an output archive, the
-		// & operator is defined similar to <<.  Likewise, when the class Archive
-		// is a type of input archive the & operator is defined similar to >>.
+	BOOST_SERIALIZATION_SPLIT_MEMBER()
 
-		ar & m_tileType;
+	template<class Archive>
+	void save(Archive & ar, const unsigned int version) const
+	{
+
+		ar << m_tileType;
+		ar << m_tileHeight;
 
 		ar.template register_type<Industries>();
 		ar.template register_type<Road>();
+		ar << m_tileStatObj;
 
-		ar & m_tileStatObj;
-		ar & m_tileHeight;
+	}
+	template<class Archive>
+	void load(Archive & ar, const unsigned int version)
+	{
+
+		ar >> m_tileType;
+		ar >> m_tileHeight;
+
+		ar.template register_type<Industries>();
+		ar.template register_type<Road>();
+		ar >> m_tileStatObj;
 
 	}
 

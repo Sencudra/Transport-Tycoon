@@ -71,20 +71,22 @@ private:
 class DynamicObject: public Object
 {
 public:
-	DynamicObject() { ; }
+	DynamicObject();
     DynamicObject(Player* player, Map* map, sf::Texture *texture, float x, float y);
     ~DynamicObject();
 
     virtual void update(const float dt);
     virtual void draw(sf::RenderWindow& view);
 
+	void loadSetup();
     void moveTaskSetup(rs::Point start, rs::Point end);
     void addTask(rs::Point task);
 
     std::vector<rs::Point> m_moveTask;
     int m_cargoLoaded;
     int m_capacity;
-
+	Map* m_map;
+	Player* m_player;
 
 private:
     void cargoExchange();
@@ -94,19 +96,16 @@ private:
     rs::Resources m_cargoType;
     bool m_isActive;
 
-    Map* m_map;
-    Player* m_player;
+	float m_x_iso;//
+	float m_y_iso;//
 
-	float m_x_iso;
-	float m_y_iso;
-
-    float m_speedX;
-    float m_speedY;
+    float m_speedX;//
+    float m_speedY;//
     //float m_acceleration;
 
-    PathFinder* m_finder;
-
-    std::vector<PPoint*>*  m_path;
+    PathFinder* m_finder;//
+	
+    std::vector<PPoint*>*  m_path;//
 
 private:
 	friend class boost::serialization::access;
@@ -173,7 +172,7 @@ private:
 
 		ar & m_storage;
 		ar & m_workSpeed;
-		ar &  m_type;
+		ar & m_type;
 
 	}
 

@@ -4,6 +4,7 @@
 #include "object.h"
 #include "player.h"
 #include "Pathfinder.h"
+#include "texturemanager.h"
 #include "resources.h"
 
 
@@ -17,6 +18,11 @@ int Object::createObject(rs::ObjectType type, sf::Texture* texture, float x, flo
 	m_isSelected = false;
 	
 	return 0;
+}
+
+DynamicObject::DynamicObject()
+{
+
 }
 
 DynamicObject::DynamicObject(Player *player, Map* map, sf::Texture* texture, float x, float y)
@@ -147,6 +153,23 @@ void DynamicObject::draw(sf::RenderWindow& view)
 	rs::twoDToIso(x, y, 64, 32);
 	m_sprite.setPosition(x + 27, y + 11); // TO GET TO THE CENTER
 	view.draw(m_sprite);
+}
+
+void DynamicObject::loadSetup()
+{	// setup after loading
+
+
+	m_finder = new PathFinder(m_map);
+	if (!m_moveTask.empty())
+	{
+		m_isActive = true;
+
+		rs::Point start, end;
+		start.setValues(m_x, m_y);
+		end.setValues(m_moveTask.front().x, m_moveTask.front().y);
+		moveTaskSetup(start, end);
+	}
+	
 }
 
 void DynamicObject::moveTaskSetup(rs::Point start, rs::Point end)

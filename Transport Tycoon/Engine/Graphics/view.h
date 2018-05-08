@@ -10,18 +10,18 @@ using namespace sf;
 class ScreenView : public sf::View
 {
 public:
+
     ScreenView();
     ScreenView(sf::Vector2f size);
-
-
     ~ScreenView();
 
-    void viewMap(float time);
-    void changeView();
-
+	void update(float time);
     rs::ScreenRectangle getViewRect(){return m_screenPos;}
 
 private:
+
+	void viewMoving(float time);
+	void viewScaling();
     void updatePos();
     rs::ScreenRectangle m_screenPos; // view position by TL and BR corners
 

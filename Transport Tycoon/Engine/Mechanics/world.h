@@ -11,19 +11,18 @@
 class Player;
 class ProgramStateMain;
 class ScreenView;
+class DynamicObject;
 
 class World
 {
 public:
 	World();
-    World(int mode, ng::ProgramEngine* engine, ProgramStateMain* state);
+	
+    World(ng::ProgramEngine* engine, ProgramStateMain* state);
     ~World();
-
+	void setParameters(ng::ProgramEngine* engine, ProgramStateMain* state);
     void update(float dt);
     void draw(ScreenView &gameView);
-
-    void saveToFile();
-    void loadFromFile();
 
     Object* selectObject(sf::Vector2f pos);
     void deleteObject(sf::Vector2f pos);
@@ -39,14 +38,17 @@ public:
     rs::Rectangle getTileMapEdges(){return m_tileMap->getMapEdges();}
 	int getDayCount() { return m_day; }
 
-    float m_day;
-    Player m_player;
-
     bool isPause(){return m_isPause;}
 	void switchPause();
 	void x2Speed();
 
 	bool* getDrawnFlag() { return &m_drawFlag; }
+
+
+public:
+	float m_day;
+	Player m_player;
+	Map* m_tileMap;
 
 private:
 
@@ -67,7 +69,7 @@ private:
     std::vector<Object*> m_objStaticContainer;
     std::vector<Object*> m_objDynamContainer;
 
-    Map* m_tileMap;
+   
 
 
     // World behaviour
@@ -79,28 +81,59 @@ private:
 private: 
 	// Serialization
 	friend class boost::serialization::access;
+
+	BOOST_SERIALIZATION_SPLIT_MEMBER()
+
 	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version)
-	{ 
-		// When the class Archive corresponds to an output archive, the
-		// & operator is defined similar to <<.  Likewise, when the class Archive
-		// is a type of input archive the & operator is defined similar to >>.
+	void save(Archive & ar, const unsigned int version) const
+	{
 
-		ar & m_day;
-		ar & m_player;
+		ar << m_day;
+		ar << m_player;
 
-		ar & m_isPause;
-		ar & m_isSpeed;
+		ar << m_isPause;
+		ar << m_isSpeed;
 
 		ar.template register_type<Industries>();
 		ar.template register_type<Road>();
 		ar.template register_type<DynamicObject>();
 
-		ar & m_objDynamContainer;
+		ar << m_objDynamContainer;
 
-		ar & m_objStaticContainer;
+		ar << m_objStaticContainer;
 
-		ar & m_tileMap;
+		ar << m_tileMap;
+
+	}
+	template<class Archive>
+	void load(Archive & ar, const unsigned int version)
+	{
+		ar >> m_day;
+		ar >> m_player;
+
+		ar >> m_isPause;
+		ar >> m_isSpeed;
+
+		ar.template register_type<Industries>();
+		ar.template register_type<Road>();
+		ar.template register_type<DynamicObject>();
+
+		ar >> m_objDynamContainer;
+		for (auto i : m_objDynamContainer)
+		{
+			i->m_texture = this->m_engine->m_texmng->getTextureRef("auto");
+			i->m_sprite.setTexture(*(i->m_texture));
+			DynamicObject* obj = dynamic_cast<DynamicObject*> (i);
+			obj->m_map = this->m_tileMap;
+			obj->m_player = (Player*) &this->m_player;
+			obj->loadSetup(); 
+		}
+			
+		ar >> m_objStaticContainer;
+
+		ar >> m_tileMap;
+		//m_tileMap->loadSetup(this, m_engine, &m_drawFlag);
+
 
 	}
 };

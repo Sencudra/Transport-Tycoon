@@ -2,7 +2,7 @@
 #include <iostream>
 
 ScreenView::ScreenView()
-{
+{ // Default constructor
 
 }
 
@@ -10,10 +10,6 @@ ScreenView::ScreenView(sf::Vector2f size):
     sf::View(size*0.5f, size)
 {
     updatePos();
-
-    //sf::Vector2f centre()
-
-
 }
 
 void ScreenView::updatePos()
@@ -34,10 +30,14 @@ ScreenView::~ScreenView()
 
 }
 
-void ScreenView::viewMap(float time) {
+void ScreenView::update(float time)
+{
+	viewMoving(time);
+	viewScaling();
+	updatePos();
+}
 
-
-    //std::cout << "Psition: " << this->getCenter().x << " " <<  this->getCenter().y << std::endl;
+void ScreenView::viewMoving(float time) {
 
     if (Keyboard::isKeyPressed(Keyboard::A)) {
         //if(this->getCenter().x - (m_rect.width/2) >= m_mapSize.bottomLeft.x)
@@ -60,8 +60,7 @@ void ScreenView::viewMap(float time) {
 
 }
 
-void ScreenView::changeView(){
-
+void ScreenView::viewScaling(){
 
     if (Keyboard::isKeyPressed(Keyboard::U)) {
         zoom(1.1000f); //масштабируем, уменьшение
@@ -72,5 +71,4 @@ void ScreenView::changeView(){
         zoom(0.9000f); //масштабируем, увеличение
         //this->setSize(this->getSize().x*0.9000f,this->getSize().x*0.9000f);
     }
-    updatePos();
 }

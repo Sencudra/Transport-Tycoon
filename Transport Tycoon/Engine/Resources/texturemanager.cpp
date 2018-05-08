@@ -57,3 +57,5 @@ sf::Texture* TextureManager::getTextureRef(const rs::RoadType& type)
 {
     return &this->road_textures.at(type);
 }
+
+

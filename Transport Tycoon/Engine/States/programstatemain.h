@@ -15,7 +15,8 @@ class ProgramStateMain : public ProgramState
 {
 public:
 
-    ProgramStateMain(int mode,ng::ProgramEngine* game);
+	ProgramStateMain(World* world, ng::ProgramEngine* engine);
+    ProgramStateMain(ng::ProgramEngine* game);
     ~ProgramStateMain();
 
     virtual void draw(const float dt);
@@ -23,6 +24,8 @@ public:
     virtual void handleInput();
 
 	void setEditState(rs::EditState state) { m_editState = state; }
+	void viewSetup();
+
 
 private:
     //void drawMap(int dt);

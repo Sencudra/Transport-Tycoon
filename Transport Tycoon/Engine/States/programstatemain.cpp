@@ -11,38 +11,43 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+ProgramStateMain::ProgramStateMain(World* world, ng::ProgramEngine* engine) :
+	m_world(world)
+{
+	std::cout << "ProgramStateMain::ProgramStateMain" << std::endl;
+	this->m_game = engine;
+	this->m_world->setParameters(engine, this);
+	this->m_world->m_tileMap->loadSetup(world, engine, m_world->getDrawnFlag());
+		
+	this->m_gui = new gui::GuiGame(m_game, m_world);
 
-ProgramStateMain::ProgramStateMain(int mode, ng::ProgramEngine* game)
+	viewSetup();
+
+	this->m_zoomLevel = 1.0f;
+	this->m_actionState = rs::ActionState::NONE;
+	this->m_editState = rs::EditState::NONE;
+
+	m_focusObject = nullptr;
+
+}
+
+
+
+ProgramStateMain::ProgramStateMain(ng::ProgramEngine* game)
 {
 
     std::cout << "ProgramStateMain::ProgramStateMain" << std::endl;
 
     this->m_game = game;
 
-    if(mode == 1)
-    {
-		// load from file
-        m_world = new World(1, game, this);
-    }
-    else
-    {
-		// new game
-        m_world = new World(0, game, this);
-    }
+	// new game
+    m_world = new World(game, this);
 
 	// Gui Setup
 
 	this->m_gui = new gui::GuiGame(m_game, m_world);
 
-    /* View setup */
-    sf::Vector2f pos = sf::Vector2f(this->m_game->m_window.getSize());
-    sf::Vector2f centre(0, this->m_world->getTileMapSize()*0.5*32);
-    this->m_gameView = ScreenView(pos);
-    m_gameView.setCenter(centre);           // Centre the camera on the map
-
-	// for static background
-    sf::FloatRect guiView = sf::FloatRect(sf::Vector2f(0,0),pos);
-    m_guiView = View(guiView);
+	viewSetup();
 
     this->m_zoomLevel = 1.0f;
     this->m_actionState = rs::ActionState::NONE;
@@ -58,10 +63,22 @@ ProgramStateMain::~ProgramStateMain()
     delete m_world;
 }
 
+void ProgramStateMain::viewSetup()
+{
+	/* View setup */
+	sf::Vector2f pos = sf::Vector2f(this->m_game->m_window.getSize());
+	sf::Vector2f centre(0, this->m_world->getTileMapSize()*0.5 * 32);
+	this->m_gameView = ScreenView(pos);
+	m_gameView.setCenter(centre);           // Centre the camera on the map
+
+											// for static background
+	sf::FloatRect guiView = sf::FloatRect(sf::Vector2f(0, 0), pos);
+	m_guiView = View(guiView);
+}
+
 
 void ProgramStateMain::draw(const float dt)
 {
-	// DEMO Imgui
 
     //this->m_game->m_window.setView(this->m_guiView);
     //this->m_game->m_window.draw(this->m_game->m_background);
@@ -74,11 +91,8 @@ void ProgramStateMain::draw(const float dt)
 
 void ProgramStateMain::update(const float dt)
 {
-    m_gameView.viewMap(dt);
-    m_gameView.changeView();
-
+	m_gameView.update(dt);
     m_world->update(dt);
-	
 	this->showImGui();
 	
 
@@ -92,7 +106,7 @@ void ProgramStateMain::s_pause()
 
 void ProgramStateMain::s_save()
 {
-    m_world->saveToFile();
+    //m_world->saveToFile();
 }
 
 void ProgramStateMain::s_speed()

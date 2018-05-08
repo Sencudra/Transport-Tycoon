@@ -6,11 +6,11 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+
 #include "resources.h"
 #include "programengine.h"
 #include "programstate.h"
 #include "programstatemain.h"
-
 #include "IOutput.h"
 #include "IconsKenney.h"
 
@@ -45,7 +45,7 @@ ProgramEngine::ProgramEngine()
     //this->m_background.setTexture(*this->m_texmng->getTextureRef("bg1"));
 
 	std::string defPath = "C:/Users/vladt/source/repos/Transport Tycoon/Transport Tycoon/saves/";
-	m_ioutput = new IOutput(defPath);
+	m_ioutput = new IOutput(this, defPath);
 
     m_clock = new sf::Clock();
 

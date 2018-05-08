@@ -1,13 +1,15 @@
 #pragma once
 
 class World;
+namespace ng { class ProgramEngine; }
 
 class IOutput
 {
 public:
 
-	IOutput(std::string defaultPath);
 	IOutput();
+	IOutput(ng::ProgramEngine* engine, std::string defaultPath);
+	
 
 	void saveGameToFile(std::string defaultPath);
 	void loadGameFromFile(std::string defaultPath);
@@ -21,7 +23,8 @@ public:
 
 
 private:
-	World * m_world;
+	ng::ProgramEngine* m_engine;
+	World* m_world;
 	std::string m_defaultPath; // default path to save folder
 
 

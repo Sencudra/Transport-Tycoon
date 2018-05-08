@@ -441,3 +441,22 @@ rs::TileType Map::getTileType(const int cellHeight) const
     else return rs::TileType::VOID;
 }
 
+void Map::loadSetup(World * world, ng::ProgramEngine * engine, bool* flag)
+{ // For loading from file
+	m_world = world;
+	m_engine = engine;
+	for (int i = 0; i < m_mapSize; ++i)
+	{
+		for (int j = 0; j < m_mapSize; ++j)
+		{
+			m_map[i][j]->drawFlag = this->m_world->getDrawnFlag();
+			m_map[i][j]->isSpriteDrawn = *(m_map[i][j]->drawFlag);
+			m_map[i][j]->m_sprite.setOrigin(sf::Vector2f(0.0f, 0.0f));
+			m_map[i][j]->m_sprite.setTexture(getTileTexture(m_map[i][j]->m_tileHeight));
+		}
+
+	}
+
+	loadIndustryMaps();
+}
+

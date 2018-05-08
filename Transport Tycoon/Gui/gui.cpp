@@ -86,7 +86,7 @@ void GuiMenu::menu(bool gShow)
 			ImGui::PushFont(fontMenu);
 			{
 				if (ImGui::Button("New Game", size)) {
-					this->m_game->pushState(new ProgramStateMain(0, this->m_game));
+					this->m_game->pushState(new ProgramStateMain(this->m_game));
 
 				}
 				if (ImGui::Button("Load Game", size)) {

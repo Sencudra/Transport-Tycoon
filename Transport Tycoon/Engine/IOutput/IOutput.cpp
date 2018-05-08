@@ -6,7 +6,10 @@
 #include "resources.h"
 
 #include "world.h"
+#include "programengine.h"
+#include "programstatemain.h"
 #include "IOutput.h"
+
 
 
 IOutput::IOutput()
@@ -14,7 +17,8 @@ IOutput::IOutput()
 
 }
 
-IOutput::IOutput(std::string defaultPath) : m_defaultPath(defaultPath)
+IOutput::IOutput(ng::ProgramEngine* engine, std::string defaultPath) : 
+	m_defaultPath(defaultPath), m_engine(engine)
 {
 	
 }
@@ -51,6 +55,9 @@ void IOutput::loadGameFromFile(std::string filename)
 	boost::archive::binary_iarchive ia(ifs);
 
 	ia >> m_world;
+
+	m_engine->pushState(new ProgramStateMain(m_world, m_engine));
+
 
 	std::cout << "Stop";
 }

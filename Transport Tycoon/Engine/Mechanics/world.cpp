@@ -12,32 +12,27 @@
 
 World::World()
 {
-	std::cout << "default " << std::endl;
+	m_drawFlag = false;
+	m_timePerDay = 2.5;
+	m_oneDayTimer = 0;
 
 }
 
 
-World::World(int mode, ng::ProgramEngine* engine, ProgramStateMain *state):
+World::World(ng::ProgramEngine* engine, ProgramStateMain *state):
     m_engine(engine), m_state(state)
 {
 	// io initialising 
 
 	engine->io_setupIO(this);
 
-	// mode loading
-    if(mode == 1)
-    {
-        loadFromFile();
-    }
-    else
-    {
-        m_player = Player();
-        m_day = 0;
+    m_player = Player();
+    m_day = 0;
 
-        int mapSize = std::stoi(engine->m_iniFile.get<std::string>("game.default_map_size"));
-        if(mapSize < 128 || mapSize > 4096) mapSize = rs::G_DEFAULT_MAP_SIZE;
-        m_tileMap = new Map(this, engine, mapSize);
-    }
+    int mapSize = std::stoi(engine->m_iniFile.get<std::string>("game.default_map_size"));
+    if(mapSize < 128 || mapSize > 4096) mapSize = rs::G_DEFAULT_MAP_SIZE;
+    m_tileMap = new Map(this, engine, mapSize);
+
 
     m_oneDayTimer = 0;
     m_isPause = false;
@@ -46,6 +41,20 @@ World::World(int mode, ng::ProgramEngine* engine, ProgramStateMain *state):
 
     m_timePerDay = 2.5;
 }
+
+void World::setParameters(ng::ProgramEngine* engine, ProgramStateMain* state)
+{
+	engine->io_setupIO(this);
+	this->m_engine = engine;
+	this->m_state = state;
+
+	 m_drawFlag = false;
+
+	m_timePerDay = 2.5;
+	m_oneDayTimer = 0;
+
+}
+
 
 World::~World()
 {
@@ -60,7 +69,7 @@ void World::update(float dt)
     if(dt > 0.5)return;
     if(!m_isPause){
         float time_dt = dt*2;
-        if (m_timePerDay == 0.75)
+        if (m_timePerDay == 1.25)
             time_dt = dt*4;
         
 		for(auto i : m_objStaticContainer)
@@ -307,200 +316,6 @@ Object* World::addVehicle(float x, float y)
     {
         return nullptr;
     }
-}
-
-void World::loadFromFile()
-{
-    //m_tileMap
-    //m_day = 0;
-    //m_player = Player();
-
-
-    // Create a root
-    boost::property_tree::ptree root;
-
-    // Load the json file in this ptree
-    boost::property_tree::read_json("GameSave.json", root);
-
-    //GAME
-    m_day = root.get<int>("world.day");
-
-    //PLAYER
-    std::string companyName = root.get<std::string>("world.player.company_name");
-    std::string playerName = root.get<std::string>("world.player.player_name");
-    int balance = root.get<int>("world.player.player_balance");
-
-    m_player = Player(balance, companyName,playerName);
-
-    int mapSize = root.get<int>("map.map_size");
-
-    //std::cout << "Loading... " << std::endl;
-    //std::cout << "MapSize: " << mapSize << std::endl;
-
-
-    //isPause
-
-    m_tileMap = new Map(this,m_engine);
-    m_tileMap->m_map = new Tile** [mapSize];
-    m_tileMap->setMapSize(mapSize);
-
-
-    int x = -1;
-    for(boost::property_tree::ptree::value_type &row : root.get_child("map"))
-    {
-        m_tileMap->m_map[x] = new Tile* [mapSize];
-        int y = 0;
-        for(boost::property_tree::ptree::value_type &tile : row.second)
-        {
-            int height = tile.second.get<int>("tile_height");
-            int roadType = tile.second.get<int>("road_type");
-
-            int x1 = tile.second.get<int>("i");
-            int y1 = tile.second.get<int>("j");
-
-
-            rs::TileType tileType = (rs::TileType)tile.second.get<int>("tile_type");
-
-            //rs::TileType tileType = getTileType(height);
-            //std::cout<< "DATA" << x1 << " " << y1 << std::endl;
-            m_tileMap->m_map[x1][y1] = new Tile(height, m_tileMap->getTileTexture(height), tileType, &m_drawFlag);
-
-
-            if(roadType != -1)
-            {
-                rs::RoadType type  = (rs::RoadType) roadType;
-                Road* road = new Road(rs::ObjectType::ROAD, m_engine->m_texmng->getTextureRef(type), type);
-                m_tileMap->m_map[x1][y1]->setObject(road);
-                int a,b;
-                a = x1;
-                b = y1;
-                rs::twoDToIso(a,b,64,32);
-                m_tileMap->m_map[x1][y1]->m_sprite.setPosition(a,b);
-                road->m_sprite.setPosition(sf::Vector2f(a,b));
-
-
-            }
-            y++;
-        }
-        x++;
-    }
-
-    //    for (boost::property_tree::ptree::value_type &object : root.get_child("world").get_child("objects"))
-    //    {
-    //        DynamicObject* nObj = dynamic_cast<DynamicObject*> (obj);
-    //        boost::property_tree::ptree dynObject;
-    //        int object_type = (int) nObj->m_objectType;
-    //        dynObject.put("x",nObj->m_x);
-    //        dynObject.put("y",nObj->m_y);
-    //        dynObject.put("type",object_type);
-    //        dynObject.put("cargoLoaded", nObj->m_cargoLoaded);
-    //        dynObject.put("capacity", nObj->m_capacity);
-
-    //        boost::property_tree::ptree moveTask;
-    //        for(auto& i : nObj->m_moveTask)
-    //        {
-    //            boost::property_tree::ptree point;
-    //            point.put("x",i.x);
-    //            point.put("y",i.y);
-    //            moveTask.add_child("point", point);
-    //        }
-    //        dynObject.add_child("moveTask", moveTask);
-    //        objects.add_child("dynObject", dynObject);
-    //    }
-}
-
-void World::saveToFile()
-{
-    boost::property_tree::ptree root;
-
-    /* World DATA */
-    boost::property_tree::ptree world;
-    world.put("day", this->m_day);
-
-    /* Player DATA*/
-    boost::property_tree::ptree player;
-
-    player.put("player_name", m_player.getPlayerName());
-    player.put("company_name", m_player.getCompanyName());
-    player.put("player_balance", m_player.getBalance());
-
-    world.add_child("player", player);
-
-    /* Objects DATA */
-    boost::property_tree::ptree objects;
-
-
-    for (auto &obj : m_objDynamContainer)
-    {
-        DynamicObject* nObj = dynamic_cast<DynamicObject*> (obj);
-        boost::property_tree::ptree dynObject;
-        int object_type = (int) nObj->m_objectType;
-        dynObject.put("x",nObj->m_x);
-        dynObject.put("y",nObj->m_y);
-        dynObject.put("type",object_type);
-        dynObject.put("cargoLoaded", nObj->m_cargoLoaded);
-        dynObject.put("capacity", nObj->m_capacity);
-
-        boost::property_tree::ptree moveTask;
-        for(auto& i : nObj->m_moveTask)
-        {
-            boost::property_tree::ptree point;
-            point.put("x",i.x);
-            point.put("y",i.y);
-            moveTask.add_child("point", point);
-        }
-        dynObject.add_child("moveTask", moveTask);
-        objects.add_child("dynObject", dynObject);
-    }
-
-    // Add the new node to the root
-    world.add_child("objects", objects);
-
-
-    /* Map DATA*/
-
-    boost::property_tree::ptree map;
-
-    int size = m_tileMap->getMapSize();
-    map.put("map_size",size);
-
-    for(int i = 0; i < size; ++i)
-    {
-        boost::property_tree::ptree row;
-        for(int j = 0; j < size; ++j)
-        {
-            boost::property_tree::ptree tile;
-
-            int height =  m_tileMap->m_map[i][j]->m_tileHeight;
-            int type = (int) m_tileMap->m_map[i][j]->m_tileType;
-            int roadType = -1;
-            int tileType = (int) m_tileMap->m_map[i][j]->m_tileType;
-
-            if(m_tileMap->m_map[i][j]->m_tileStatObj != NULL &&
-               m_tileMap->m_map[i][j]->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
-            {
-                Road* road = dynamic_cast<Road*> (m_tileMap->m_map[i][j]->m_tileStatObj);
-                roadType = (int) road->getType();
-            }
-
-            tile.put("j",j);
-            tile.put("i",i);
-            tile.put("tile_height", height);
-            tile.put("tile_type", type);
-            tile.put("road_type", roadType);
-            tile.put("tile_type", tileType);
-            //tile.put(*m_tileMap->m_map[i][j]);
-
-            row.push_back(std::make_pair("", tile));
-        }
-        /* Add the row to our matrix */
-        map.push_back(std::make_pair("row", row));
-    }
-    root.add_child("world", world);
-    root.add_child("map", map);
-
-
-    boost::property_tree::write_json("GameSave.json", root);
 }
 
 

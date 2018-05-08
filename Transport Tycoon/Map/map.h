@@ -34,6 +34,9 @@ public:
     sf::Texture &getTileTexture(const int cellHeight) const;
     rs::TileType getTileType(const int cellHeight) const;
 
+	void loadSetup(World* world, ng::ProgramEngine* engine, bool* flag);
+
+
 private:
 		
     void loadIndustryMaps();
@@ -47,8 +50,6 @@ private:
     int generateObjects();
 
     bool isValid(int x, int y, Tile*** map, rs::IndustryType type);
-
-
 
     /* Methods that maintain landscape generation */
 
@@ -109,10 +110,19 @@ private:
 		for (int i = 0; i < m_mapSize; ++i)
 		{
 			for (int j = 0; j < m_mapSize; ++j)
+			{
 				ar >> m_map[i][j];
+			}
+				
 		}
+		
 	}
 
 };
+
+
+
+
+
 
 #endif // MAP_H
