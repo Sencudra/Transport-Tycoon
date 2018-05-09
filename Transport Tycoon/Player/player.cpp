@@ -23,7 +23,8 @@ bool Player::getMoney(int money)
     }
     else
     {
-         return false;
+		std::cout << "Player::getMoney: insufficient funds";
+        return false;
     }
 }
 

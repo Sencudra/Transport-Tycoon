@@ -160,43 +160,37 @@ private:
 class DynamicObject : public Object
 {
 public:
-	DynamicObject();
-	DynamicObject(Player* player, Map* map, sf::Texture *texture, float x, float y);
-	~DynamicObject();
+	
+	virtual ~DynamicObject();
 
-	virtual void update(const float dt) override;
-	virtual void draw(sf::RenderWindow& view) override;
-	virtual void loadObject(sf::Texture * texture) override { ; }
+	virtual void update(const float dt) = 0;
+	virtual void draw(sf::RenderWindow& view) = 0;
+	virtual void loadObject(sf::Texture * texture) = 0;
 
-	void loadObject(sf::Texture * texture, Map* map, Player* player);
+	//void loadObject(sf::Texture * texture, Map* map, Player* player);
 
 	void moveTaskSetup(rs::Point start, rs::Point end);
 	void addTask(rs::Point task);
 
 	std::vector<rs::Point> m_moveTask;
-	int m_cargoLoaded;
-	int m_capacity;
+	
+
+public:
 	Map* m_map;
 	Player* m_player;
 
-private:
-	void cargoExchange();
-
-private:
-
-	rs::Resources m_cargoType;
 	bool m_isActive;
 
-	float m_x_iso;//
-	float m_y_iso;//
+	float m_x_iso;
+	float m_y_iso;
 
-	float m_speedX;//
-	float m_speedY;//
-				   //float m_acceleration;
+	float m_speedX;
+	float m_speedY;
+	//float m_acceleration;
 
-	PathFinder* m_finder;//
+	PathFinder* m_finder;
 
-	std::vector<PPoint*>*  m_path;//
+	std::vector<PPoint*>*  m_path;
 
 private:
 	friend class boost::serialization::access;
@@ -213,10 +207,6 @@ private:
 
 		ar & m_isActive;
 
-		ar & m_cargoType;
-		ar & m_cargoLoaded;
-		ar & m_capacity;
-
 	}
 
 };
@@ -224,23 +214,52 @@ private:
 class Vehicle : public DynamicObject
 {
 public:
-	Vehicle();
-	Vehicle(const Vehicle &obj);
-	Vehicle(const Vehicle &&obj);
+	Vehicle() { ; }
+	Vehicle(rs::vhs::Vehicle vehStruct, rs::Resources cargo, Player* player, Map* map, sf::Texture *texture, float x, float y);
+	//Vehicle(const Vehicle &obj);
+	//Vehicle(const Vehicle &&obj);
 	~Vehicle();
 
-	int loadVehicle(rs::Cargo cargo) { m_cargo.push_back(cargo); return 0; }
-	int move(float dx, float dy);
+	virtual void update(const float dt) override;
+	virtual void draw(sf::RenderWindow& view) override;
+	virtual void loadObject(sf::Texture * texture) override { ; }
+
+	void loadObject(sf::Texture * texture, Map* map, Player* player);
+
+	//int loadVehicle(rs::Cargo cargo) { m_cargo.push_back(cargo); return 0; }
+
+	int m_cargoLoaded;
+	int m_capacity;
 
 private:
-	float m_xPos;
-	float m_yPos;
+	void cargoExchange();
 
-	int m_speed;
+private:
+	rs::vhs::enumVehicle vehName;
+	rs::vhs::Vehicle vehStruct;
+	rs::Resources m_cargoType;
+
 	bool m_isBroken;
-	bool m_isActive;
+	int m_speed;
 
 	std::vector<rs::Cargo> m_cargo;
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		// serialize base class information
+		ar & boost::serialization::base_object<Object>(*this);
+
+		ar & m_x_iso & m_y_iso;
+		ar & m_speedX & m_speedY;
+
+		ar & m_moveTask;
+
+		ar & m_isActive;
+
+	}
 
 };
 

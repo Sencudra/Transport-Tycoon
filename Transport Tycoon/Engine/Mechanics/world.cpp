@@ -1,3 +1,4 @@
+#include "resources.h"
 #include "world.h"
 #include "programstatemain.h"
 #include "tile.h"
@@ -74,9 +75,12 @@ void World::WorldLoadSetup(ng::ProgramEngine* engine, ProgramStateMain* state)
 	}
 	for (auto i : m_objDynamContainer)
 	{
-		DynamicObject* dy = dynamic_cast<DynamicObject*> (i);
-		sf::Texture* txRef = m_engine->m_texmng->getTextureRef("auto");
-		dy->loadObject(txRef, m_tileMap, &m_player);
+		if (i->m_objectType == rs::ObjectType::VEHICLE)
+		{
+			Vehicle* dy = dynamic_cast<Vehicle*> (i);
+			sf::Texture* txRef = m_engine->m_texmng->getTextureRef("auto");
+			dy->loadObject(txRef, m_tileMap, &m_player);
+		}
 
 	}
 
@@ -303,35 +307,31 @@ void World::updateRoadDirection(int a, int b)
 
 Object* World::addVehicle(float x, float y)
 {
-
-    float x_iso, y_iso;
-	x_iso = x;
-	y_iso = y;
-
+	
+	// cheking for right edges
+	float x_iso, y_iso; x_iso = x; y_iso = y;
     rs::isoToTwoD(x_iso, y_iso, 64, 32);
 
-    int x_2d , y_2d;
-    x_2d = x_iso;
-    y_2d = y_iso;
-
-    if((x_2d <= 0 || x_2d >= m_tileMap->getMapSize()) || (y_2d <= 0 || y_2d >= m_tileMap->getMapSize())) return nullptr;
-
-
-
-    /* checking for tile availableness */
-    bool isTileAvailable;
-
-    (m_tileMap->m_map[x_2d][y_2d]->m_tileStatObj != NULL &&
-            m_tileMap->m_map[x_2d][y_2d]->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
-      ? isTileAvailable = true : isTileAvailable = false;
+    int x_2d , y_2d; x_2d = x_iso; y_2d = y_iso;
+	if ((x_2d <= 0 || x_2d >= m_tileMap->getMapSize()) ||
+		(y_2d <= 0 || y_2d >= m_tileMap->getMapSize()))
+	{
+		return nullptr;
+	}
 
     /* adding new vechicale */
-    if(isTileAvailable)
+    if(isTileIsRoad(x_2d, y_2d))
     {
         /* Check balance */
         if(!m_player.getMoney(250)) return nullptr;
 
-        DynamicObject* car = new DynamicObject(&m_player, m_tileMap, m_engine->m_texmng->getTextureRef("auto"), float(x_2d), float(y_2d));
+		// Temporary
+		rs::Resources cargo = rs::Resources::COAL;
+
+		rs::vhs::enumVehicle eV = rs::vhs::enumVehicle::BALOGH;
+		rs::vhs::Vehicle veh = this->m_engine->m_texmng->getVehicleStruct(eV);
+
+        Vehicle* car = new Vehicle(veh, cargo, &m_player, m_tileMap, m_engine->m_texmng->getTextureRef("auto"), float(x_2d), float(y_2d));
         m_objDynamContainer.push_back(car);
 		m_tileMap->m_map[x_2d][y_2d]->m_tileDynObj.push_back(car);
 
@@ -341,6 +341,19 @@ Object* World::addVehicle(float x, float y)
     {
         return nullptr;
     }
+}
+
+bool World::isTileIsRoad(int x, int y)
+{
+	if (m_tileMap->m_map[x][y]->m_tileStatObj != nullptr &&
+		m_tileMap->m_map[x][y]->m_tileStatObj->m_objectType == rs::ObjectType::ROAD)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 

@@ -30,6 +30,7 @@ public:
 
     void addRoad(float x, float y);
     Object *addVehicle(float x, float y);
+	bool isTileIsRoad(int x, int y);
     void deleteVec(Object* obj);
 
     void addObject(Object* obj){m_objStaticContainer.push_back(obj);}

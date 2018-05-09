@@ -11,6 +11,9 @@
 #include <deque>
 #include <utility>
 
+
+
+
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -19,12 +22,17 @@
 
 #include <glut.h> // OpenGL
 
+
+
+#include <boost/assert.hpp> 
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/assign.hpp>
+#include <boost/assign/list_of.hpp> // for 'map_list_of()'
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -76,6 +84,7 @@ enum class EditState { NONE, ROADING, CARSETUP, ROUTING, DELETING };
 enum class Color { WHITE, RED, GREEN, NONE};
 
 
+//std::map<std::string, rs::Resources> resourceMap = boost::
 
 
 template <typename T>
@@ -185,12 +194,13 @@ namespace vhs {
 	struct Vehicle
 	{
 		std::string name;
-		float price;		// in dollars
-		int speed;			// km/h
-		int runCost;		// Per year
-		int dateDesigned;	// Year
-		int lifespan;		// In years
-		int capacity;		// In tonnes
+		float price;				// in dollars
+		int speed;					// km/h
+		int runCost;				// Per year
+		int dateDesigned;			// Year
+		int lifespan;				// In years
+		int capacity;				// In tonnes
+		rs::Resources resources
 	};
 
 }

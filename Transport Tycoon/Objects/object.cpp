@@ -20,21 +20,53 @@ int Object::createObject(rs::ObjectType type, sf::Texture* texture, float x, flo
 	return 0;
 }
 
-DynamicObject::DynamicObject()
-{
 
+
+DynamicObject::~DynamicObject()
+{
+	delete m_finder;
 }
 
-DynamicObject::DynamicObject(Player *player, Map* map, sf::Texture* texture, float x, float y)
+void DynamicObject::moveTaskSetup(rs::Point start, rs::Point end)
 {
+	if (m_finder)
+	{
+		if (m_finder->setupPath(start, end))
+		{
+			std::cout << "ERROR DynamicObject::moveTaskSetup: setupPath()" << std::endl;
+			
+		}
+		else
+		{
+			if (m_finder->findPath())
+			{
+				m_path = m_finder->getPath();
+			}
+		}
+	}
+}
 
+void DynamicObject::addTask(rs::Point task)
+{
+	m_moveTask.push_back(task);
+
+	if (!m_isActive)
+	{
+		m_isActive = true;
+
+		rs::Point start, end;
+		start.setValues(m_x, m_y);
+		end.setValues(m_moveTask.front().x, m_moveTask.front().y);
+		moveTaskSetup(start, end);
+	}
+}
+
+
+Vehicle::Vehicle(rs::vhs::Vehicle vehStruct, Player * player, Map * map,sf::Texture * texture, float x, float y)
+{
+	m_player = player;
 	m_map = map;
 	createObject(rs::ObjectType::VEHICLE, texture, x, y);
-	m_player = player;
-
-	m_cargoType = rs::Resources::COAL;
-	m_capacity = 20;
-	m_cargoLoaded = 0;
 
 	m_finder = new PathFinder(map);
 
@@ -45,15 +77,18 @@ DynamicObject::DynamicObject(Player *player, Map* map, sf::Texture* texture, flo
 	m_speedY = 0;
 
 	m_sprite.setTexture(*texture);
+
+	//m_cargoType = rs::Resources::COAL;
+	//m_capacity = 20;
+	//m_cargoLoaded = 0;
+
 }
 
-
-DynamicObject::~DynamicObject()
+Vehicle::~Vehicle()
 {
-	delete m_finder;
 }
 
-void DynamicObject::update(const float dt)
+void Vehicle::update(const float dt)
 {
 
 	if (m_path != nullptr && m_path->empty())
@@ -64,7 +99,7 @@ void DynamicObject::update(const float dt)
 			m_moveTask.push_back(*m_moveTask.begin());
 			m_moveTask.erase(m_moveTask.begin());
 			moveTaskSetup(m_moveTask.back(), m_moveTask.front());
-			cargoExchange();
+			//cargoExchange();
 		}
 		m_speedX = 0;
 		m_speedY = 0;
@@ -122,7 +157,7 @@ void DynamicObject::update(const float dt)
 	}
 }
 
-void DynamicObject::draw(sf::RenderWindow& view)
+void Vehicle::draw(sf::RenderWindow& view)
 {
 	if (m_path != nullptr && !m_path->empty())
 	{	// Draw next tile and previous tile
@@ -155,8 +190,7 @@ void DynamicObject::draw(sf::RenderWindow& view)
 	view.draw(m_sprite);
 }
 
-
-void DynamicObject::loadObject(sf::Texture * texture, Map * map, Player * player)
+void Vehicle::loadObject(sf::Texture * texture, Map * map, Player * player)
 {
 	m_texture = texture;
 	m_map = map;
@@ -178,27 +212,7 @@ void DynamicObject::loadObject(sf::Texture * texture, Map * map, Player * player
 
 }
 
-
-void DynamicObject::moveTaskSetup(rs::Point start, rs::Point end)
-{
-	if (m_finder)
-	{
-		if (m_finder->setupPath(start, end))
-		{
-			std::cout << "ERROR DynamicObject::moveTaskSetup: setupPath()" << std::endl;
-			
-		}
-		else
-		{
-			if (m_finder->findPath())
-			{
-				m_path = m_finder->getPath();
-			}
-		}
-	}
-}
-
-void DynamicObject::cargoExchange()
+void Vehicle::cargoExchange()
 {
     Industry* obj = NULL;
 
@@ -243,20 +257,6 @@ void DynamicObject::cargoExchange()
 }
 
 
-void DynamicObject::addTask(rs::Point task)
-{
-        m_moveTask.push_back(task);
-
-        if(!m_isActive)
-        {
-            m_isActive = true;
-
-            rs::Point start, end;
-            start.setValues(m_x, m_y);
-            end.setValues(m_moveTask.front().x,m_moveTask.front().y);
-            moveTaskSetup(start, end);
-        }
-}
 
 Road::Road(rs::ObjectType objType, sf::Texture* texture, rs::RoadType type, int x, int y)
 {
@@ -287,6 +287,8 @@ void Road::updateSprite(sf::Texture *texture)
 {
     m_sprite.setTexture(*texture);
 }
+
+
 
 Industry::Industry(rs::ObjectType objType, sf::Texture* texture, rs::IndustryType type, float x, float y)
 {
