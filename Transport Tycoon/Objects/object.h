@@ -167,15 +167,15 @@ public:
 
 	//void loadObject(sf::Texture * texture, Map* map, Player* player);
 
+
+	// Moving
 	void moveTaskSetup(rs::Point start, rs::Point end);
 	void addTask(rs::Point task);
-
 	std::vector<rs::Point> m_moveTask;
 	
 
 public:
 	Map* m_map;
-	Player* m_player;
 
 	bool m_isActive;
 
@@ -187,7 +187,6 @@ public:
 	//float m_acceleration;
 
 	PathFinder* m_finder;
-
 	std::vector<PPoint*>*  m_path;
 
 private:
@@ -213,7 +212,7 @@ class Vehicle : public DynamicObject
 {
 public:
 	Vehicle() { ; }
-	Vehicle(vhs::Vehicle vehStruct, rs::Resources cargo, Player* player, Map* map, sf::Texture *texture, float x, float y);
+	Vehicle(vhs::Vehicle vehStruct, Map* map, float x, float y);
 	//Vehicle(const Vehicle &obj);
 	//Vehicle(const Vehicle &&obj);
 	~Vehicle();
@@ -222,42 +221,72 @@ public:
 	virtual void draw(sf::RenderWindow& view) override;
 	virtual void loadObject(sf::Texture * texture) override { ; }
 
-	void loadObject(sf::Texture * texture, Map* map, Player* player);
+	void loadObject(vhs::Vehicle vehStruct, Map* map);
 
 	//int loadVehicle(rs::Cargo cargo) { m_cargo.push_back(cargo); return 0; }
 
-	int m_cargoLoaded;
-	int m_capacity;
+	vhs::enumVehicle getVehicleType() { return m_vehicleInfo.name; }
+
 
 private:
 	void cargoExchange();
+	void updateDirection();
 
 private:
-	vhs::enumVehicle vehName;
-	vhs::Vehicle vehStruct;
-	rs::Resources m_cargoType;
+	vhs::Vehicle m_vehicleInfo;
+	std::string ownerName;
 
+	vhs::Directions m_direction;
+	int m_cargoLoaded;
 	bool m_isBroken;
-	int m_speed;
 
 	std::vector<rs::Cargo> m_cargo;
 
+
 private:
 	friend class boost::serialization::access;
+	BOOST_SERIALIZATION_SPLIT_MEMBER()
+
 	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version)
+	void save(Archive & ar, const unsigned int version) const
 	{
+
 		// serialize base class information
-		ar & boost::serialization::base_object<DynamicObject>(*this);
+		ar << boost::serialization::base_object<DynamicObject>(*this);
 
-		ar & m_x_iso & m_y_iso;
-		ar & m_speedX & m_speedY;
+		ar << m_vehicleInfo.id;
+		ar << m_vehicleInfo.name;
 
-		ar & m_moveTask;
+		std::string name = m_vehicleInfo.owner->getPlayerName();
+		ar << name;
+		ar << m_direction;
 
-		ar & m_isActive;
+		ar << m_cargoLoaded;
+		ar << m_isBroken;
+
+		ar << m_cargo;
 
 	}
+	template<class Archive>
+	void load(Archive & ar, const unsigned int version)
+	{
+		// serialize base class information
+		ar >> boost::serialization::base_object<DynamicObject>(*this);
+
+		ar >> m_vehicleInfo.id;
+		ar >> m_vehicleInfo.name;
+
+		// FIX ME, adding a standart player
+		ar >> ownerName;
+		ar >> m_direction;
+
+		ar >> m_cargoLoaded;
+		ar >> m_isBroken;
+
+		ar >> m_cargo;
+
+	}
+
 
 };
 

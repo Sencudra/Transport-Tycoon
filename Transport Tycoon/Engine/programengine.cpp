@@ -42,7 +42,6 @@ ProgramEngine::ProgramEngine()
     this->loadTextures();
     this->loadFonts();
     this->loadStylesheets();
-	m_texmng->loadVehicleBase();
     //this->m_background.setTexture(*this->m_texmng->getTextureRef("bg1"));
 
 	std::string defPath = "C:/Users/vladt/source/repos/Transport Tycoon/Transport Tycoon/saves/";
@@ -229,31 +228,12 @@ void ProgramEngine::loadTextures()
     //m_texmng->loadTexture("ind_sawmill",        "media/textures/industry/sawmill.png");
     //m_texmng->loadTexture("ind_steelmill",      "media/textures/industry/steelmill.png");
     //m_texmng->loadTexture("ind_factory",        "media/textures/industry/factory.png");
-
-
-    /* Road loading */
-    m_texmng->loadTexture(rs::RoadType::ROAD_0_PATH1,   "media/textures/roads/road0path1.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_1_PATH1,   "media/textures/roads/road1path1.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_1_PATH2,   "media/textures/roads/road1path2.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_1_PATH3,   "media/textures/roads/road1path3.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_1_PATH4,   "media/textures/roads/road1path4.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_2_PATH1,   "media/textures/roads/road2path1.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_2_PATH2,   "media/textures/roads/road2path2.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_2_PATH3,   "media/textures/roads/road2path3.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_2_PATH4,   "media/textures/roads/road2path4.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_2_PATH5,   "media/textures/roads/road2path5.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_2_PATH6,   "media/textures/roads/road2path6.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_3_PATH1,   "media/textures/roads/road3path1.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_3_PATH2,   "media/textures/roads/road3path2.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_3_PATH3,   "media/textures/roads/road3path3.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_3_PATH4,   "media/textures/roads/road3path4.png");
-    m_texmng->loadTexture(rs::RoadType::ROAD_4_PATH1,   "media/textures/roads/road4path1.png");
-
-
 }
-// Text Sizes available in px
+
+
+
 enum TextSize
-{
+{	// Text Sizes available in px
 	PxSize_12 = 12, PxSize_14 = 14, PxSize_16 = 16,
 	PxSize_18 = 18, PxSize_20 = 20, PxSize_22 = 22, 
 	PxSize_24 = 24, PxSize_26 = 26, PxSize_28 = 28,

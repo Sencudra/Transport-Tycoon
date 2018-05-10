@@ -78,7 +78,7 @@ private:
     // World behaviour
 
     float m_timePerDay;
-    float m_oneDayTimer;
+	float m_oneDayTimer;
 
 
 private: 

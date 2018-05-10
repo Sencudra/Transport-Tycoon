@@ -60,13 +60,15 @@ void DynamicObject::addTask(rs::Point task)
 	}
 }
 
-Vehicle::Vehicle(vhs::Vehicle vehStruct, rs::Resources cargo,  Player * player, Map * map,sf::Texture * texture, float x, float y)
+Vehicle::Vehicle(vhs::Vehicle vehStruct, Map* map, float x, float y)
 {
-	m_player = player;
 	m_map = map;
-	createObject(rs::ObjectType::VEHICLE, texture, x, y);
-
+	m_vehicleInfo = vehStruct;
 	m_finder = new PathFinder(map);
+	m_direction = vhs::Directions::BOTTOM_RIGHT;
+
+	createObject(rs::ObjectType::VEHICLE, &m_vehicleInfo.sprites->at(m_direction), x, y);
+	m_sprite.setTexture(*m_texture);
 
 	m_x_iso = m_x = x;
 	m_y_iso = m_y = y;
@@ -74,12 +76,9 @@ Vehicle::Vehicle(vhs::Vehicle vehStruct, rs::Resources cargo,  Player * player, 
 	m_speedX = 0;
 	m_speedY = 0;
 
-	m_sprite.setTexture(*texture);
-
-	//m_cargoType = rs::Resources::COAL;
-	//m_capacity = 20;
-	//m_cargoLoaded = 0;
-
+	m_cargoLoaded = 0;
+	m_isBroken = false;
+	
 }
 
 Vehicle::~Vehicle()
@@ -89,6 +88,7 @@ Vehicle::~Vehicle()
 void Vehicle::update(const float dt)
 {
 
+	// Path follower
 	if (m_path != nullptr && m_path->empty())
 	{
 		if (m_moveTask.front().x == this->m_x && m_moveTask.front().y == this->m_y)
@@ -120,10 +120,13 @@ void Vehicle::update(const float dt)
 
 				m_speedX = x - m_x;
 				m_speedY = y - m_y;
+
+				updateDirection();
 			}
 		}
 	}
 
+	// Moving Object
 	m_x_iso += (m_speedX*dt);
 	m_y_iso += (m_speedY*dt);
 
@@ -188,11 +191,20 @@ void Vehicle::draw(sf::RenderWindow& view)
 	view.draw(m_sprite);
 }
 
-void Vehicle::loadObject(sf::Texture * texture, Map * map, Player * player)
+void Vehicle::loadObject(vhs::Vehicle vehStruct, Map* map)
 {
-	m_texture = texture;
+
 	m_map = map;
-	m_player = player;
+
+	// Temopary save
+	int id = vehStruct.id;
+	Player* player = vehStruct.owner;
+	m_vehicleInfo = vehStruct;
+	m_vehicleInfo.id = id;
+	m_vehicleInfo.owner = player;
+
+	m_texture = &m_vehicleInfo.sprites->at(m_direction);
+	m_sprite.setTexture(*m_texture);
 
 	m_finder = new PathFinder(m_map);
 	if (!m_moveTask.empty())
@@ -204,8 +216,6 @@ void Vehicle::loadObject(sf::Texture * texture, Map * map, Player * player)
 		end.setValues(m_moveTask.front().x, m_moveTask.front().y);
 		moveTaskSetup(start, end);
 	}
-
-	m_sprite.setTexture(*texture);
 	m_map->m_map[m_x][m_y]->m_tileDynObj.push_back(this);
 
 }
@@ -230,9 +240,9 @@ void Vehicle::cargoExchange()
     {
         //std::cout << "Available: " << obj->m_storage << std::endl;
 
-        if(m_cargoLoaded != m_capacity && obj->m_storage != 0)
+        if(m_cargoLoaded != m_vehicleInfo.capacity && obj->m_storage != 0)
         {
-            if(obj->m_storage < (m_capacity - m_cargoLoaded))
+            if(obj->m_storage < (m_vehicleInfo.capacity - m_cargoLoaded))
             {
                 m_cargoLoaded += obj->m_storage;
                 obj->m_storage = 0;
@@ -240,8 +250,8 @@ void Vehicle::cargoExchange()
             else
             {
 
-                m_cargoLoaded += (m_capacity - m_cargoLoaded);
-                obj->m_storage -= (m_capacity - m_cargoLoaded);
+                m_cargoLoaded += (m_vehicleInfo.capacity - m_cargoLoaded);
+                obj->m_storage -= (m_vehicleInfo.capacity - m_cargoLoaded);
             }
         }
     }
@@ -249,9 +259,28 @@ void Vehicle::cargoExchange()
     {
         std::cout << "Sold: " <<  (m_cargoLoaded) << std::endl;
 
-        m_player->addMoney(m_cargoLoaded*100);
+		m_vehicleInfo.owner->addMoney(m_cargoLoaded*100);
         m_cargoLoaded = 0;
     }
+}
+
+void Vehicle::updateDirection()
+{
+
+	if (m_speedX < 0 && m_speedY == 0)	m_direction = vhs::Directions::TOP_LEFT;
+	else if(m_speedX == 0 && m_speedY > 0)	m_direction = vhs::Directions::BOTTOM_LEFT;
+	else if(m_speedX > 0 && m_speedY == 0)	m_direction = vhs::Directions::BOTTOM_RIGHT;
+	else if(m_speedX == 0 && m_speedY < 0)	m_direction = vhs::Directions::TOP_RIGHT;
+	else std::cout << "ERROR: Vehicle::updateDirection" << std::endl;
+
+
+	float x, y;
+	x = m_x_iso;
+	y = m_y_iso;
+	rs::twoDToIso(x, y, 64, 32);
+	m_sprite.setTexture(m_vehicleInfo.sprites->at(m_direction));
+	m_sprite.setPosition(x + 27, y + 11); // TO GET TO THE CENTER
+
 }
 
 

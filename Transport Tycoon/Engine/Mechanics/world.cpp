@@ -78,8 +78,9 @@ void World::WorldLoadSetup(ng::ProgramEngine* engine, ProgramStateMain* state)
 		if (i->m_objectType == rs::ObjectType::VEHICLE)
 		{
 			Vehicle* dy = dynamic_cast<Vehicle*> (i);
-			sf::Texture* txRef = m_engine->m_texmng->getTextureRef("auto");
-			dy->loadObject(txRef, m_tileMap, &m_player);
+			vhs::Vehicle vehStruct = m_engine->m_texmng->getVehicleStruct(dy->getVehicleType());
+			vehStruct.owner = &m_player;
+			dy->loadObject(vehStruct, m_tileMap);
 		}
 
 	}
@@ -326,12 +327,12 @@ Object* World::addVehicle(float x, float y)
         if(!m_player.getMoney(250)) return nullptr;
 
 		// Temporary
-		rs::Resources cargo = rs::Resources::COAL;
-
 		vhs::enumVehicle eV = vhs::enumVehicle::BALOGH;
 		vhs::Vehicle veh = this->m_engine->m_texmng->getVehicleStruct(eV);
+		veh.owner = &m_player;
 
-        Vehicle* car = new Vehicle(veh, cargo, &m_player, m_tileMap, m_engine->m_texmng->getTextureRef("auto"), float(x_2d), float(y_2d));
+
+        Vehicle* car = new Vehicle(veh, m_tileMap, float(x_2d), float(y_2d));
         m_objDynamContainer.push_back(car);
 		m_tileMap->m_map[x_2d][y_2d]->m_tileDynObj.push_back(car);
 

@@ -104,6 +104,12 @@ struct Cargo
   int size;
   Resources type;
 
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+	  ar & size;
+	  ar & type;
+  }
 };
 
 struct Point
@@ -180,13 +186,18 @@ namespace boost {
 
 }
 
+class Player;
+
 namespace vhs {
 
 	enum class enumVehicle { BALOGH, UHL, DW };
+	enum class Directions { TOP_LEFT, BOTTOM_LEFT, BOTTOM_RIGHT, TOP_RIGHT};
 
 	struct Vehicle
 	{
-		std::string name;
+		int id;						// ATTENTION: null after loading
+		vhs::enumVehicle name;		// name
+		Player* owner;				// ATTENTION: null after loading
 		float price;				// in dollars
 		int speed;					// km/h
 		int runCost;				// Per year
@@ -194,6 +205,7 @@ namespace vhs {
 		int lifespan;				// In years
 		int capacity;				// In tonnes
 		rs::Resources resource;
+		std::map<vhs::Directions, sf::Texture>* sprites;
 	};
 }
 
