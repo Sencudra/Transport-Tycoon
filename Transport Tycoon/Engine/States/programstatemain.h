@@ -1,3 +1,5 @@
+#pragma once 
+
 #ifndef PROGRAMSTATEEDITOR_H
 #define PROGRAMSTATEEDITOR_H
 

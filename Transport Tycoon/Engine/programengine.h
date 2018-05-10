@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef PROGRAMENGINE_H
 #define PROGRAMENGINE_H
 

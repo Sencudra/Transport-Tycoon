@@ -215,7 +215,7 @@ void ProgramStateMain::handleInput()
 					rs::Point task;
 					task.setValues(mousePosWorld.x, mousePosWorld.y);
 					rs::isoToTwoD(task.x, task.y, 64, 32);
-					dynamic_cast<DynamicObject*> (m_focusObject)->addTask(task);
+					dynamic_cast<Vehicle*> (m_focusObject)->addTask(task);
 					std::cout << "ProgramStateMain::handleInput: Task added for vechicle" << std::endl;
 
 				}

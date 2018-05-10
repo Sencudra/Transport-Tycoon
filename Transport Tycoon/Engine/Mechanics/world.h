@@ -1,3 +1,5 @@
+#pragma once 
+
 #ifndef WORLD_H
 #define WORLD_H
 
@@ -97,7 +99,7 @@ private:
 
 		ar.template register_type<Industry>();
 		ar.template register_type<Road>();
-		ar.template register_type<DynamicObject>();
+		ar.template register_type<Vehicle>();
 
 		ar << m_objDynamContainer;
 
@@ -117,7 +119,7 @@ private:
 
 		ar.template register_type<Industry>();
 		ar.template register_type<Road>();
-		ar.template register_type<DynamicObject>();
+		ar.template register_type<Vehicle>();
 
 		ar >> m_objDynamContainer;
 			

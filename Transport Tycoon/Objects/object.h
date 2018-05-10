@@ -1,14 +1,12 @@
+#pragma once
+
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "resources.h"
+//#include "resources.h"
 #include <math.h>
 #include "map.h"
 #include "tile.h"
-
-
-
-
 
 class PathFinder;
 class PPoint;
@@ -215,7 +213,7 @@ class Vehicle : public DynamicObject
 {
 public:
 	Vehicle() { ; }
-	Vehicle(rs::vhs::Vehicle vehStruct, rs::Resources cargo, Player* player, Map* map, sf::Texture *texture, float x, float y);
+	Vehicle(vhs::Vehicle vehStruct, rs::Resources cargo, Player* player, Map* map, sf::Texture *texture, float x, float y);
 	//Vehicle(const Vehicle &obj);
 	//Vehicle(const Vehicle &&obj);
 	~Vehicle();
@@ -235,8 +233,8 @@ private:
 	void cargoExchange();
 
 private:
-	rs::vhs::enumVehicle vehName;
-	rs::vhs::Vehicle vehStruct;
+	vhs::enumVehicle vehName;
+	vhs::Vehicle vehStruct;
 	rs::Resources m_cargoType;
 
 	bool m_isBroken;
@@ -250,7 +248,7 @@ private:
 	void serialize(Archive & ar, const unsigned int version)
 	{
 		// serialize base class information
-		ar & boost::serialization::base_object<Object>(*this);
+		ar & boost::serialization::base_object<DynamicObject>(*this);
 
 		ar & m_x_iso & m_y_iso;
 		ar & m_speedX & m_speedY;

@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef TEXTUREMANAGER_H
 #define TEXTUREMANAGER_H
 
@@ -15,14 +17,14 @@ public:
     void loadTexture(const rs::RoadType type, const std::string& filename);
 	
 	void loadVehicleBase();
-	void addToVehiclesBase(const rs::vhs::enumVehicle name, rs::vhs::Vehicle obj);
+	void addToVehiclesBase(const vhs::enumVehicle name, vhs::Vehicle obj);
 
 
 
     sf::Texture* getTextureRef(const std::string& name);
     sf::Texture* getTextureRef(const rs::IndustryType& type);
     sf::Texture* getTextureRef(const rs::RoadType& type);
-	rs::vhs::Vehicle getVehicleStruct(const rs::vhs::enumVehicle) const;
+	vhs::Vehicle getVehicleStruct(const vhs::enumVehicle) const;
 
 
 private:
@@ -30,7 +32,7 @@ private:
     std::map<rs::IndustryType, sf::Texture> ind_textures;
     std::map<rs::RoadType, sf::Texture> road_textures;
 	
-	std::map<rs::vhs::enumVehicle, rs::vhs::Vehicle> vehicles;
+	std::map<vhs::enumVehicle, vhs::Vehicle> vehicles;
 
 
 };

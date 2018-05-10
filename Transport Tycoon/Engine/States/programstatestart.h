@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef PROGRAMSTATESTART_H
 #define PROGRAMSTATESTART_H
 

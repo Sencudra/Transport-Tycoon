@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
@@ -11,28 +13,20 @@
 #include <deque>
 #include <utility>
 
-
-
+#include <glut.h> // OpenG
 
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
-
-#include "imgui-sfml.h"
-
-#include <glut.h> // OpenGL
-
-
-
-#include <boost/assert.hpp> 
+//#include <boost/assert.hpp> 
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/base_object.hpp>
-#include <boost/serialization/split_member.hpp>
+
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/vector.hpp>
-#include <boost/assign.hpp>
-#include <boost/assign/list_of.hpp> // for 'map_list_of()'
+
+#include "imgui-sfml.h"
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +55,7 @@ enum class TileType {VOID, WATER, DEEPWATER,SAND, PLAIN, FOREST,STONE,
 enum class ObjectType {INDUSTRY ,ROAD, VEHICLE};
 
 enum class Resources {COAL, IRONORE, GRAIN, LIVESTOCK, STEEL, WOOD, OIL,
-                      GOODS, PASSAGERS, MAIL, VALUABLES};
+                      GOODS, PASSANGERS, MAIL, VALUABLES};
 
 enum class RoadType {   ROAD_0_PATH1, ROAD_1_PATH1, ROAD_1_PATH2, ROAD_1_PATH3, ROAD_1_PATH4,
                         ROAD_2_PATH1, ROAD_2_PATH2, ROAD_2_PATH3, ROAD_2_PATH4, ROAD_2_PATH5, ROAD_2_PATH6,
@@ -79,12 +73,10 @@ enum class MapSprites {DEEP_WATER, WATER, SAND, PLAIN, FOREST, STONE,
                        MOUNTAIN_STONE, SNOW};
 
 enum class ActionState { NONE, PANNING };
+
 enum class EditState { NONE, ROADING, CARSETUP, ROUTING, DELETING };
 
 enum class Color { WHITE, RED, GREEN, NONE};
-
-
-//std::map<std::string, rs::Resources> resourceMap = boost::
 
 
 template <typename T>
@@ -137,10 +129,10 @@ struct Point
 
 struct Rectangle
 {
-    Point topRight;
-    Point topLeft;
-    Point bottomLeft;
-    Point bottomRight;
+	Point topRight;
+	Point topLeft;
+	Point bottomLeft;
+	Point bottomRight;
 };
 
 struct ScreenRectangle
@@ -186,8 +178,9 @@ namespace boost {
 
 
 
-namespace vhs {
+}
 
+namespace vhs {
 
 	enum class enumVehicle { BALOGH, UHL, DW };
 
@@ -200,16 +193,8 @@ namespace vhs {
 		int dateDesigned;			// Year
 		int lifespan;				// In years
 		int capacity;				// In tonnes
-		rs::Resources resources
+		rs::Resources resource;
 	};
-
-}
-
-
-
-
-
-
 }
 
 

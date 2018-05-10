@@ -1,7 +1,28 @@
+#include "resources.h"
 #include "texturemanager.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
+
+namespace rs {
+	Resources strToResource(std::string str)
+	{
+		if (str == "coal")					return Resources::COAL;
+		else if (str == "ironore")				return Resources::IRONORE;
+		else if (str == "grain")				return Resources::GRAIN;
+		else if (str == "livestock")			return Resources::LIVESTOCK;
+		else if (str == "steel ")				return Resources::STEEL;
+		else if (str == "wood")					return Resources::WOOD;
+		else if (str == "oil")					return Resources::OIL;
+		else if (str == "goods")				return Resources::GOODS;
+		else if (str == "passengers")			return Resources::PASSANGERS;
+		else if (str == "mail")					return Resources::MAIL;
+		else if (str == "valuables")			return Resources::VALUABLES;
+		else std::cout << "ERROR: Resources strToResource - enum not found" << std::endl;
+	}
+}
+
+
 
 
 
@@ -52,7 +73,7 @@ void DataManager::loadVehicleBase()
 	boost::property_tree::ptree pt;
 	boost::property_tree::ini_parser::read_ini("data.ini", pt);
 
-	rs::vhs::Vehicle truck_1;
+	vhs::Vehicle truck_1;
 	truck_1.name			=			  pt.get<std::string>("balogh_truck.name");
 	truck_1.price			=	std::stoi(pt.get<std::string>("balogh_truck.price"));
 	truck_1.speed			=	std::stoi(pt.get<std::string>("balogh_truck.speed"));
@@ -60,12 +81,12 @@ void DataManager::loadVehicleBase()
 	truck_1.dateDesigned	=	std::stoi(pt.get<std::string>("balogh_truck.date_designed"));
 	truck_1.lifespan		=	std::stoi(pt.get<std::string>("balogh_truck.lifespan"));
 	truck_1.capacity		=	std::stoi(pt.get<std::string>("balogh_truck.capacity"));
-	truck_1.capacity		= std::stoi(pt.get<std::string>("balogh_truck.capacity"));
+	truck_1.resource		=	rs::strToResource(pt.get<std::string>("balogh_truck.resources"));
 
-	this->addToVehiclesBase(rs::vhs::enumVehicle::BALOGH, truck_1);
+	this->addToVehiclesBase(vhs::enumVehicle::BALOGH, truck_1);
 
 
-	rs::vhs::Vehicle truck_2;
+	vhs::Vehicle truck_2;
 	truck_2.name			= pt.get<std::string>("uhl_truck.name");
 	truck_2.price			= std::stoi(pt.get<std::string>("uhl_truck.price"));
 	truck_2.speed			= std::stoi(pt.get<std::string>("uhl_truck.speed"));
@@ -73,15 +94,15 @@ void DataManager::loadVehicleBase()
 	truck_2.dateDesigned	= std::stoi(pt.get<std::string>("uhl_truck.date_designed"));
 	truck_2.lifespan		= std::stoi(pt.get<std::string>("uhl_truck.lifespan"));
 	truck_2.capacity		= std::stoi(pt.get<std::string>("uhl_truck.capacity"));
-	truck_2.resources		=		    pt.get<std::string>("uhl_truck.name");
+	truck_2.resource		= rs::strToResource(pt.get<std::string>("uhl_truck.resources"));
 
-	this->addToVehiclesBase(rs::vhs::enumVehicle::UHL, truck_1);
+	this->addToVehiclesBase(vhs::enumVehicle::UHL, truck_1);
 	
 
 	
 }
 
-void DataManager::addToVehiclesBase(const rs::vhs::enumVehicle name, rs::vhs::Vehicle obj)
+void DataManager::addToVehiclesBase(const vhs::enumVehicle name, vhs::Vehicle obj)
 {
 	vehicles[name] = obj;
 }
@@ -105,7 +126,7 @@ sf::Texture* DataManager::getTextureRef(const rs::RoadType& type)
     return &this->road_textures.at(type);
 }
 
-rs::vhs::Vehicle DataManager::getVehicleStruct(const rs::vhs::enumVehicle name) const
+vhs::Vehicle DataManager::getVehicleStruct(const vhs::enumVehicle name) const
 {
 	return vehicles.at(name);	
 }

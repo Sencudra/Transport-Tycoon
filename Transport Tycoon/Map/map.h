@@ -1,8 +1,11 @@
+#pragma once
+
 #ifndef MAP_H
 #define MAP_H
 
-#include "resources.h"
 
+#include <boost/serialization/split_member.hpp>
+#include "resources.h"
 
 namespace ng { class ProgramEngine;}
 class Object;

@@ -1,3 +1,4 @@
+#include "resources.h"
 #include "view.h"
 #include <iostream>
 

@@ -1,9 +1,9 @@
+#pragma once
+
 #ifndef VIEW_H
 #define VIEW_H
 
 #include "resources.h"
-
-
 
 using namespace sf;
 

@@ -150,7 +150,6 @@
     <ClCompile Include="ImGui\imgui_demo.cpp" />
     <ClCompile Include="ImGui\imgui_draw.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Map\cell.cpp" />
     <ClCompile Include="Map\map.cpp" />
     <ClCompile Include="Map\tile.cpp" />
     <ClCompile Include="Objects\object.cpp" />
@@ -168,7 +167,6 @@
     <ClInclude Include="Engine\States\programstatestart.h" />
     <ClInclude Include="Gui\gui.h" />
     <ClInclude Include="IconsKenney.h" />
-    <ClInclude Include="Map\cell.h" />
     <ClInclude Include="Map\map.h" />
     <ClInclude Include="Map\tile.h" />
     <ClInclude Include="MyImgui.h" />

@@ -1,11 +1,12 @@
 
+#include "resources.h"
 #include <iostream>
 #include <algorithm>
 #include "object.h"
 #include "player.h"
 #include "Pathfinder.h"
 #include "texturemanager.h"
-#include "resources.h"
+
 
 
 int Object::createObject(rs::ObjectType type, sf::Texture* texture, float x, float y)
@@ -19,8 +20,6 @@ int Object::createObject(rs::ObjectType type, sf::Texture* texture, float x, flo
 	
 	return 0;
 }
-
-
 
 DynamicObject::~DynamicObject()
 {
@@ -61,8 +60,7 @@ void DynamicObject::addTask(rs::Point task)
 	}
 }
 
-
-Vehicle::Vehicle(rs::vhs::Vehicle vehStruct, Player * player, Map * map,sf::Texture * texture, float x, float y)
+Vehicle::Vehicle(vhs::Vehicle vehStruct, rs::Resources cargo,  Player * player, Map * map,sf::Texture * texture, float x, float y)
 {
 	m_player = player;
 	m_map = map;

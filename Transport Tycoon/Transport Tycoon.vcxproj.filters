@@ -89,9 +89,6 @@
     <ClCompile Include="Objects\object.cpp">
       <Filter>Исходные файлы\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Map\cell.cpp">
-      <Filter>Исходные файлы\Map</Filter>
-    </ClCompile>
     <ClCompile Include="Map\tile.cpp">
       <Filter>Исходные файлы\Map</Filter>
     </ClCompile>
@@ -144,9 +141,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Mechanics\world.h">
       <Filter>Исходные файлы\Engine\Mechanics</Filter>
-    </ClInclude>
-    <ClInclude Include="Map\cell.h">
-      <Filter>Исходные файлы\Map</Filter>
     </ClInclude>
     <ClInclude Include="Objects\object.h">
       <Filter>Исходные файлы\Objects</Filter>

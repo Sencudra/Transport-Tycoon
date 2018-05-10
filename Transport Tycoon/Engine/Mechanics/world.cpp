@@ -328,8 +328,8 @@ Object* World::addVehicle(float x, float y)
 		// Temporary
 		rs::Resources cargo = rs::Resources::COAL;
 
-		rs::vhs::enumVehicle eV = rs::vhs::enumVehicle::BALOGH;
-		rs::vhs::Vehicle veh = this->m_engine->m_texmng->getVehicleStruct(eV);
+		vhs::enumVehicle eV = vhs::enumVehicle::BALOGH;
+		vhs::Vehicle veh = this->m_engine->m_texmng->getVehicleStruct(eV);
 
         Vehicle* car = new Vehicle(veh, cargo, &m_player, m_tileMap, m_engine->m_texmng->getTextureRef("auto"), float(x_2d), float(y_2d));
         m_objDynamContainer.push_back(car);
