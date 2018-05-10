@@ -47,6 +47,8 @@ void DynamicObject::moveTaskSetup(rs::Point start, rs::Point end)
 
 void DynamicObject::addTask(rs::Point task)
 {
+	if (m_map->m_map[task.x][task.y]->m_tileStatObj == nullptr ||
+		m_map->m_map[task.x][task.y]->m_tileStatObj->m_objectType != rs::ObjectType::ROAD ) return;
 	m_moveTask.push_back(task);
 
 	if (!m_isActive)
@@ -118,8 +120,8 @@ void Vehicle::update(const float dt)
 				x = m_path->front()->x;
 				y = m_path->front()->y;
 
-				m_speedX = x - m_x;
-				m_speedY = y - m_y;
+				m_speedX = (x - m_x);
+				m_speedY = (y - m_y);
 
 				updateDirection();
 			}
@@ -127,8 +129,8 @@ void Vehicle::update(const float dt)
 	}
 
 	// Moving Object
-	m_x_iso += (m_speedX*dt);
-	m_y_iso += (m_speedY*dt);
+	m_x_iso += (m_speedX*dt)*m_vehicleInfo.speed / 100;
+	m_y_iso += (m_speedY*dt)*m_vehicleInfo.speed / 100;
 
 	// Changing object's tile
 	if (m_x != m_x_iso || m_y != m_y_iso)

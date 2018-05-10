@@ -170,13 +170,13 @@ void DataManager::loadVehicleSprites()
 	sf::Texture tex;
 	std::map<vhs::Directions, sf::Texture> vehicle_balogh;
 	//TOP_LEFT, BOTTOM_LEFT, BOTTOM_RIGHT, TOP_RIGHT
-	tex.loadFromFile("media\textures\vehicles\balogh_car1.png");
+	tex.loadFromFile("media/textures/Vehicles/balogh_car1.png");
 	vehicle_balogh[vhs::Directions::TOP_LEFT] = tex;
-	tex.loadFromFile("media\textures\vehicles\balogh_car2.png");
+	tex.loadFromFile("media/textures/Vehicles/balogh_car2.png");
 	vehicle_balogh[vhs::Directions::BOTTOM_LEFT] = tex;
-	tex.loadFromFile("media\textures\vehicles\balogh_car3.png");
+	tex.loadFromFile("media/textures/Vehicles/balogh_car3.png");
 	vehicle_balogh[vhs::Directions::BOTTOM_RIGHT] = tex;
-	tex.loadFromFile("media\textures\vehicles\balogh_car4.png");
+	tex.loadFromFile("media/textures/Vehicles/balogh_car4.png");
 	vehicle_balogh[vhs::Directions::TOP_RIGHT] = tex;
 
 	vehicleSprites[vhs::enumVehicle::BALOGH] = vehicle_balogh;

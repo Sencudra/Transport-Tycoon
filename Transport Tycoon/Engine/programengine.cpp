@@ -143,11 +143,13 @@ void ProgramEngine::loop()
         time = time/800;
 
         fps_time = fps_clock.getElapsedTime();
-        //std::cout << 1.0f/fps_time.asSeconds() << std::endl;
+        
         fps_clock.restart().asSeconds();
 
         sf::Time elapsed = clock.restart();
         float dt = elapsed.asSeconds();
+		std::cout << 1.0f/fps_time.asSeconds()<< " "<< dt << std::endl;
+		if (dt > 0.2) dt = 0.00001;
 
         if(m_active_state == nullptr) continue;
 		
