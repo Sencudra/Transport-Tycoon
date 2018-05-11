@@ -72,9 +72,9 @@ void ProgramStateMain::viewSetup()
 	this->m_gameView = ScreenView(pos);
 	m_gameView.setCenter(centre);           // Centre the camera on the map
 
-											// for static background
+	// for static background
 	sf::FloatRect guiView = sf::FloatRect(sf::Vector2f(0, 0), pos);
-	m_guiView = View(guiView);
+	m_guiView = sf::View(guiView);
 }
 
 
@@ -115,6 +115,12 @@ void ProgramStateMain::s_speed()
     m_world->x2Speed();
    
 }
+
+
+
+
+
+
 
 void ProgramStateMain::handleInput()
 {
@@ -162,6 +168,25 @@ void ProgramStateMain::handleInput()
         /* Press mouse button */
         case sf::Event::MouseButtonPressed:
         {
+			sf::Vector2f mousePos = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window), this->m_guiView);
+			sf::Vector2f mousePosWorld = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window), this->m_gameView);
+			int navPadding = 36;
+			int bottomPadding = 30;
+
+			if (mousePos.y < (m_guiView.getCenter().y - m_guiView.getSize().y / 2.0f) + navPadding ||
+				mousePos.y >(m_guiView.getCenter().y + m_guiView.getSize().y / 2.0f) - bottomPadding)
+			{
+				std::cout << "false" << std::endl;
+				return;
+			}	
+			else
+			{
+				std::cout << "true" << std::endl;
+			}
+				
+
+			std::cout << "OOOOOOO" << std::endl;
+
             /* Start panning */
             if(event.mouseButton.button == sf::Mouse::Middle)
             {
@@ -182,8 +207,11 @@ void ProgramStateMain::handleInput()
 			/* Left mouse click */
             if(event.mouseButton.button == sf::Mouse::Left)
             {
-                sf::Vector2f mousePos = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_guiView);
-                sf::Vector2f mousePosWorld = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window),this->m_gameView);
+
+
+				//m_guiView.
+				//std::cout << m_gameView.getSize().y << std::endl;
+				//std::cout << mousePosWorld.x << " " << mousePosWorld.y << std::endl;
 
 				// Selecting object
 				if ( m_editState == rs::EditState::NONE)

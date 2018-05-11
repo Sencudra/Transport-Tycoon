@@ -10,6 +10,7 @@ ScreenView::ScreenView()
 ScreenView::ScreenView(sf::Vector2f size):
     sf::View(size*0.5f, size)
 {
+	int m_navPadding = 36;
     updatePos();
 }
 
@@ -30,6 +31,8 @@ ScreenView::~ScreenView()
 {
 
 }
+
+
 
 void ScreenView::update(float time)
 {

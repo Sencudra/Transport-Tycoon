@@ -20,6 +20,7 @@ public:
 
 private:
 
+
 	void viewMoving(float time);
 	void viewScaling();
     void updatePos();
