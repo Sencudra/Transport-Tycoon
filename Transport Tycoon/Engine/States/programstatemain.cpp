@@ -151,14 +151,14 @@ void ProgramStateMain::handleInput()
                 //          BR
 
 
-                if(newPos.y - (m_gameView.getSize().y/2) > mapEdges.topLeft.y &&
-                   newPos.y + (m_gameView.getSize().y/2) < mapEdges.bottomRight.y &&
-                   newPos.x - (m_gameView.getSize().x/2) > mapEdges.bottomLeft.x &&
-                   newPos.x + (m_gameView.getSize().x/2) < mapEdges.topRight.x)
-                {
+                //if(newPos.y - (m_gameView.getSize().y/2) > mapEdges.topLeft.y &&
+                //   newPos.y + (m_gameView.getSize().y/2) < mapEdges.bottomRight.y &&
+                //   newPos.x - (m_gameView.getSize().x/2) > mapEdges.bottomLeft.x &&
+                //   newPos.x + (m_gameView.getSize().x/2) < mapEdges.topRight.x)
+                //{
                     m_gameView.move(-1.0f * pos * this->m_zoomLevel);
 
-                }
+   //             }
                 m_panningAnchor = sf::Mouse::getPosition(this->m_game->m_window);
 
             }
@@ -172,20 +172,6 @@ void ProgramStateMain::handleInput()
 			sf::Vector2f mousePosWorld = this->m_game->m_window.mapPixelToCoords(sf::Mouse::getPosition(this->m_game->m_window), this->m_gameView);
 			int navPadding = 36;
 			int bottomPadding = 30;
-
-			if (mousePos.y < (m_guiView.getCenter().y - m_guiView.getSize().y / 2.0f) + navPadding ||
-				mousePos.y >(m_guiView.getCenter().y + m_guiView.getSize().y / 2.0f) - bottomPadding)
-			{
-				std::cout << "false" << std::endl;
-				return;
-			}	
-			else
-			{
-				std::cout << "true" << std::endl;
-			}
-				
-
-			std::cout << "OOOOOOO" << std::endl;
 
             /* Start panning */
             if(event.mouseButton.button == sf::Mouse::Middle)
@@ -207,11 +193,6 @@ void ProgramStateMain::handleInput()
 			/* Left mouse click */
             if(event.mouseButton.button == sf::Mouse::Left)
             {
-
-
-				//m_guiView.
-				//std::cout << m_gameView.getSize().y << std::endl;
-				//std::cout << mousePosWorld.x << " " << mousePosWorld.y << std::endl;
 
 				// Selecting object
 				if ( m_editState == rs::EditState::NONE)

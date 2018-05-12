@@ -17,13 +17,15 @@ public:
     sf::Texture* getTextureRef(const std::string& name);
     sf::Texture* getTextureRef(const rs::IndustryType& type);
     sf::Texture* getTextureRef(const rs::RoadType& type);
-	vhs::Vehicle getVehicleStruct(const vhs::enumVehicle) const;
+	vhs::Vehicle getVehicleStruct(const vhs::enumVehicle type) const;
+	rs::Greenery getGreeneryStruct(const rs::GreeneryType type) const;
 
 
 	void loadTexture(const std::string& name, const std::string& filename);
 	void loadTexture(const rs::IndustryType type, const std::string& filename);
 	void loadTexture(const rs::RoadType type, const std::string& filename);
 	void loadTexture(const rs::RoadType type, const sf::Texture texture);
+	void loadTexture(const rs::GreeneryType type, const rs::Greenery spriteSet);
 	void loadTexture(const vhs::enumVehicle vehicle, const std::map<vhs::Directions, sf::Texture> sprites);
 
 
@@ -31,6 +33,7 @@ private:
 	void loadSpiteSheet();
 	void loadVehicleSprites();
 	void loadVehicleBase();
+	void loadGreenerySprites();
 	void addToVehiclesBase(const vhs::enumVehicle name, vhs::Vehicle obj);
 
 
@@ -40,6 +43,7 @@ private:
 	
 	std::map<vhs::enumVehicle, vhs::Vehicle> vehicles;
 	std::map<vhs::enumVehicle, std::map<vhs::Directions, sf::Texture>> vehicleSprites;
+	std::map<rs::GreeneryType, rs::Greenery> greenerySprites;
 
 };
 

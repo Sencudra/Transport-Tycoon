@@ -6,6 +6,7 @@
 #include "player.h"
 #include "Pathfinder.h"
 #include "texturemanager.h"
+#include <random>
 
 
 
@@ -421,4 +422,60 @@ void Industry::setIsActive()
     m_isActive = true;
 }
 
+GreeneryObject::GreeneryObject(rs::Greenery structure, float x, float y)
+{
+	srand(time(NULL));
 
+	m_structure = structure;
+	m_spriteNum = rand() % 4; 
+	m_texture = &m_structure.spriteSet.at(m_spriteNum);
+	createObject(rs::ObjectType::GREENERY, m_texture, x, y);
+
+
+	m_sprite.setTexture(*m_texture);
+	m_timeSinceLastChange = 0;
+
+	float n_x = x;
+	float n_y = y;
+	rs::twoDToIso(n_x, n_y, 64, 32);
+
+	m_sprite.setPosition(n_x + m_structure.offsetX, n_y + m_structure.offsetY);
+
+}
+
+void GreeneryObject::update(const float dt)
+{
+	m_timeSinceLastChange += dt;
+	int x = (int)rand() % 20;
+	if (x == 10 & m_timeSinceLastChange > 2.5)
+	{
+		m_timeSinceLastChange = 0;
+		m_spriteNum = (m_spriteNum + 1) % 4;
+		m_sprite.setTexture(m_structure.spriteSet.at(m_spriteNum));
+	}
+}
+
+void GreeneryObject::draw(sf::RenderWindow & view)
+{
+	view.draw(this->m_sprite);
+}
+
+void GreeneryObject::loadObject(sf::Texture * texture)
+{
+}
+
+void GreeneryObject::loadObject(rs::Greenery greeneryStruct)
+{
+	rs::GreeneryType type = greeneryStruct.type;
+	m_structure = greeneryStruct;
+	m_structure.type = type;
+
+	m_texture = &m_structure.spriteSet.at(m_spriteNum);
+	m_sprite.setTexture(*m_texture);
+
+	m_timeSinceLastChange = 0;
+	float n_x = m_x;
+	float n_y = m_y;
+	rs::twoDToIso(n_x, n_y, 64, 32);
+	m_sprite.setPosition(n_x + m_structure.offsetX, n_y + m_structure.offsetY);
+}

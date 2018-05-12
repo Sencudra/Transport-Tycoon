@@ -53,6 +53,9 @@ public:
 	Player m_player;
 	Map* m_tileMap;
 
+	std::vector<Object*> m_objStaticContainer;
+	std::vector<Object*> m_objDynamContainer;
+
 private:
 
 	void drawMap(ScreenView& gameView);
@@ -69,12 +72,9 @@ private:
     ng::ProgramEngine* m_engine;
     ProgramStateMain* m_state;
 
-    std::vector<Object*> m_objStaticContainer;
-    std::vector<Object*> m_objDynamContainer;
-
-   
 
 
+ 
     // World behaviour
 
     float m_timePerDay;
@@ -100,6 +100,7 @@ private:
 		ar.template register_type<Industry>();
 		ar.template register_type<Road>();
 		ar.template register_type<Vehicle>();
+		ar.template register_type<GreeneryObject>();
 
 		ar << m_objDynamContainer;
 
@@ -120,6 +121,7 @@ private:
 		ar.template register_type<Industry>();
 		ar.template register_type<Road>();
 		ar.template register_type<Vehicle>();
+		ar.template register_type<GreeneryObject>();
 
 		ar >> m_objDynamContainer;
 			

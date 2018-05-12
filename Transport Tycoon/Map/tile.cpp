@@ -82,15 +82,18 @@ void Tile::update()
 
 bool Tile::setObject(Object* obj)
 {
+
     if(m_tileStatObj == nullptr)
     {
-        obj->m_sprite.setPosition(this->m_sprite.getPosition().x, this->m_sprite.getPosition().y);
-        m_tileStatObj = obj;
-        return true;
+		obj->m_sprite.setPosition(this->m_sprite.getPosition().x, this->m_sprite.getPosition().y);
+		m_tileStatObj = obj;
+		return true;
     }
     else
     {
-        return false;
+		obj->m_sprite.setPosition(this->m_sprite.getPosition().x, this->m_sprite.getPosition().y);
+		m_tileStatObj = obj;
+		return true;
     }
 }
 

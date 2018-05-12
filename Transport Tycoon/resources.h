@@ -38,21 +38,35 @@
 
 namespace rs {
 
-//const int G_SPR_NUM_REQ = 8; // Required sprite amount for correct work
-const float G_PROGRAM_VERSION = 1.0;
-const int   G_DEFAULT_MAP_SIZE = 256;
-const char  G_PROGRAM_NAME[20] = "Transport Paradise";
+	//const int G_SPR_NUM_REQ = 8; // Required sprite amount for correct work
+	const float G_PROGRAM_VERSION = 1.0;
+	const int   G_DEFAULT_MAP_SIZE = 256;
+	const char  G_PROGRAM_NAME[20] = "Transport Paradise";
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// TileType and it's serializations method
-//
+	/////////////////////////////////////////////////////////////////////////////////////////
+	// TileType and it's serializations method
+	//
 
-enum class TileType {VOID, WATER, DEEPWATER,SAND, PLAIN, FOREST,STONE,
-                     ROCKS, SNOW};
+	enum class TileType {
+		VOID, WATER, DEEPWATER, SAND, PLAIN, FOREST, STONE,
+		ROCKS, SNOW
+	};
 
-enum class ObjectType {INDUSTRY ,ROAD, VEHICLE};
+	enum class GreeneryType {
+		TREE_1, TREE_2, TREE_3
+	};
+
+	struct Greenery
+	{
+		rs::GreeneryType type;
+		int offsetX;
+		int offsetY;
+		std::vector<sf::Texture> spriteSet;
+	};
+
+enum class ObjectType {INDUSTRY ,ROAD, VEHICLE, GREENERY};
 
 enum class Resources {COAL, IRONORE, GRAIN, LIVESTOCK, STEEL, WOOD, OIL,
                       GOODS, PASSANGERS, MAIL, VALUABLES};
@@ -116,6 +130,12 @@ struct Point
 {
     int x;
     int y;
+
+	//Point(int x_new,int y_new)
+	//{
+	//	x = x_new;
+	//	y = y_new;
+	//}
 
     void setValues(int nx, int ny)
     {

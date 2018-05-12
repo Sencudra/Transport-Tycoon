@@ -72,6 +72,16 @@ void World::WorldLoadSetup(ng::ProgramEngine* engine, ProgramStateMain* state)
 			m_tileMap->placeIndustry(ind);
 
 		}
+		if (i->m_objectType == rs::ObjectType::GREENERY)
+		{
+			GreeneryObject* green = dynamic_cast<GreeneryObject*>(i);
+			rs::Greenery greeneryStruct = m_engine->m_texmng->getGreeneryStruct(green->getGreeneryType());
+
+			m_tileMap->m_map[green->m_x][green->m_y]->setObject(green);
+			m_tileMap->m_map[green->m_x][green->m_y]->isMainStatic = true;
+			green->loadObject(greeneryStruct);
+
+		}
 	}
 	for (auto i : m_objDynamContainer)
 	{
@@ -151,7 +161,8 @@ void World::addRoad(float x, float y)
     (m_tileMap->m_map[x1][y1]->m_tileType != rs::TileType::DEEPWATER &&
       m_tileMap->m_map[x1][y1]->m_tileType != rs::TileType::WATER &&
       m_tileMap->m_map[x1][y1]->m_tileType != rs::TileType::ROCKS &&
-      m_tileMap->m_map[x1][y1]->m_tileStatObj == NULL)
+      (m_tileMap->m_map[x1][y1]->m_tileStatObj == NULL ||
+		m_tileMap->m_map[x1][y1]->m_tileStatObj->m_objectType == rs::ObjectType::GREENERY))
       ? isTileAvailable = true : isTileAvailable = false;
 
     /* adding new road path */

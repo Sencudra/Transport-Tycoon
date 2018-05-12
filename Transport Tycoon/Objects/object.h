@@ -70,6 +70,41 @@ private:
     }
 };
 
+class GreeneryObject : public Object
+{
+public:
+	GreeneryObject() { ; }
+	GreeneryObject(rs::Greenery structure, float x, float y);
+    ~GreeneryObject(){}
+
+    virtual void update(const float dt) override;
+    virtual void draw(sf::RenderWindow& view) override; //Возможно прорисовывает несколько раз. Проверить
+	virtual void loadObject(sf::Texture* texture) override;
+
+	void loadObject(rs::Greenery greeneryStruct);
+	rs::GreeneryType getGreeneryType() { return m_structure.type; }
+
+protected:
+	float m_timeSinceLastChange;
+	rs::Greenery m_structure;
+	int m_spriteNum;
+    
+
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version)
+	{
+		// serialize base class information
+		ar & boost::serialization::base_object<Object>(*this);
+
+		ar & m_structure.type;
+		ar & m_spriteNum;
+
+	}
+
+};
+
 class Industry : public Object
 {
 public:

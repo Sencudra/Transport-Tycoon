@@ -13,6 +13,9 @@
 #include "programengine.h"
 #include "world.h"
 #include "object.h"
+#include <random>
+
+
 
 
 float deepWaterThreshold = 0.4f;
@@ -130,7 +133,7 @@ int Map::initialiseMap()
 
 
 
-bool Map::isValid(int x, int y, Tile*** map, rs::IndustryType type)
+bool Map::isValidIndustry(int x, int y, Tile*** map, rs::IndustryType type)
 {
     int rows = m_industryMaps[type].m_sizeX;
     int columns = m_industryMaps[type].m_sizeY;
@@ -164,6 +167,20 @@ bool Map::isValid(int x, int y, Tile*** map, rs::IndustryType type)
     return true;
 }
 
+bool Map::isValidGreenery(int x, int y, Tile *** map)
+{	// Checks is tile velide for placement a greenery object
+	if (map[x][y]->m_tileType == rs::TileType::PLAIN || map[x][y]->m_tileType == rs::TileType::FOREST)
+	{
+		if (map[x][y]->m_tileStatObj != NULL)
+			return false;
+	}
+	else
+	{
+		return false;
+	}
+	return true;
+}
+
 int Map::generateObjects()
 {
 
@@ -192,7 +209,7 @@ int Map::generateObjects()
                 if (m_map[x][y]->m_tileType == rs::TileType::PLAIN || m_map[x][y]->m_tileType == rs::TileType::FOREST ||
                         m_map[x][y]->m_tileType == rs::TileType::STONE)
                 {
-                    isCreated = isValid(x,y,m_map,type);
+                    isCreated = isValidIndustry(x,y,m_map,type);
 
                     if(isCreated)
                     {
@@ -212,6 +229,7 @@ int Map::generateObjects()
         }
 
     }
+	this->placeGreenery();
     return 0;
 }
 
@@ -245,6 +263,99 @@ void Map::loadIndustryMaps()
     this->m_industryMaps[rs::IndustryType::POWERSTATION].CreateIndustryMap(4,2,temp_matrix2);
 
 
+}
+
+void Map::placeGreenery()
+{	// Forest generator
+	// control radius, objects in a radius
+	// probabilities
+
+	int radius = 7;
+
+	int objectsForest = 40;
+	int objectsPlain = 3;
+
+
+	rs::GreeneryType type;
+	std::default_random_engine generator;
+	std::bernoulli_distribution distribution(0.4);
+
+	std::random_device rd{};
+	std::mt19937 gen{ rd() };
+	std::normal_distribution<> d{ 5,2 };
+
+	for (int x = 0; x < m_mapSize; ++x) {
+		for (int y = 0; y < m_mapSize; ++y) {
+
+			if ((m_map[x][y]->m_tileType == rs::TileType::FOREST || m_map[x][y]->m_tileType == rs::TileType::PLAIN)
+				&& isValidGreenery(x, y, m_map))
+			{
+				int trueFalse = distribution(generator);
+				rs::Point center;
+				center.setValues(x, y);
+				int objectsNumberRad = countObjectRadius(rs::ObjectType::GREENERY, center, radius);
+
+				if(m_map[x][y]->m_tileType == rs::TileType::FOREST &&
+					trueFalse && objectsNumberRad <= objectsForest)
+				{
+
+					int probability = round(d(gen));
+
+					if (probability <= 4)
+						type = rs::GreeneryType::TREE_1;
+					else if (probability > 4 && probability <= 6 )
+						type = rs::GreeneryType::TREE_2;
+					else if (probability > 6)
+						type = rs::GreeneryType::TREE_3;
+
+					rs::Greenery newStruct = m_engine->m_texmng->getGreeneryStruct(type);
+
+					GreeneryObject* newObject = new GreeneryObject(newStruct, x, y);
+
+					m_world->addObject(newObject);
+
+					m_map[x][y]->m_tileStatObj = newObject;
+					m_map[x][y]->isMainStatic = true;
+				}
+				else if(m_map[x][y]->m_tileType == rs::TileType::PLAIN &&
+					trueFalse && objectsNumberRad <= objectsPlain)
+				{
+					int probability = round(d(gen));
+
+					if (probability <= 3)
+						type = rs::GreeneryType::TREE_1;
+					else if (probability > 3 && probability <= 4)
+						type = rs::GreeneryType::TREE_2;
+					else if (probability > 4)
+						type = rs::GreeneryType::TREE_3;
+
+					rs::Greenery newStruct = m_engine->m_texmng->getGreeneryStruct(type);
+
+					GreeneryObject* newObject = new GreeneryObject(newStruct, x, y);
+
+					m_world->addObject(newObject);
+
+					m_map[x][y]->m_tileStatObj = newObject;
+					m_map[x][y]->isMainStatic = true;
+				}
+			}
+		}
+	}
+}
+
+int Map::countObjectRadius(rs::ObjectType type, rs::Point point, int rad)
+{
+	int count = 0;
+	for (auto i : m_world->m_objStaticContainer)
+	{
+		if (i->m_objectType == type)
+		{
+			GreeneryObject* obj = dynamic_cast<GreeneryObject*>(i);
+			bool inRadius = pow(obj->m_x - point.x, 2) + pow(obj->m_y - point.y, 2) < pow(rad, 2);
+			if (inRadius) ++count;
+		}
+	}
+	return count;
 }
 
 

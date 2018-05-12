@@ -42,6 +42,7 @@ DataManager::DataManager()
 	loadSpiteSheet();
 	loadVehicleSprites();
 	loadVehicleBase();
+	loadGreenerySprites();
 }
 
 
@@ -86,6 +87,14 @@ void DataManager::loadTexture(const rs::RoadType type, sf::Texture texture)
 
 	/* Add it to the list of textures */
 	road_textures[type] = texture;
+
+	return;
+}
+
+void DataManager::loadTexture(const rs::GreeneryType type, const rs::Greenery spriteSet)
+{
+	/* Add it to the list of textures */
+	greenerySprites[type] = spriteSet;
 
 	return;
 }
@@ -223,6 +232,48 @@ void DataManager::loadVehicleBase()
 		
 }
 
+void DataManager::loadGreenerySprites()
+{
+	sf::Texture tex;
+	std::vector<sf::Texture> spriteSet;
+
+	rs::Greenery tree_1;
+	tex.loadFromFile("media/textures/trees-blackland/tree1_s/s2tree1_00.png"); spriteSet.push_back(tex);
+	tex.loadFromFile("media/textures/trees-blackland/tree1_s/s2tree1_01.png"); spriteSet.push_back(tex);
+	tex.loadFromFile("media/textures/trees-blackland/tree1_s/s2tree1_02.png"); spriteSet.push_back(tex);
+	tex.loadFromFile("media/textures/trees-blackland/tree1_s/s2tree1_03.png"); spriteSet.push_back(tex);
+	tree_1.offsetX = 21;
+	tree_1.offsetY = 20 - tex.getSize().y;
+	tree_1.spriteSet = spriteSet;
+	tree_1.type = rs::GreeneryType::TREE_1;
+	loadTexture(rs::GreeneryType::TREE_1, tree_1);
+
+	spriteSet.clear();
+	rs::Greenery tree_2;
+	tex.loadFromFile("media/textures/trees-blackland/tree2_s/s2tree2_00.png"); spriteSet.push_back(tex);
+	tex.loadFromFile("media/textures/trees-blackland/tree2_s/s2tree2_01.png"); spriteSet.push_back(tex);
+	tex.loadFromFile("media/textures/trees-blackland/tree2_s/s2tree2_02.png"); spriteSet.push_back(tex);
+	tex.loadFromFile("media/textures/trees-blackland/tree2_s/s2tree2_03.png"); spriteSet.push_back(tex);
+	tree_2.offsetX = 21;
+	tree_2.offsetY = 20 - tex.getSize().y;
+	tree_2.spriteSet = spriteSet;
+	tree_2.type = rs::GreeneryType::TREE_2;
+	loadTexture(rs::GreeneryType::TREE_2, tree_2);
+
+	spriteSet.clear();
+	rs::Greenery tree_3;
+	tex.loadFromFile("media/textures/trees-blackland/tree3_s/s2tree3_00.png"); spriteSet.push_back(tex);
+	tex.loadFromFile("media/textures/trees-blackland/tree3_s/s2tree3_01.png"); spriteSet.push_back(tex);
+	tex.loadFromFile("media/textures/trees-blackland/tree3_s/s2tree3_02.png"); spriteSet.push_back(tex);
+	tex.loadFromFile("media/textures/trees-blackland/tree3_s/s2tree3_03.png"); spriteSet.push_back(tex);
+	tree_3.offsetX = 21;
+	tree_3.offsetY = 20 - tex.getSize().y;
+	tree_3.spriteSet = spriteSet;
+	tree_3.type = rs::GreeneryType::TREE_3;
+	loadTexture(rs::GreeneryType::TREE_3, tree_3);
+
+}
+
 void DataManager::addToVehiclesBase(const vhs::enumVehicle name, vhs::Vehicle obj)
 {
 	vehicles[name] = obj;
@@ -252,6 +303,11 @@ vhs::Vehicle DataManager::getVehicleStruct(const vhs::enumVehicle name) const
 {
 	vhs::Vehicle a = vehicles.at(name);
 	return a;
+}
+
+rs::Greenery DataManager::getGreeneryStruct(const rs::GreeneryType type) const
+{
+	return greenerySprites.at(type);
 }
 
 

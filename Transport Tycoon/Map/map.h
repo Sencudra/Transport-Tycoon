@@ -7,6 +7,7 @@
 #include <boost/serialization/split_member.hpp>
 #include "resources.h"
 
+
 namespace ng { class ProgramEngine;}
 class Object;
 class Tile;
@@ -46,6 +47,10 @@ private:
 		
     void loadIndustryMaps();
 
+	void placeGreenery();
+
+	int countObjectRadius(rs::ObjectType type, rs::Point point, int rad);
+
     /* Methods that maintain tilemap */
 
     int generateMap();
@@ -54,7 +59,8 @@ private:
     int initialiseMap();
     int generateObjects();
 
-    bool isValid(int x, int y, Tile*** map, rs::IndustryType type);
+    bool isValidIndustry(int x, int y, Tile*** map, rs::IndustryType type);
+	bool isValidGreenery(int x, int y, Tile*** map);
 
     /* Methods that maintain landscape generation */
 
