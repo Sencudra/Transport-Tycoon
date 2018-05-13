@@ -55,7 +55,6 @@ void IOutput::loadGameFromFile(std::string filename)
 	boost::archive::binary_iarchive ia(ifs);
 
 	ia >> m_world;
-
 	m_engine->pushState(new ProgramStateMain(m_world, m_engine));
 
 

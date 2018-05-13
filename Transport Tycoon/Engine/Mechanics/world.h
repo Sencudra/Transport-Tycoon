@@ -72,9 +72,6 @@ private:
     ng::ProgramEngine* m_engine;
     ProgramStateMain* m_state;
 
-
-
- 
     // World behaviour
 
     float m_timePerDay;

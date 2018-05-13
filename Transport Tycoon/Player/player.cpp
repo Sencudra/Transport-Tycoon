@@ -4,7 +4,7 @@ Player::Player()
 {
     m_companyName = "New Company";
     m_playerName = "Player1";
-    m_balance = 20000;
+    m_balance = 60000;
 	m_color = rs::Color::GREEN;
 }
 

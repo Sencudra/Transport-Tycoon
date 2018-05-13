@@ -27,6 +27,7 @@ float forestThreshold = 0.75f;              //stone
 float hillsThreshold = 0.80f;               //ston2
 float mountainsThreshold = 0.88f;           // snow
 
+
 std::string IndTypeToString(rs::IndustryType type)
 {
 	switch (type)
@@ -59,7 +60,6 @@ std::string IndTypeToString(rs::IndustryType type)
 		break;
 	}
 }
-
 
 
 float dRand(double dMax)
@@ -164,7 +164,7 @@ int Map::initialiseMap()
 
 
 
-bool Map::isValidIndustry(int x, int y, Tile*** map, rs::IndustryType type)
+bool Map::isValidIndustry(bool condition, int x, int y, Tile*** map, rs::IndustryType type)
 {
     int rows = m_industryMaps[type].m_sizeX;
     int columns = m_industryMaps[type].m_sizeY;
@@ -173,14 +173,13 @@ bool Map::isValidIndustry(int x, int y, Tile*** map, rs::IndustryType type)
     {
         for(int j = x, j2 = 0; j <= x + columns, j2 < columns; ++j,++j2)
         {
-            if(m_industryMaps[type].m_map[i2][j2] == 'x')
+            if(m_industryMaps[type].m_map[i2][j2] == 'x' || m_industryMaps[type].m_map[i2][j2] == '1')
             {
                 if(i > 0 && i < m_mapSize && j > 0 && j < m_mapSize)
                 {
-                    if(map[j][i]->m_tileType == rs::TileType::PLAIN || map[j][i]->m_tileType == rs::TileType::FOREST ||
-                            map[j][i]->m_tileType == rs::TileType::STONE)
+                    if(condition)
                     {
-                        if(map[j][i]->m_tileStatObj != NULL)
+                        if(map[j][i]->m_tileStatObj != nullptr)
                             return false;
                     }
                     else
@@ -227,7 +226,7 @@ int Map::generateObjects()
 	std::cout << "Elapset time for loading ind. maps:" << clock.getElapsedTime().asSeconds() << std::endl; clock.restart();
 	
 
-    for(int i = 0; i < 12; ++i)
+    for(int i = 0; i < 9; ++i)
     {
         int qvote = 5;
 		int built = 0;
@@ -246,10 +245,9 @@ int Map::generateObjects()
 				++tries;
 
 				isCreated = createIndustry(x, y, type);
-                
+				if (isCreated) ++built;
             }
             qvote--;
-			if (isCreated) ++built;
         }
 		std::cout << "Build ind. " << IndTypeToString(type) << " : " << built << std::endl;;
 
@@ -443,12 +441,11 @@ void Map::placeGreenery()
 
 bool Map::createIndustry(int x, int y, rs::IndustryType type)
 {
-	bool isCreated = false;
+	
 	bool condition = false;
 
 	switch (type)
 	{
-
 	case rs::IndustryType::POWERSTATION:
 	case rs::IndustryType::STEELMILL:
 	case rs::IndustryType::FACTORY:
@@ -507,13 +504,14 @@ bool Map::createIndustry(int x, int y, rs::IndustryType type)
 	{
 		condition = false;
 	}
-		break;
+	break;
 	}
 
+	bool isCreated = false;
 
 	if (condition)
 	{
-		isCreated = isValidIndustry(x, y, m_map, type);
+		isCreated = isValidIndustry(condition, x, y, m_map, type);
 
 		if (isCreated)
 		{

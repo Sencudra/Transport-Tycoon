@@ -60,7 +60,7 @@ private:
     int initialiseMap();
     int generateObjects();
 
-    bool isValidIndustry(int x, int y, Tile*** map, rs::IndustryType type);
+    bool isValidIndustry(bool condition, int x, int y, Tile*** map, rs::IndustryType type);
 	bool isValidGreenery(int x, int y, Tile*** map);
 
     /* Methods that maintain landscape generation */

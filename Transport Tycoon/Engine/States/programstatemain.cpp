@@ -14,6 +14,7 @@
 ProgramStateMain::ProgramStateMain(World* world, ng::ProgramEngine* engine) :
 	m_world(world)
 {
+	m_world->switchPause();
 	std::cout << "ProgramStateMain::ProgramStateMain" << std::endl;
 	this->m_game = engine;
 	
@@ -29,6 +30,7 @@ ProgramStateMain::ProgramStateMain(World* world, ng::ProgramEngine* engine) :
 	this->m_editState = rs::EditState::NONE;
 
 	m_focusObject = nullptr;
+	m_world->switchPause();
 
 }
 
@@ -95,7 +97,6 @@ void ProgramStateMain::update(const float dt)
 	m_gameView.update(dt);
     m_world->update(dt);
 	this->showImGui();
-	
 
     return;
 }

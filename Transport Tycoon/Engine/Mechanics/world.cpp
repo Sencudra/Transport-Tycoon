@@ -106,10 +106,13 @@ World::~World()
     {
         delete i;
     }
+	m_objStaticContainer.clear();
 }
 
 void World::update(float dt)
 {
+	std::cout << dt << std::endl;
+
     if(dt > 0.5)return;
     if(!m_isPause){
         float time_dt = dt*2;
@@ -335,7 +338,7 @@ Object* World::addVehicle(float x, float y)
     if(isTileIsRoad(x_2d, y_2d))
     {
         /* Check balance */
-        if(!m_player.getMoney(250)) return nullptr;
+        if(!m_player.getMoney(11000)) return nullptr;
 
 		// Temporary
 		vhs::enumVehicle eV = vhs::enumVehicle::BALOGH;

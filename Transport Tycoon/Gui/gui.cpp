@@ -10,8 +10,40 @@
 
 using namespace gui;
 
-
 // Menu Gui
+std::string IndTypeToString2(rs::IndustryType type)
+{
+	switch (type)
+	{
+	case rs::IndustryType::COALMINE: return "Coal Mine";
+		break;
+	case rs::IndustryType::POWERSTATION: return "Power Station";
+		break;
+	case rs::IndustryType::IRONOREMINE: return "Iron Ore Mine";
+		break;
+	case rs::IndustryType::STEELMILL: return "Steel Mill";
+		break;
+	case rs::IndustryType::FARM: return "Farm";
+		break;
+	case rs::IndustryType::FACTORY: return "Factory";
+		break;
+	case rs::IndustryType::FOREST: return "Forest";
+		break;
+	case rs::IndustryType::SAWMILL: return "Saw Mill";
+		break;
+	case rs::IndustryType::OILWELLS: return "Oil Mill";
+		break;
+	case rs::IndustryType::OILRIG: return "Oil Rig";
+		break;
+	case rs::IndustryType::OILREFINERY: return "Oil Refinery";
+		break;
+	case rs::IndustryType::BANK: return "Bank";
+		break;
+	default:
+		break;
+	}
+}
+
 
 GuiMenu::GuiMenu(ng::ProgramEngine* game)
 {
@@ -287,7 +319,46 @@ void GuiGame::infoBar(bool gShow)
 		ImGui::TextWrapped("Day %d", this->m_world->getDayCount());
 
 		ImGui::NextColumn();
-		ImGui::TextWrapped(" -- Current state -- ");
+
+		ProgramStateMain* state = dynamic_cast<ProgramStateMain*>(m_game->peekState());
+		Object* obj = state->getFocusedObject();
+		if ( obj == nullptr)
+		{
+			ImGui::TextWrapped(" -- %s -- ", m_world->m_player.getCompanyName().c_str());
+		}
+		else
+		{
+			std::string output;
+			switch (obj->m_objectType)
+			{
+			case rs::ObjectType::INDUSTRY:
+			{
+				Industry* ind = dynamic_cast<Industry*>(obj);
+				output = IndTypeToString2(ind->getType()) + " " + std::to_string(ind->m_storage);
+				ImGui::TextWrapped(" -- %s -- ", output.c_str());
+			}
+				break;
+			case rs::ObjectType::ROAD:
+			{
+				ImGui::TextWrapped(" -- ROAD -- ");
+			}
+				break;
+			case rs::ObjectType::VEHICLE:
+			{
+				Vehicle* ind = dynamic_cast<Vehicle*>(obj);
+				output =  "Vehicle" + std::to_string(ind->m_cargoLoaded);
+				ImGui::TextWrapped(" -- %s -- ", output.c_str());
+			}
+				break;
+			case rs::ObjectType::GREENERY:
+			{
+				ImGui::TextWrapped(" -- Plant -- ");
+			}
+				break;
+			default:
+				break;
+			}
+		}
 		ImGui::NextColumn();
 		ImGui::TextWrapped(" Money: %d $", this->m_world->m_player.getBalance());
 		ImGui::Columns(1);

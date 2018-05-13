@@ -28,6 +28,7 @@ public:
 	void setEditState(rs::EditState state) { m_editState = state; }
 	void viewSetup();
 
+	Object* getFocusedObject() { return m_focusObject; }
 
 private:
     //void drawMap(int dt);

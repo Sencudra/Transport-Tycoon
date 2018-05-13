@@ -124,11 +124,12 @@ public:
     int m_storage;
 
 protected:
+	float m_time_elapsed;		// Timer
     rs::IndustryType m_type;
-    int m_workSpeed;      // in 30 days
+    int m_workSpeed;			// in 30 days
 
-    int m_iResNum;
-    rs::Resources m_iRsrc[1];
+    int m_iResNum;				// Input res
+    rs::Resources m_iRsrc[2];
 
     int m_oResNum;
     rs::Resources m_oRsrc[1];
@@ -232,7 +233,7 @@ private:
 		// serialize base class information
 		ar & boost::serialization::base_object<Object>(*this);
 
-		ar & m_x_iso & m_y_iso;
+		//ar & m_x_iso & m_y_iso;
 		ar & m_speedX & m_speedY;
 
 		ar & m_moveTask;
@@ -259,20 +260,27 @@ public:
 	void loadObject(vhs::Vehicle vehStruct, Map* map);
 
 	//int loadVehicle(rs::Cargo cargo) { m_cargo.push_back(cargo); return 0; }
+	int m_cargoLoaded;
 
 	vhs::enumVehicle getVehicleType() { return m_vehicleInfo.name; }
 
-
+	vhs::Vehicle m_vehicleInfo;
 private:
 	void cargoExchange();
+
+	void unload(Industry* obj);
+	void load(Industry* obj);
+
+
 	void updateDirection();
 
 private:
-	vhs::Vehicle m_vehicleInfo;
+	
+
 	std::string ownerName;
 
 	vhs::Directions m_direction;
-	int m_cargoLoaded;
+
 	bool m_isBroken;
 
 	std::vector<rs::Cargo> m_cargo;

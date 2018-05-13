@@ -189,6 +189,12 @@ struct IndustryMap
 };
 
 
+//std::string IndTypeToString(rs::IndustryType type)
+//{
+//	return "asd";
+//}
+
+
 namespace boost {
 	namespace serialization {
 
@@ -199,8 +205,6 @@ namespace boost {
 		}
 	} // namespace serialization
 } // namespace boost
-
-
 
 }
 
@@ -225,7 +229,13 @@ namespace vhs {
 		rs::Resources resource;
 		std::map<vhs::Directions, sf::Texture>* sprites;
 	};
+
+
+
+
+
 }
+
 
 
 

@@ -81,6 +81,7 @@ Vehicle::Vehicle(vhs::Vehicle vehStruct, Map* map, float x, float y)
 
 	m_cargoLoaded = 0;
 	m_isBroken = false;
+
 	
 }
 
@@ -90,7 +91,6 @@ Vehicle::~Vehicle()
 
 void Vehicle::update(const float dt)
 {
-
 	// Path follower
 	if (m_path != nullptr && m_path->empty())
 	{
@@ -100,7 +100,7 @@ void Vehicle::update(const float dt)
 			m_moveTask.push_back(*m_moveTask.begin());
 			m_moveTask.erase(m_moveTask.begin());
 			moveTaskSetup(m_moveTask.back(), m_moveTask.front());
-			//cargoExchange();
+			cargoExchange();
 		}
 		m_speedX = 0;
 		m_speedY = 0;
@@ -196,7 +196,8 @@ void Vehicle::draw(sf::RenderWindow& view)
 
 void Vehicle::loadObject(vhs::Vehicle vehStruct, Map* map)
 {
-
+	m_x_iso = m_x;
+	m_y_iso = m_y;
 	m_map = map;
 
 	// Temopary save
@@ -230,41 +231,82 @@ void Vehicle::cargoExchange()
     for(int x = m_x - 1; x < m_x + 1; ++x)
         for(int y = m_y - 1; y < m_y + 1; ++y)
         {
-
             if(m_map->m_map[x][y]->m_tileStatObj != NULL &&
                m_map->m_map[x][y]->m_tileStatObj->m_objectType == rs::ObjectType::INDUSTRY )
             {
                 obj = dynamic_cast<Industry*> (m_map->m_map[x][y]->m_tileStatObj);
-                continue;
+                break;
             }
         }
+	if (obj == NULL) return;
 
-    if(obj != NULL && obj->getType() == rs::IndustryType::COALMINE)
+
+    if( obj->getType() == rs::IndustryType::COALMINE)
     {
         //std::cout << "Available: " << obj->m_storage << std::endl;
+		load(obj);
 
-        if(m_cargoLoaded != m_vehicleInfo.capacity && obj->m_storage != 0)
-        {
-            if(obj->m_storage < (m_vehicleInfo.capacity - m_cargoLoaded))
-            {
-                m_cargoLoaded += obj->m_storage;
-                obj->m_storage = 0;
-            }
-            else
-            {
-
-                m_cargoLoaded += (m_vehicleInfo.capacity - m_cargoLoaded);
-                obj->m_storage -= (m_vehicleInfo.capacity - m_cargoLoaded);
-            }
-        }
     }
-    else if(obj != NULL && obj->getType() == rs::IndustryType::POWERSTATION)
-    {
-        std::cout << "Sold: " <<  (m_cargoLoaded) << std::endl;
+	else if (obj->getType() == rs::IndustryType::POWERSTATION)
+	{
+		unload(obj);
+	}
+	else if (obj->getType() == rs::IndustryType::IRONOREMINE)
+	{
+		load(obj);
+	}
+	else if (obj->getType() == rs::IndustryType::STEELMILL)
+	{
+		unload(obj);
+	}
+	else if (obj->getType() == rs::IndustryType::FARM)
+	{
+		load(obj);
+	}
+	else if (obj->getType() == rs::IndustryType::FACTORY)
+	{
+		load(obj);
+	}
+	else if (obj->getType() == rs::IndustryType::FOREST)
+	{
+		load(obj);
+	}
+	else if (obj->getType() == rs::IndustryType::SAWMILL)
+	{
+		unload(obj);
+	}
 
-		m_vehicleInfo.owner->addMoney(m_cargoLoaded*100);
-        m_cargoLoaded = 0;
-    }
+}
+
+void Vehicle::unload(Industry* obj)
+{
+	std::cout << "Sold: " << (m_cargoLoaded) << std::endl;
+	obj->m_storage += m_cargoLoaded;
+
+	srand(time(NULL));
+	int rate = (rand() % 50) + (rand() % 25 + 10);
+	m_vehicleInfo.owner->addMoney(m_cargoLoaded * rate);
+
+	m_cargoLoaded = 0;
+
+}
+
+void Vehicle::load(Industry * obj)
+{
+	if (m_cargoLoaded != m_vehicleInfo.capacity && obj->m_storage != 0)
+	{
+		if (obj->m_storage < (m_vehicleInfo.capacity - m_cargoLoaded))
+		{
+			m_cargoLoaded += obj->m_storage;
+			obj->m_storage = 0;
+		}
+		else
+		{
+			m_cargoLoaded += (m_vehicleInfo.capacity - m_cargoLoaded);
+			obj->m_storage -= (m_vehicleInfo.capacity);
+		}
+	}
+
 }
 
 void Vehicle::updateDirection()
@@ -326,17 +368,37 @@ Industry::Industry(rs::ObjectType objType, sf::Texture* texture, rs::IndustryTyp
 
 	m_type = type;
 	m_storage = 0;
+	m_time_elapsed = 0;
 	m_isActive = true;
-	setProp(type);
 	loadObject(texture);
     
 }
 
 void Industry::update(const float dt)
 {
-    if(m_isActive)
+	m_time_elapsed += dt;
+    if(m_isActive && m_time_elapsed > 2.5)
     {
-        m_storage+= int(dt/5*m_workSpeed);
+		if (m_iResNum > 0)
+		{
+			if (m_storage - m_workSpeed > 0)
+			{
+				m_storage -= int(m_workSpeed);
+				m_time_elapsed = 0;
+			}
+			else
+			{
+				m_storage = 0 ;
+				m_time_elapsed = 0;
+			}
+
+		}
+		else if (m_oResNum > 0)
+		{
+			m_storage += int(m_workSpeed);
+			m_time_elapsed = 0;
+		}
+
     }
 }
 
@@ -347,8 +409,10 @@ void Industry::draw(sf::RenderWindow& view)
 
 void Industry::loadObject(sf::Texture * texture)
 { // Loads sprite settings
+	setProp(m_type);
 	m_texture = texture;
-
+	m_time_elapsed = 0;
+	
 
 	/* different objects have different sprite size. */
 	int pointMapping, xPoint;
@@ -450,37 +514,154 @@ void Industry::setProp(const rs::IndustryType type)
 
     case IndustryType::COALMINE:
     {
-        m_iResNum = 0;
+        m_iResNum = 0; // No input resources
+
         m_oResNum = 1;
         m_oRsrc[0] = Resources::COAL;
 
         m_isActive = true;
-
-        m_workSpeed = 100;
+        m_workSpeed = 10;
 
     }break;
     case IndustryType::POWERSTATION:
     {
-        m_iResNum = 1;
-        m_oResNum = 0;
+		m_oResNum = 0;
 
+        m_iResNum = 1;
         m_iRsrc[0] = Resources::COAL;
-        m_workSpeed = 1000;
+
+		m_isActive = true;
+        m_workSpeed = 1;
 
     }break;
     case IndustryType::FACTORY:
     {
-        m_iResNum = 1;
-        m_oResNum = 0;
+        m_iResNum = 3;
+        m_oResNum = 1;
 
-        m_iRsrc[0] = Resources::COAL;
-        m_workSpeed = 1000;
+		m_oRsrc[0] = Resources::GOODS;
+
+        m_iRsrc[0] = Resources::GRAIN;
+		m_iRsrc[1] = Resources::LIVESTOCK;
+		m_iRsrc[2] = Resources::STEEL;
+
+		m_isActive = true;
+        m_workSpeed = 10;
 
     }break;
+	case IndustryType::BANK:
+	{
+		m_iResNum = 1;
+		m_oResNum = 0;
+
+		m_iRsrc[0] = Resources::VALUABLES;
+
+		m_isActive = true;
+		m_workSpeed = 1;
+	}
+	break;
+	case IndustryType::IRONOREMINE:
+	{
+		m_iResNum = 0;
+		m_oResNum = 1;
+
+		m_oRsrc[0] = Resources::IRONORE;
+
+		m_isActive = true;
+		m_workSpeed = 10;
+	}
+	break;
+	case IndustryType::FARM:
+	{
+		m_iResNum = 0;
+		m_oResNum = 2;
+
+		m_oRsrc[0] = Resources::LIVESTOCK;
+		m_oRsrc[1] = Resources::GRAIN;
+
+		m_isActive = true;
+		m_workSpeed = 10;
+	}
+	break;
+	case IndustryType::FOREST:
+	{
+		m_iResNum = 0;
+		m_oResNum = 1;
+
+		m_oRsrc[0] = Resources::WOOD;
+
+		m_isActive = true;
+		m_workSpeed = 10;
+
+	}
+	break;
+	case IndustryType::OILWELLS:
+	{
+		m_iResNum = 0;
+		m_oResNum = 1;
+
+		m_oRsrc[0] = Resources::OIL;
+
+		m_isActive = true;
+		m_workSpeed = 10;
+	}
+	break;
+	case IndustryType::OILRIG:
+	{
+		m_iResNum = 2;
+		m_oResNum = 3;
+
+		m_iRsrc[0] = Resources::MAIL;
+		m_iRsrc[1] = Resources::PASSANGERS;
+
+		m_oRsrc[0] = Resources::OIL;
+		m_oRsrc[1] = Resources::PASSANGERS;
+		m_oRsrc[2] = Resources::MAIL;
+
+		m_isActive = true;
+		m_workSpeed = 10;
+	}
+	break;
+	case IndustryType::OILREFINERY:
+	{
+		m_iResNum = 1;
+		m_oResNum = 1;
+
+		m_iRsrc[0] = Resources::OIL;
+		m_oRsrc[0] = Resources::GOODS;
+		m_isActive = true;
+		m_workSpeed = 10;
+	}
+	break;
+	case IndustryType::SAWMILL:
+	{
+		m_iResNum = 1;
+		m_oResNum = 1;
+
+		m_iRsrc[0] = Resources::WOOD;
+		m_oRsrc[0] = Resources::GOODS;
+
+		m_isActive = true;
+		m_workSpeed = 10;
+	}
+	break;
+	case IndustryType::STEELMILL:
+	{
+		m_iResNum = 1;
+		m_oResNum = 1;
+
+		m_iRsrc[0] = Resources::IRONORE;
+		m_oRsrc[0] = Resources::STEEL;
+
+		m_isActive = true;
+		m_workSpeed = 10;
+	}
+	break;
     default:
     {
         m_workSpeed = 0;
-    }break;
+    }
+	break;
     }
 }
 
