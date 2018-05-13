@@ -246,16 +246,19 @@ void ProgramStateMain::handleInput()
         /* Zoom the view */
         case sf::Event::MouseWheelMoved:
         {
-            if(event.mouseWheel.delta < 0)
-            {
-                m_gameView.zoom(2.0f);
-                m_zoomLevel *= 2.0f;
-            }
-            else
-            {
-                m_gameView.zoom(0.5f);
-                m_zoomLevel *= 0.5f;
-            }
+				float scale = 0;
+				if (event.mouseWheel.delta < 0 && m_zoomLevel >= 0.5 && m_zoomLevel <= 3)
+				{
+					m_zoomLevel * 1.25f > 3 ? scale = 3.0f / m_zoomLevel : scale = 1.25f;
+					m_gameView.zoom(scale);
+					m_zoomLevel *= scale;
+				}
+				else if (event.mouseWheel.delta > 0 && m_zoomLevel >= 1 && m_zoomLevel <= 3.5)
+				{
+					m_zoomLevel * 0.8f < 1 ? scale = 1.0f / m_zoomLevel : scale = 0.8f;
+					m_gameView.zoom(scale);
+					m_zoomLevel *= scale;
+				}
             break;
         }
 

@@ -190,7 +190,7 @@ int Map::generateObjects()
 
     for(int i = 0; i <= 2; ++i)
     {
-        int qvote = 4;
+        int qvote = 0;
         if( i == 1)
             type = rs::IndustryType::COALMINE;
         else
