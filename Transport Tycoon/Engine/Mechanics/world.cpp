@@ -515,8 +515,11 @@ void World::drawMap(ScreenView& gameView)
 
 
 	//Buffer 
+	idxRec.topRight.y -= 4;
+    idxRec.bottomLeft.y += 4;
+	idxRec.topLeft.x -= 4;
+	idxRec.bottomRight.x += 4;
 
-    idxRec.bottomLeft.y += 2;
 
 
 	int dRows = std::abs(idxRec.topRight.y - idxRec.bottomLeft.y);
@@ -565,10 +568,10 @@ void World::drawMap(ScreenView& gameView)
 
 			twoDToIso(n_x, n_y, 64, 32);
 
-			if ((n_x >= gameView.getViewRect().topLeft.x - 64 &&
-				n_x <= gameView.getViewRect().bottomRight.x + 64) &&
-				(n_y >= gameView.getViewRect().topLeft.y - 64 &&
-					n_y <= gameView.getViewRect().bottomRight.y + 64))
+			if ((n_x >= gameView.getViewRect().topLeft.x - 256 &&
+				n_x <= gameView.getViewRect().bottomRight.x + 256) &&
+				(n_y >= gameView.getViewRect().topLeft.y - 128 &&
+					n_y <= gameView.getViewRect().bottomRight.y + 128))
 			{
 				m_tileMap->m_map[x][y]->draw(n_x, n_y, (m_engine->m_window));
 			}

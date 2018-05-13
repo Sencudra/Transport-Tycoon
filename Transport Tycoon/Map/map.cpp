@@ -183,10 +183,14 @@ bool Map::isValidGreenery(int x, int y, Tile *** map)
 
 int Map::generateObjects()
 {
+	sf::Clock clock;
 
     rs::IndustryType type;
 
     loadIndustryMaps();
+
+	std::cout << "Elapset time for loading ind. maps:" << clock.getElapsedTime().asSeconds() << std::endl; clock.restart();
+	
 
     for(int i = 0; i <= 2; ++i)
     {
@@ -196,7 +200,7 @@ int Map::generateObjects()
         else
             type = rs::IndustryType::POWERSTATION;
 
-        while(qvote > 0)
+        while(qvote > 5)
         {
             bool isCreated = false;
 
@@ -229,7 +233,12 @@ int Map::generateObjects()
         }
 
     }
+	std::cout << "Elapset time for placing ind." << clock.getElapsedTime().asSeconds() << std::endl; clock.restart();
+	
 	this->placeGreenery();
+
+	std::cout << "Elapset time for placing greenery." << clock.getElapsedTime().asSeconds() << std::endl; clock.restart();
+	
     return 0;
 }
 
@@ -272,9 +281,8 @@ void Map::placeGreenery()
 
 	int radius = 7;
 
-	int objectsForest = 40;
+	int objectsForest = 20;
 	int objectsPlain = 3;
-
 
 	rs::GreeneryType type;
 	std::default_random_engine generator;
