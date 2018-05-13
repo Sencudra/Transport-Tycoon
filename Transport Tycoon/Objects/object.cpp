@@ -349,15 +349,82 @@ void Industry::loadObject(sf::Texture * texture)
 { // Loads sprite settings
 	m_texture = texture;
 
+
 	/* different objects have different sprite size. */
-	int pointMapping;
+	int pointMapping, xPoint;
 	switch (this->m_type) {
 	case rs::IndustryType::COALMINE:
+	{
 		pointMapping = 64;
-		break;
+		xPoint = 0;
+	}	
+	break;
 	case rs::IndustryType::POWERSTATION:
+	{
 		pointMapping = 48;
-		break;
+		xPoint = 0;
+	}
+	break;
+	case rs::IndustryType::BANK :
+	{
+		pointMapping = 32;
+		xPoint = 0;
+	}
+	break;
+	case rs::IndustryType::FACTORY :
+	{
+		pointMapping = 64;
+		xPoint = 0;
+	}	
+	break;
+	case rs::IndustryType::FARM :
+	{
+		pointMapping = 82;
+		xPoint = -6;
+	}
+	break;
+	case rs::IndustryType::FOREST :
+	{
+		pointMapping = 80;
+		xPoint = 0;
+	}
+	break;
+	case rs::IndustryType::IRONOREMINE :
+	{
+		pointMapping = 86;
+		xPoint = -4;
+	}
+	break;
+	case rs::IndustryType::OILREFINERY :
+	{
+		pointMapping = 100;
+		xPoint = -8;
+	}
+	break;
+	case rs::IndustryType::OILRIG :
+	{
+		pointMapping = 32;
+		xPoint = -32;
+	}
+	break;
+	case rs::IndustryType::OILWELLS :
+	{
+		pointMapping = 32;
+		xPoint = 0;
+	}
+	break;
+	case rs::IndustryType::SAWMILL :
+	{
+		pointMapping = 25 + 32;
+		xPoint = -2;
+	}
+	break;
+	case rs::IndustryType::STEELMILL :
+	{
+		pointMapping = 64;
+		xPoint = 0;
+	}
+	break;
 	default:
 		break;
 	}
@@ -368,7 +435,7 @@ void Industry::loadObject(sf::Texture * texture)
 	rs::twoDToIso(x1, y1, 64, 32);
 
 	m_sprite.setTexture(*m_texture);
-	m_sprite.setPosition(sf::Vector2f(x1, y1 - (m_texture->getSize().y) + pointMapping));
+	m_sprite.setPosition(sf::Vector2f(x1 + xPoint, y1 - (m_texture->getSize().y) + pointMapping));
 
 
 }

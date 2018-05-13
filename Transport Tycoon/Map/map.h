@@ -48,6 +48,7 @@ private:
     void loadIndustryMaps();
 
 	void placeGreenery();
+	bool createIndustry(int x, int y, rs::IndustryType type);
 
 	int countObjectRadius(rs::ObjectType type, rs::Point point, int rad);
 

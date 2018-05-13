@@ -222,17 +222,17 @@ void ProgramEngine::loadTextures()
 
     //Indutry
     m_texmng->loadTexture(rs::IndustryType::COALMINE,       "media/textures/industry/coalmine.png");
-    //m_texmng->loadTexture("ind_bank",           "media/textures/industry/bank.png");
-    //m_texmng->loadTexture("ind_farm",           "media/textures/industry/farm.png");
-    //m_texmng->loadTexture("ind_forest",         "media/textures/industry/forest(industry).png");
-    //m_texmng->loadTexture("ind_ironoremine",    "media/textures/industry/ironoremine.png");
-    //m_texmng->loadTexture("ind_oilrefinery",    "media/textures/industry/oilrefinary.png");
-    //m_texmng->loadTexture("ind_oilrig",         "media/textures/industry/oilrig.png");
-    //m_texmng->loadTexture("ind_oilwells",       "media/textures/industry/oilwells.png");
+    m_texmng->loadTexture(rs::IndustryType::BANK,			"media/textures/industry/bank.png");
+    m_texmng->loadTexture(rs::IndustryType::FARM,			"media/textures/industry/farm.png");
+    m_texmng->loadTexture(rs::IndustryType::FOREST,			"media/textures/industry/forest(industry).png");
+    m_texmng->loadTexture(rs::IndustryType::IRONOREMINE,	"media/textures/industry/ironoremine.png");
+    m_texmng->loadTexture(rs::IndustryType::OILREFINERY,	"media/textures/industry/oilrefinery.png");
+    m_texmng->loadTexture(rs::IndustryType::OILRIG,			"media/textures/industry/oilrig.png");
+    m_texmng->loadTexture(rs::IndustryType::OILWELLS,       "media/textures/industry/oilwells.png");
     m_texmng->loadTexture(rs::IndustryType::POWERSTATION,   "media/textures/industry/powerstation.png");
-    //m_texmng->loadTexture("ind_sawmill",        "media/textures/industry/sawmill.png");
-    //m_texmng->loadTexture("ind_steelmill",      "media/textures/industry/steelmill.png");
-    //m_texmng->loadTexture("ind_factory",        "media/textures/industry/factory.png");
+	m_texmng->loadTexture(rs::IndustryType::SAWMILL,		"media/textures/industry/sawmill.png");
+    m_texmng->loadTexture(rs::IndustryType::STEELMILL,		"media/textures/industry/steelmill.png");
+    m_texmng->loadTexture(rs::IndustryType::FACTORY,		"media/textures/industry/factory.png");
 }
 
 

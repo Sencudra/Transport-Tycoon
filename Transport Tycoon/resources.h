@@ -82,7 +82,6 @@ enum class IndustryType {COALMINE, POWERSTATION, IRONOREMINE, STEELMILL,
                          FARM, FACTORY, FOREST, SAWMILL, OILWELLS,
                          OILRIG, OILREFINERY, BANK};
 
-
 enum class MapSprites {DEEP_WATER, WATER, SAND, PLAIN, FOREST, STONE,
                        MOUNTAIN_STONE, SNOW};
 
@@ -173,13 +172,12 @@ struct IndustryMap
 {
     int m_sizeX;
     int m_sizeY;
-    char m_map[4][4];
+    char m_map[4][5];
 
 
-    void CreateIndustryMap(int x, int y, const char map[4][4]){
+    void CreateIndustryMap(int x, int y, const char map[4][5]){
         m_sizeX = x;
         m_sizeY = y;
-
 
         for(int i = 0; i < m_sizeX; ++i)
             for(int j = 0; j < m_sizeY; ++j)

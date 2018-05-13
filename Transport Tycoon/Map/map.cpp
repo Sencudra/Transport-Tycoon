@@ -27,7 +27,38 @@ float forestThreshold = 0.75f;              //stone
 float hillsThreshold = 0.80f;               //ston2
 float mountainsThreshold = 0.88f;           // snow
 
-
+std::string IndTypeToString(rs::IndustryType type)
+{
+	switch (type)
+	{
+	case rs::IndustryType::COALMINE: return "Coal Mine";
+		break;
+	case rs::IndustryType::POWERSTATION: return "Power Station";
+		break;
+	case rs::IndustryType::IRONOREMINE: return "Iron Ore Mine";
+		break;
+	case rs::IndustryType::STEELMILL: return "Steel Mill";
+		break;
+	case rs::IndustryType::FARM: return "Farm";
+		break;
+	case rs::IndustryType::FACTORY: return "Factory";
+		break;
+	case rs::IndustryType::FOREST: return "Forest";
+		break;
+	case rs::IndustryType::SAWMILL: return "Saw Mill";
+		break;
+	case rs::IndustryType::OILWELLS: return "Oil Mill";
+		break;
+	case rs::IndustryType::OILRIG: return "Oil Rig";
+		break;
+	case rs::IndustryType::OILREFINERY: return "Oil Refinery";
+		break;
+	case rs::IndustryType::BANK: return "Bank";
+		break;
+	default:
+		break;
+	}
+}
 
 
 
@@ -183,6 +214,10 @@ bool Map::isValidGreenery(int x, int y, Tile *** map)
 
 int Map::generateObjects()
 {
+
+	int generatedItems = 5;
+
+
 	sf::Clock clock;
 
     rs::IndustryType type;
@@ -192,53 +227,41 @@ int Map::generateObjects()
 	std::cout << "Elapset time for loading ind. maps:" << clock.getElapsedTime().asSeconds() << std::endl; clock.restart();
 	
 
-    for(int i = 0; i <= 2; ++i)
+    for(int i = 0; i < 12; ++i)
     {
-        int qvote = 0;
-        if( i == 1)
-            type = rs::IndustryType::COALMINE;
-        else
-            type = rs::IndustryType::POWERSTATION;
+        int qvote = 5;
+		int built = 0;
+	
+		type = rs::IndustryType(i);
 
-        while(qvote > 5)
+        while(qvote > 0)
         {
             bool isCreated = false;
+			int tries = 0;
 
-            while(!isCreated)
+            while(!isCreated && tries < 30)
             {
                 int x = (int)rand()%(this->getMapSize()-1)+1;
                 int y = (int)rand()%(this->getMapSize()-1)+1;
+				++tries;
 
-
-                if (m_map[x][y]->m_tileType == rs::TileType::PLAIN || m_map[x][y]->m_tileType == rs::TileType::FOREST ||
-                        m_map[x][y]->m_tileType == rs::TileType::STONE)
-                {
-                    isCreated = isValidIndustry(x,y,m_map,type);
-
-                    if(isCreated)
-                    {
-                        sf::Texture* newTexture = m_engine->m_texmng->getTextureRef(type);
-
-                        Industry* newObject = new Industry(rs::ObjectType::INDUSTRY , newTexture, type, x, y);
-
-                        m_world->addObject(newObject);
-						
-						this->placeIndustry(newObject);
-
-                    }
-                }
+				isCreated = createIndustry(x, y, type);
+                
             }
             qvote--;
-
+			if (isCreated) ++built;
         }
+		std::cout << "Build ind. " << IndTypeToString(type) << " : " << built << std::endl;;
 
     }
+	std::cout << "Ind count:" << m_world->m_objStaticContainer.size() << std::endl;
+
 	std::cout << "Elapset time for placing ind." << clock.getElapsedTime().asSeconds() << std::endl; clock.restart();
 	
 	this->placeGreenery();
 
 	std::cout << "Elapset time for placing greenery." << clock.getElapsedTime().asSeconds() << std::endl; clock.restart();
-	
+	std::cout << "Objects:" << m_world->m_objStaticContainer.size() << std::endl;
     return 0;
 }
 
@@ -254,24 +277,91 @@ rs::Rectangle Map::getMapEdges()
 
 
 void Map::loadIndustryMaps()
-{
+{	// Loads Industry maps
 
-    const char temp_matrix1[4][4] = {{'0','0','0','0'},
-                                    {'0','x','x','x'},
-                                    {'x','x','x','1'},
-                                    {'x','x','x','0'}};
-
-
+    const char temp_matrix1[4][5] = {{'0','0','0','0','0'},
+                                    {'0','x','x','x','0'},
+                                    {'x','x','x','1','0'},
+                                    {'x','x','x','0','0'}};
     this->m_industryMaps[rs::IndustryType::COALMINE].CreateIndustryMap(4,4,temp_matrix1);
 
-    const char temp_matrix2[4][4] = {{'x','x','0','0'},
-                                    {'x','x','0','0'},
-                                    {'x','x','0','0'},
-                                    {'x','1','0','0'}};
 
+    const char temp_matrix2[4][5] = {{'x','x','0','0','0'},
+                                    {'x','x','0','0','0' },
+                                    {'x','x','0','0','0' },
+                                    {'x','1','0','0','0' }};
     this->m_industryMaps[rs::IndustryType::POWERSTATION].CreateIndustryMap(4,2,temp_matrix2);
 
 
+
+	const char temp_matrix3[4][5] = {{'0','0','0','0','0' },
+									{ '0','0','0','0','0' },
+									{ 'x','0','0','0','0' },
+									{ '1','0','0','0','0' } };
+	this->m_industryMaps[rs::IndustryType::BANK].CreateIndustryMap(4, 1, temp_matrix3);
+
+
+	const char temp_matrix4[4][5] = {{'0','0','0','0','0' },
+									{ 'x','x','x','x','0' },
+									{ 'x','x','x','1','0' },
+									{ 'x','x','0','0','0' } };
+	this->m_industryMaps[rs::IndustryType::FACTORY].CreateIndustryMap(4, 4, temp_matrix4);
+
+
+	const char temp_matrix5[4][5] = {{'0','0','0','0','0' },
+									{ 'x','x','x','x','0' },
+									{ 'x','x','x','x','0' },
+									{ 'x','x','x','1','0' } };
+	this->m_industryMaps[rs::IndustryType::FARM].CreateIndustryMap(4, 4, temp_matrix5);
+
+
+	const char temp_matrix6[4][5] = {{'x','x','x','x','0' },
+									{ 'x','x','x','x','x' },
+									{ 'x','x','x','x','1' },
+									{ 'x','x','x','x','0' } };
+	this->m_industryMaps[rs::IndustryType::FOREST].CreateIndustryMap(4, 5, temp_matrix6);
+
+
+	const char temp_matrix7[4][5] = {{'x','x','x','x','0' },
+									{ 'x','x','x','x','0' },
+									{ 'x','x','x','x','0' },
+									{ 'x','x','x','1','0' } };
+	this->m_industryMaps[rs::IndustryType::IRONOREMINE].CreateIndustryMap(4, 4, temp_matrix7);
+
+
+	const char temp_matrix8[4][5] = {{'0','0','0','0','0' },
+									{ 'x','x','x','x','x' },
+									{ 'x','x','x','x','x' },
+									{ 'x','x','x','x','1' } };
+	this->m_industryMaps[rs::IndustryType::OILREFINERY].CreateIndustryMap(4, 5, temp_matrix8);
+
+
+	const char temp_matrix9[4][5] = {{'0','0','0','0','0' },
+									{ '0','0','0','0','0' },
+									{ '0','0','0','0','0' },
+									{ '1','0','0','0','0' } };
+	this->m_industryMaps[rs::IndustryType::OILRIG].CreateIndustryMap(4, 1, temp_matrix9);
+
+
+	const char temp_matrix10[4][5] = {{'0','0','0','0','0' },
+									 { 'x','x','1','0','0' },
+									 { 'x','0','0','0','0' },
+									 { 'x','0','0','0','0' } };
+	this->m_industryMaps[rs::IndustryType::OILWELLS].CreateIndustryMap(4, 3, temp_matrix10);
+
+
+	const char temp_matrix11[4][5] = {{'0','0','0','0','0' },
+									 { 'x','x','x','0','0' },
+									 { 'x','x','1','0','0' },
+									 { 'x','x','0','0','0' } };
+	this->m_industryMaps[rs::IndustryType::SAWMILL].CreateIndustryMap(4, 3, temp_matrix11);
+
+
+	const char temp_matrix12[4][5] = {{'x','x','x','0','0' },
+									 { 'x','x','x','x','0' },
+									 { 'x','x','x','1','0' },
+									 { 'x','x','x','0','0' } };
+	this->m_industryMaps[rs::IndustryType::STEELMILL].CreateIndustryMap(4, 4, temp_matrix12);
 }
 
 void Map::placeGreenery()
@@ -349,6 +439,95 @@ void Map::placeGreenery()
 			}
 		}
 	}
+}
+
+bool Map::createIndustry(int x, int y, rs::IndustryType type)
+{
+	bool isCreated = false;
+	bool condition = false;
+
+	switch (type)
+	{
+
+	case rs::IndustryType::POWERSTATION:
+	case rs::IndustryType::STEELMILL:
+	case rs::IndustryType::FACTORY:
+	case rs::IndustryType::OILREFINERY:
+	case rs::IndustryType::BANK:
+	{
+		condition = m_map[x][y]->m_tileType == rs::TileType::PLAIN ||
+					m_map[x][y]->m_tileType == rs::TileType::FOREST ||
+					m_map[x][y]->m_tileType == rs::TileType::STONE ||
+					m_map[x][y]->m_tileType == rs::TileType::SAND;
+	}
+	break;
+	case rs::IndustryType::COALMINE:
+	{
+		condition = m_map[x][y]->m_tileType == rs::TileType::PLAIN ||
+					m_map[x][y]->m_tileType == rs::TileType::FOREST ||
+					m_map[x][y]->m_tileType == rs::TileType::STONE ||
+					m_map[x][y]->m_tileType == rs::TileType::ROCKS;
+	}
+	break;
+	case rs::IndustryType::IRONOREMINE:
+	{
+		condition = m_map[x][y]->m_tileType == rs::TileType::STONE ||
+					m_map[x][y]->m_tileType == rs::TileType::SAND ||
+					m_map[x][y]->m_tileType == rs::TileType::ROCKS;
+	}
+	break;
+	case rs::IndustryType::FARM:
+	{
+		condition = m_map[x][y]->m_tileType == rs::TileType::PLAIN;
+	}
+	break;
+	case rs::IndustryType::FOREST: {
+		condition = m_map[x][y]->m_tileType == rs::TileType::FOREST;
+	}
+	break;
+	case rs::IndustryType::SAWMILL:
+	{
+		condition = m_map[x][y]->m_tileType == rs::TileType::FOREST ||
+					m_map[x][y]->m_tileType == rs::TileType::PLAIN;
+	}
+	break;
+	case rs::IndustryType::OILWELLS:
+	{
+		condition = m_map[x][y]->m_tileType == rs::TileType::SAND ||
+					m_map[x][y]->m_tileType == rs::TileType::PLAIN ||
+					m_map[x][y]->m_tileType == rs::TileType::ROCKS;
+	}
+	break;
+	case rs::IndustryType::OILRIG:
+	{
+		condition = m_map[x][y]->m_tileType == rs::TileType::WATER;
+	}
+	break;
+	default:
+	{
+		condition = false;
+	}
+		break;
+	}
+
+
+	if (condition)
+	{
+		isCreated = isValidIndustry(x, y, m_map, type);
+
+		if (isCreated)
+		{
+			sf::Texture* newTexture = m_engine->m_texmng->getTextureRef(type);
+
+			Industry* newObject = new Industry(rs::ObjectType::INDUSTRY, newTexture, type, x, y);
+
+			m_world->addObject(newObject);
+
+			this->placeIndustry(newObject);
+
+		}
+	}
+	return isCreated;
 }
 
 int Map::countObjectRadius(rs::ObjectType type, rs::Point point, int rad)
@@ -581,11 +760,12 @@ void Map::placeIndustry(Industry * ind)
 			// Look in Map::loadIndustryMaps() for more info
 			if (m_industryMaps[type].m_map[i2][j2] == 'x')
 			{
+				//m_map[j][i]->m_sprite.setTexture(*m_engine->m_texmng->getTextureRef("bg_red"));
 				m_map[j][i]->m_tileStatObj = ind;
 			}
 			if (m_industryMaps[type].m_map[i2][j2] == '1')
 			{
-				m_map[j][i]->m_sprite.setTexture(*m_engine->m_texmng->getTextureRef("bg_factory"));
+				//m_map[j][i]->m_sprite.setTexture(*m_engine->m_texmng->getTextureRef("bg_factory"));
 				m_map[j][i]->m_tileStatObj = ind;
 				m_map[j][i]->isMainStatic = true;
 			}
