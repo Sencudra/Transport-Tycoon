@@ -248,15 +248,15 @@ void ProgramStateMain::handleInput()
         case sf::Event::MouseWheelMoved:
         {
 				float scale = 0;
-				if (event.mouseWheel.delta < 0 && m_zoomLevel >= 0.5 && m_zoomLevel <= 3)
+				if (event.mouseWheel.delta < 0 && m_zoomLevel >= 0.1 && m_zoomLevel <= 3)
 				{
 					m_zoomLevel * 1.1f > 3 ? scale = 3.0f / m_zoomLevel : scale = 1.1f;
 					m_gameView.zoom(scale);
 					m_zoomLevel *= scale;
 				}
-				else if (event.mouseWheel.delta > 0 && m_zoomLevel >= 1 && m_zoomLevel <= 3.5)
+				else if (event.mouseWheel.delta > 0 && m_zoomLevel >= 0.5 && m_zoomLevel <= 3.5)
 				{
-					m_zoomLevel * 0.9f < 1 ? scale = 1.0f / m_zoomLevel : scale = 0.9f;
+					m_zoomLevel * 0.9f < 0.5 ? scale = 0.5f / m_zoomLevel : scale = 0.9f;
 					m_gameView.zoom(scale);
 					m_zoomLevel *= scale;
 				}

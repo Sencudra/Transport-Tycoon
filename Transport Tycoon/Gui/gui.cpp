@@ -128,10 +128,10 @@ void GuiMenu::menu(bool gShow)
 					
 					//this->m_game->pushState(new ProgramStateMain(1, this->m_game));
 				}
-				if (ImGui::Button("Settings", size)) {
-					this->m_isSettingsPanelAxtive = !(this->m_isSettingsPanelAxtive);
+				//if (ImGui::Button("Settings", size)) {
+				//	this->m_isSettingsPanelAxtive = !(this->m_isSettingsPanelAxtive);
 
-				}
+				//}
 				if (ImGui::Button("Exit", size)) {
 					this->m_game->m_window.close();
 
@@ -346,7 +346,7 @@ void GuiGame::infoBar(bool gShow)
 			case rs::ObjectType::VEHICLE:
 			{
 				Vehicle* ind = dynamic_cast<Vehicle*>(obj);
-				output =  "Vehicle" + std::to_string(ind->m_cargoLoaded);
+				output =  "Vehicle " + std::to_string(ind->m_cargoLoaded);
 				ImGui::TextWrapped(" -- %s -- ", output.c_str());
 			}
 				break;
@@ -418,11 +418,11 @@ void GuiGame::toolBar(bool gShow)
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("Fast Forward button");
 
-			fontIcon->DisplayOffset.y = 2;
-			ImGui::Button(ICON_KI_COG, buttonRect);
-			fontIcon->DisplayOffset.y = 0;
-			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("Settings");
+			//fontIcon->DisplayOffset.y = 2;
+			//ImGui::Button(ICON_KI_COG, buttonRect);
+			//fontIcon->DisplayOffset.y = 0;
+			//if (ImGui::IsItemHovered())
+			//	ImGui::SetTooltip("Settings");
 			
 			// Save button
 			this->saveButton(buttonRect, fontIcon);
@@ -431,17 +431,17 @@ void GuiGame::toolBar(bool gShow)
 		}
 		ImGui::VerticalSeparator();
 		{
-			fontIcon->DisplayOffset.y = 2;
-			ImGui::Button("?", buttonRect);
-			fontIcon->DisplayOffset.y = 0;
-			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("Map");
+			//fontIcon->DisplayOffset.y = 2;
+			//ImGui::Button("?", buttonRect);
+			//fontIcon->DisplayOffset.y = 0;
+			//if (ImGui::IsItemHovered())
+			//	ImGui::SetTooltip("Map");
 
-			fontIcon->DisplayOffset.y = 2;
-			ImGui::Button(ICON_KI_USER, buttonRect);
-			fontIcon->DisplayOffset.y = 0;
-			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("Company profile");
+			//fontIcon->DisplayOffset.y = 2;
+			//ImGui::Button(ICON_KI_USER, buttonRect);
+			//fontIcon->DisplayOffset.y = 0;
+			//if (ImGui::IsItemHovered())
+			//	ImGui::SetTooltip("Company profile");
 
 		}
 		ImGui::VerticalSeparator();

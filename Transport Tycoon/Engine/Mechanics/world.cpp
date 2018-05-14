@@ -111,7 +111,7 @@ World::~World()
 
 void World::update(float dt)
 {
-	std::cout << dt << std::endl;
+	//std::cout << dt << std::endl;
 
     if(dt > 0.5)return;
     if(!m_isPause){
