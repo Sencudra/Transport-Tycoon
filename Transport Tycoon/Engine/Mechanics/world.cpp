@@ -135,6 +135,12 @@ void World::update(float dt)
             std::cout << m_day << std::endl;
             m_oneDayTimer = 0;
         }
+
+		if (int(m_day) % 30 == 0)
+		{
+			m_player.substractMoney(m_objDynamContainer.size() * 1000);
+		}
+
     }
 
 
@@ -380,7 +386,7 @@ void World::deleteVec(Object* obj)
         if(i == obj)
         {
             m_objDynamContainer.erase(m_objDynamContainer.begin()+position);
-			return;
+			break;
         }
         position++;
     }
@@ -389,7 +395,7 @@ void World::deleteVec(Object* obj)
 
 	x1 = obj->m_x;
 	y1 = obj->m_y;
-	m_tileMap->m_map[x1][y1]->deleteObject();
+	//m_tileMap->m_map[x1][y1]->m_tileDynObj.erase() ;
 
 	for (auto i : m_tileMap->m_map[x1][y1]->m_tileDynObj)
 	{

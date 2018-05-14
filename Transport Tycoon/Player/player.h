@@ -18,6 +18,7 @@ public:
 
     void addMoney(int money){m_balance += money;}
     bool getMoney(int money);
+	void substractMoney(int money);
     int getBalance(){return m_balance;}
 
     std::string getCompanyName(){return m_companyName;}

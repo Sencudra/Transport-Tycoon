@@ -28,6 +28,11 @@ bool Player::getMoney(int money)
     }
 }
 
+void Player::substractMoney(int money)
+{
+	m_balance -= money;
+}
+
 Player::~Player()
 {
 
